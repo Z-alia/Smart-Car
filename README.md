@@ -1,6 +1,17 @@
-在此同步进度
-eg：
-xx月xx日，完成xx
+在此同步进度  
+- [ ] Hardware
+  - [ ] mpu6050
+  - [ ] lcd
+  - [ ] ov2640
+  - [ ] motor
+  - [ ] motor-encoder
+  - [ ] ecll
+  - [ ] led
+  - [ ] buzzer
+- [ ] mpu6050
+- [ ] mpu6050
+
+
 
 ## 说明
 自定义文件代码路径 Smart-Car/MDK-ARM/code  
