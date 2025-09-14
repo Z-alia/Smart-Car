@@ -138,6 +138,11 @@
             "folders": []
           }
         ]
+      },
+      {
+        "name": "::CMSIS",
+        "files": [],
+        "folders": []
       }
     ]
   },
