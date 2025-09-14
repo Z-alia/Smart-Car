@@ -32,7 +32,6 @@
 #define  LCD_SPI  hspi4           // SPI局部宏，方便修改和移植
 
 static pFONT *LCD_AsciiFonts;		// 英文字体，ASCII字符集
-static pFONT *LCD_CHFonts;		   // 中文字体（同时也包含英文字体）
 
 // 因为这类SPI的屏幕，每次更新显示时，需要先配置坐标区域、再写显存，
 // 在显示字符时，如果是一个个点去写坐标写显存，会非常慢，
@@ -623,134 +622,7 @@ void LCD_DisplayString( uint16_t x, uint16_t y, char *p)
 	}
 }
 
-/****************************************************************************************************************************************
-*	函 数 名:	LCD_SetTextFont
-*
-*	入口参数:	*fonts - 要设置的文本字体
-*
-*	函数功能:	设置文本字体，包括中文和ASCII字符，
-*
-*	说    明:	1. 可选择使用 3232/2424/2020/1616/1212 五种大小的中文字体，
-*						并且对应的设置ASCII字体为 3216/2412/2010/1608/1206
-*					2. 相关字模存放在 lcd_fonts.c 
-*					3. 中文字库使用的是小字库，即用到了对应的汉字再去取模
-*					4. 使用示例 LCD_SetTextFont(&CH_Font24) ，即设置 2424的中文字体以及2412的ASCII字符字体
-*
-*****************************************************************************************************************************************/
 
-void LCD_SetTextFont(pFONT *fonts)
-{
-	LCD_CHFonts = fonts;		// 设置中文字体
-	switch(fonts->Width )
-	{
-		case 12:	LCD_AsciiFonts = &ASCII_Font12;	break;	// 设置ASCII字符的字体为 1206
-		case 16:	LCD_AsciiFonts = &ASCII_Font16;	break;	// 设置ASCII字符的字体为 1608
-		case 20:	LCD_AsciiFonts = &ASCII_Font20;	break;	// 设置ASCII字符的字体为 2010	
-		case 24:	LCD_AsciiFonts = &ASCII_Font24;	break;	// 设置ASCII字符的字体为 2412
-		case 32:	LCD_AsciiFonts = &ASCII_Font32;	break;	// 设置ASCII字符的字体为 3216		
-		default: break;
-	}
-}
-/******************************************************************************************************************************************
-*	函 数 名:	LCD_DisplayChinese
-*
-*	入口参数:	x - 起始水平坐标
-*					y - 起始垂直坐标
-*					pText - 中文字符
-*
-*	函数功能:	在指定坐标显示指定的单个中文字符
-*
-*	说    明:	1. 可设置要显示的字体，例如使用 LCD_SetTextFont(&CH_Font24) 设置为 2424的中文字体以及2412的ASCII字符字体
-*					2.	可设置要显示的颜色，例如使用 LCD_SetColor(0xff0000FF) 设置为蓝色
-*					3. 可设置对应的背景色，例如使用 LCD_SetBackColor(0xff000000) 设置为黑色的背景色
-*					4. 使用示例 LCD_DisplayChinese( 10, 10, "反") ，在坐标(10,10)显示中文字符"反"
-*
-*****************************************************************************************************************************************/
-
-void LCD_DisplayChinese(uint16_t x, uint16_t y, char *pText) 
-{
-	uint16_t  i=0,index = 0, counter = 0;	// 计数变量
-	uint16_t  addr;	// 字模地址
-   uint8_t   disChar;	//字模的值
-	uint16_t  Xaddress = 0; //水平坐标
-
-	while(1)
-	{		
-		// 对比数组中的汉字编码，用以定位该汉字字模的地址		
-		if ( *(LCD_CHFonts->pTable + (i+1)*LCD_CHFonts->Sizes + 0)==*pText && *(LCD_CHFonts->pTable + (i+1)*LCD_CHFonts->Sizes + 1)==*(pText+1) )	
-		{   
-			addr=i;	// 字模地址偏移
-			break;
-		}				
-		i+=2;	// 每个中文字符编码占两字节
-
-		if(i >= LCD_CHFonts->Table_Rows)	break;	// 字模列表中无相应的汉字	
-	}	
-	i=0;
-	for(index = 0; index <LCD_CHFonts->Sizes; index++)
-	{	
-		disChar = *(LCD_CHFonts->pTable + (addr)*LCD_CHFonts->Sizes + index);	// 获取相应的字模地址
-		
-		for(counter = 0; counter < 8; counter++)
-		{ 
-			if(disChar & 0x01)	
-			{		
-            LCD_Buff[i] =  LCD.Color;			// 当前模值不为0时，使用画笔色绘点
-			}
-			else		
-			{		
-            LCD_Buff[i] = LCD.BackColor;		// 否则使用背景色绘制点
-			}
-         i++;
-			disChar >>= 1;
-			Xaddress++;  //水平坐标自加
-			
-			if( Xaddress == LCD_CHFonts->Width ) 	//	如果水平坐标达到了字符宽度，则退出当前循环
-			{														//	进入下一行的绘制
-				Xaddress = 0;
-				break;
-			}
-		}	
-	}	
-   LCD_SetAddress( x, y, x+LCD_CHFonts->Width-1, y+LCD_CHFonts->Height-1);	   // 设置坐标	
-   LCD_WriteBuff(LCD_Buff,LCD_CHFonts->Width*LCD_CHFonts->Height);            // 写入显存
-}
-
-/*****************************************************************************************************************************************
-*	函 数 名:	LCD_DisplayText
-*
-*	入口参数:	x - 起始水平坐标
-*					y - 起始垂直坐标
-*					pText - 字符串，可以显示中文或者ASCII字符
-*
-*	函数功能:	在指定坐标显示指定的字符串
-*
-*	说    明:	1. 可设置要显示的字体，例如使用 LCD_SetTextFont(&CH_Font24) 设置为 2424的中文字体以及2412的ASCII字符字体
-*					2.	可设置要显示的颜色，例如使用 LCD_SetColor(0xff0000FF) 设置为蓝色
-*					3. 可设置对应的背景色，例如使用 LCD_SetBackColor(0xff000000) 设置为黑色的背景色
-*					4. 使用示例 LCD_DisplayChinese( 10, 10, "反客科技STM32") ，在坐标(10,10)显示字符串"反客科技STM32"
-*
-**********************************************************************************************************************************fanke*******/
-
-void LCD_DisplayText(uint16_t x, uint16_t y, char *pText) 
-{  
- 	
-	while(*pText != 0)	// 判断是否为空字符
-	{
-		if(*pText<=0x7F)	// 判断是否为ASCII码
-		{
-			LCD_DisplayChar(x,y,*pText);	// 显示ASCII
-			x+=LCD_AsciiFonts->Width;				// 水平坐标调到下一个字符处
-			pText++;								// 字符串地址+1
-		}
-		else					// 若字符为汉字
-		{			
-			LCD_DisplayChinese(x,y,pText);	// 显示汉字
-			x+=LCD_CHFonts->Width;				// 水平坐标调到下一个字符处
-			pText+=2;								// 字符串地址+2，汉字的编码要2字节
-		}
-	}	
-}
 
 /*****************************************************************************************************************************************
 *	函 数 名:	LCD_ShowNumMode

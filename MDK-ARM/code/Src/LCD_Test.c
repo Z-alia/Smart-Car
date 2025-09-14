@@ -219,21 +219,21 @@ void  LCD_Test_Direction(void)
 		{
 			case 0:  
             LCD_SetDirection(Direction_V);		   
-            LCD_DisplayText(20,20,"Direction_V"); 
+            LCD_DisplayString(20,20,"Direction_V"); 
          break;	
 
 			case 1:  
             LCD_SetDirection(Direction_H); 	
-            LCD_DisplayText(20,20,"Direction_H"); 
+            LCD_DisplayString(20,20,"Direction_H"); 
          break;	
 
 			case 2:  
             LCD_SetDirection(Direction_V_Flip); 
-            LCD_DisplayText(20,20,"Direction_V_Flip"); 
+            LCD_DisplayString(20,20,"Direction_V_Flip"); 
          break;
 			case 3: 
             LCD_SetDirection(Direction_H_Flip); 	
-            LCD_DisplayText(20,20,"Direction_H_Flip"); 
+            LCD_DisplayString(20,20,"Direction_H_Flip"); 
          break;
 	
 			default:	break;			
