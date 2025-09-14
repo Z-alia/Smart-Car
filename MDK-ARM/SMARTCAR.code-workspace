@@ -4,8 +4,6 @@
             "path": "."
         }
     ],
-    "settings": {
-        "github.copilot.nextEditSuggestions.enabled": true
-    },
+    "settings": {},
     "extensions": {}
 }
