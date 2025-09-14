@@ -3,6 +3,7 @@
 "smartcar\main.o"
 "smartcar\gpio.o"
 "smartcar\dcmi.o"
+"smartcar\dma.o"
 "smartcar\spi.o"
 "smartcar\stm32h7xx_it.o"
 "smartcar\stm32h7xx_hal_msp.o"
@@ -28,6 +29,12 @@
 "smartcar\stm32h7xx_hal_tim.o"
 "smartcar\stm32h7xx_hal_tim_ex.o"
 "smartcar\system_stm32h7xx.o"
+"smartcar\lcd_fonts.o"
+"smartcar\lcd_image.o"
+"smartcar\lcd_spi_200.o"
+"smartcar\lcd_test.o"
+"smartcar\ov2640.o"
+"smartcar\sccb.o"
 --strict --scatter "SMARTCAR\SMARTCAR.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

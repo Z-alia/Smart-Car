@@ -69,6 +69,10 @@ void Error_Handler(void);
 #define CAMERA_PWDN_GPIO_Port GPIOD
 #define LCD_BL_Pin GPIO_PIN_15
 #define LCD_BL_GPIO_Port GPIOD
+#define SCCB_SCL_Pin GPIO_PIN_8
+#define SCCB_SCL_GPIO_Port GPIOB
+#define SCCB_SDA_Pin GPIO_PIN_9
+#define SCCB_SDA_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
