@@ -2,7 +2,7 @@
 - [ ] Hardware
   - [ ] mpu6050
   - [x] lcd
-  - [ ] ov2640
+  - [x] ov2640
   - [ ] motor
   - [ ] motor-encoder
   - [ ] ecll
