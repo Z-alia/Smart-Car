@@ -5,7 +5,8 @@
   "srcDirs": [
     "code/Inc",
     "code/Src",
-    "../Core/Inc"
+    "../Core/Inc",
+    "../Core/Src"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
