@@ -3,8 +3,7 @@
   "type": "ARM",
   "dependenceList": [],
   "srcDirs": [
-    "code/Inc",
-    "code/Src"
+    "code"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
@@ -38,6 +37,9 @@
                   },
                   {
                     "path": "../Core/Src/dcmi.c"
+                  },
+                  {
+                    "path": "../Core/Src/i2c.c"
                   },
                   {
                     "path": "../Core/Src/spi.c"
@@ -142,14 +144,17 @@
     ]
   },
   "outDir": "build",
-  "deviceName": "STM32H750VBTx",
-  "packDir": ".pack/Keil/STM32H7xx_DFP.4.1.2",
+  "deviceName": null,
+  "packDir": null,
   "miscInfo": {
-    "uid": "fabe30eb6c02cb9df7d42ddc268e3971"
+    "uid": "4b45626a2b85295e1e1af4e509ad72c6"
   },
   "targets": {
     "SMARTCAR": {
-      "excludeList": [],
+      "excludeList": [
+        "code/Inc/inv_mpu.c",
+        "code/Inc/inv_mpu_dmp_motion_driver.c"
+      ],
       "toolchain": "AC5",
       "compileConfig": {
         "cpuType": "Cortex-M7",
@@ -265,42 +270,30 @@
         },
         "options": "null"
       },
-      "uploader": "STLink",
+      "uploader": "JLink",
       "uploadConfig": {
         "bin": "",
-        "proType": "SWD",
-        "resetMode": "default",
-        "runAfterProgram": true,
-        "speed": 4000,
-        "address": "",
-        "elFile": "None",
-        "optionBytes": ".eide/smartcar.st.option.bytes.ini",
+        "baseAddr": "",
+        "cpuInfo": {
+          "vendor": "null",
+          "cpuName": "null"
+        },
+        "proType": 1,
+        "speed": 8000,
         "otherCmds": ""
       },
-      "uploadConfigMap": {
-        "JLink": {
-          "bin": "",
-          "baseAddr": "",
-          "cpuInfo": {
-            "vendor": "null",
-            "cpuName": "null"
-          },
-          "proType": 1,
-          "speed": 8000,
-          "otherCmds": ""
-        }
-      },
+      "uploadConfigMap": {},
       "custom_dep": {
         "name": "default",
         "incList": [
-          ".",
           "../Core/Inc",
           "../Drivers/STM32H7xx_HAL_Driver/Inc",
           "../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy",
           "../Drivers/CMSIS/Device/ST/STM32H7xx/Include",
           "../Drivers/CMSIS/Include",
           ".cmsis/include",
-          "RTE/_SMARTCAR"
+          "RTE/_SMARTCAR",
+          "code/Inc"
         ],
         "libList": [],
         "defineList": [
