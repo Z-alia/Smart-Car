@@ -1,7 +1,7 @@
 在此同步进度  
 - [ ] Hardware
   - [ ] mpu6050
-  - [ ] lcd
+  - [x] lcd
   - [ ] ov2640
   - [ ] motor
   - [ ] motor-encoder
