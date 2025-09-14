@@ -4,7 +4,8 @@
   "dependenceList": [],
   "srcDirs": [
     "code/Inc",
-    "code/Src"
+    "code/Src",
+    "../Core/Inc"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
