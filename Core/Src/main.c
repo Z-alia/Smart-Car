@@ -189,15 +189,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         // 1. 读取编码器当前计数值
         motor_speed.encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
         motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
-        // 2. 计算速度 (两次计数值的差值)
-        motor_speed.motor_speed_left = motor_speed.encoder_count_left - motor_speed.last_encoder_count_left;
-        motor_speed.motor_speed_right = motor_speed.encoder_count_right - motor_speed.last_encoder_count_right;
+        // 2. 计算速度 修正溢出 更新上一次的计数值
+        Encoder_Correct(&motor_speed);
 
-        // 3. 更新上一次的计数值，为下一个周期做准备
-        motor_speed.last_encoder_count_left = motor_speed.encoder_count_left;
-        motor_speed.last_encoder_count_right = motor_speed.encoder_count_right;
-
-        // 4. 调用电机PID控制函数
+        // 3. 调用电机PID控制函数
     }
 }
 /* USER CODE END 4 */
