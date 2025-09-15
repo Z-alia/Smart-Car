@@ -7,7 +7,6 @@
 #define TR_tgtspd 900
 Motor leftmotor={0, 1, tgtspd, 0};
 Motor rightmotor={0, 1, tgtspd, 1};
-PIDController pid;
 
 //pid控制器初始化
 void pid_init(PIDController* pid, float kp, float ki, float kd) {
@@ -49,7 +48,8 @@ float pid_calculate(PIDController* pid, float setpoint, float feedback) {
 void motor_init(void)
 {
     // 初始化电机控制引脚
-    HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin|MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin, GPIO_PIN_RESET);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
     motor_stop();

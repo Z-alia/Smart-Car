@@ -32,7 +32,7 @@ float pid_calculate(PIDController* pid, float setpoint, float feedback);
 // 初始化电机驱动
 void motor_init(void);
 
-// 控制电机运行 (speed: -100 to 100)
+// 控制电机运行 (speed: -1000 to 1000)
 void motor_run(Motor *motor_ptr, int16_t speed);
 
 //左转
@@ -46,6 +46,9 @@ void motor_coast(void);
 
 // 刹车
 void motor_stop(void);
+
+//循迹
+void motor_follow_line(void);
 
 extern Motor leftmotor;
 extern Motor rightmotor;

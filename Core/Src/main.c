@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "encoder.h"
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,7 +49,7 @@
 
 /* USER CODE BEGIN PV */
 MotorSpeed motor_speed;
-
+PIDController pid;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
