@@ -1,6 +1,6 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
-
+#include "stdint.h"
 // PID控制结构体
 typedef struct {
     volatile float kp;           // 比例系数

@@ -1,7 +1,6 @@
 #include "motor.h"
 #include "main.h"
 #include "tim.h"
-#include "stdint.h"
 //本工程的PWM分辨率为1000
 #define tgtspd 700
 #define TL_tgtspd 900
