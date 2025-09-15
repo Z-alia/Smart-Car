@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,9 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-volatile int16_t encoder_count_left, encoder_count_right = 0;      // 保存当前编码器计数值
-volatile int16_t last_encoder_count_left,last_encoder_count_right = 0; // 保存上一次的计数值
-volatile int16_t motor_speed_left,motor_speed_right = 0; 
+MotorSpeed motor_speed;
 
 /* USER CODE END PV */
 
@@ -189,15 +187,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         //每 10ms 执行
 
         // 1. 读取编码器当前计数值
-        encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
-        encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
+        motor_speed.encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
+        motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
         // 2. 计算速度 (两次计数值的差值)
-        motor_speed_left = encoder_count_left - last_encoder_count_left;
-        motor_speed_right = encoder_count_right - last_encoder_count_right;
+        motor_speed.motor_speed_left = motor_speed.encoder_count_left - motor_speed.last_encoder_count_left;
+        motor_speed.motor_speed_right = motor_speed.encoder_count_right - motor_speed.last_encoder_count_right;
 
         // 3. 更新上一次的计数值，为下一个周期做准备
-        last_encoder_count_left = encoder_count_left;
-        last_encoder_count_right = encoder_count_right;
+        motor_speed.last_encoder_count_left = motor_speed.encoder_count_left;
+        motor_speed.last_encoder_count_right = motor_speed.encoder_count_right;
 
         // 4. 调用电机PID控制函数
     }
