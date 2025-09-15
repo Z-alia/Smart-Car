@@ -14,23 +14,20 @@ typedef struct {
 } PIDController;
 
 
-// 左电机参数结构体
-typedef struct{
-    volatile int8_t target_lspeed;
-    volatile uint8_t ldir;
-}LeftMotor;
+// 电机控制结构体
+typedef struct {
+    volatile int8_t left_speed;     // 左轮速度
+    volatile int8_t right_speed;    // 右轮速度
+    volatile uint8_t left_dir;      // 左轮方向
+    volatile uint8_t right_dir;     // 右轮方向
+    volatile int8_t target_speed;   // 目标速度
+} MotorControl;
 
-// 右电机参数结构体
-typedef struct{
-    volatile int8_t target_rspeed;
-    volatile uint8_t rdir;
-}RightMotor;
+// PID控制器初始化
+void pid_init(PIDController* pid, float kp, float ki, float kd);
 
-// 电机参数结构体
-typedef struct{
-    LeftMotor left;
-    RightMotor right;
-}Motor;
+//pid计算
+float pid_calculate(PIDController* pid, float setpoint, float feedback);
 
 // 初始化电机驱动
 void motor_init(void);

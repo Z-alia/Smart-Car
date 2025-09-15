@@ -1,6 +1,41 @@
 #include "motor.h"
 #include "main.h"
 #include "tim.h"
+
+//pid控制器初始化
+void pid_init(PIDController* pid, float kp, float ki, float kd) {
+    pid->kp = kp;
+    pid->ki = ki;
+    pid->kd = kd;
+    pid->error = 0.0;
+    pid->last_error = 0.0;
+    pid->integral = 0.0;
+    pid->derivative = 0.0;
+    pid->output = 0.0;
+}
+
+//pid计算
+float pid_calculate(PIDController* pid, float setpoint, float feedback) {
+    // 计算误差
+    pid->error = setpoint - feedback;
+    
+    // 计算积分项
+    pid->integral += pid->error;
+    
+    // 计算微分项
+    pid->derivative = pid->error - pid->last_error;
+    
+    // 计算输出
+    pid->output = pid->kp * pid->error + 
+                  pid->ki * pid->integral + 
+                  pid->kd * pid->derivative;
+    
+    // 保存上次误差
+    pid->last_error = pid->error;
+    
+    return pid->output;
+}
+
 // 初始化电机驱动
 void motor_init(void)
 {
@@ -37,5 +72,5 @@ void motor_coast(void)
 // 刹车
 void motor_stop(void)
 {
-    
+
 }
