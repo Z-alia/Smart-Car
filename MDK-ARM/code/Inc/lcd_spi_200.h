@@ -102,7 +102,8 @@ void 	LCD_DrawImage(uint16_t x,uint16_t y,uint16_t width,uint16_t height,const u
 void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16_t *DataBuff);
 //显示摄像头图像
 void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold);
-
+//显示灰度图
+void ips200_show_gray_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold);
  /*--------------------------------------------- LCD其它引脚 -----------------------------------------------*/
 
 #define LCD_Backlight_PIN						GPIO_PIN_15				         // 背光  引脚				
