@@ -36,6 +36,8 @@ smartcar\lcd_spi_200.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h
 smartcar\lcd_spi_200.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h
 smartcar\lcd_spi_200.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h
 smartcar\lcd_spi_200.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h
+smartcar\lcd_spi_200.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
+smartcar\lcd_spi_200.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 smartcar\lcd_spi_200.o: ./code/Inc/lcd_spi_200.h
 smartcar\lcd_spi_200.o: D:\Keil\ARM\ARM5.06\Bin\..\include\stdio.h
 smartcar\lcd_spi_200.o: ./code/Inc/lcd_fonts.h

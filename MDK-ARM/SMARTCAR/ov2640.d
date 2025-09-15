@@ -36,6 +36,8 @@ smartcar\ov2640.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h
 smartcar\ov2640.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h
 smartcar\ov2640.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h
 smartcar\ov2640.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h
+smartcar\ov2640.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
+smartcar\ov2640.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 smartcar\ov2640.o: ./code/Inc/sccb.h
 smartcar\ov2640.o: ../Core/Inc/dcmi.h
 smartcar\ov2640.o: ./code/Inc/lcd_spi_200.h

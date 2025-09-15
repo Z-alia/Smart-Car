@@ -35,7 +35,11 @@ smartcar\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h
 smartcar\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h
 smartcar\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h
 smartcar\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h
+smartcar\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
+smartcar\main.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 smartcar\main.o: ../Core/Inc/dcmi.h
 smartcar\main.o: ../Core/Inc/dma.h
 smartcar\main.o: ../Core/Inc/spi.h
+smartcar\main.o: ../Core/Inc/tim.h
 smartcar\main.o: ../Core/Inc/gpio.h
+smartcar\main.o: ./code/Inc/encoder.h

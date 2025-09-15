@@ -36,5 +36,7 @@ smartcar\lcd_test.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr.h
 smartcar\lcd_test.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_pwr_ex.h
 smartcar\lcd_test.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi.h
 smartcar\lcd_test.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_spi_ex.h
+smartcar\lcd_test.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim.h
+smartcar\lcd_test.o: ../Drivers/STM32H7xx_HAL_Driver/Inc/stm32h7xx_hal_tim_ex.h
 smartcar\lcd_test.o: ./code/Inc/lcd_fonts.h
 smartcar\lcd_test.o: ./code/Inc/lcd_image.h
