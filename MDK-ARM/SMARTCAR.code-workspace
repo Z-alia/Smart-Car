@@ -6,7 +6,8 @@
     ],
     "settings": {
         "files.associations": {
-            "motor.h": "c"
+            "motor.h": "c",
+            "stdint.h": "c"
         },
         "github.copilot.nextEditSuggestions.enabled": true
     },

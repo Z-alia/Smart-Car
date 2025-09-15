@@ -15,10 +15,10 @@ typedef struct {
 
 // 单电机控制结构体
 typedef struct {
-    volatile int8_t speed;     // 速度
-    volatile uint8_t dir;      // 方向（1正转）
-    volatile int8_t target_speed;   // 目标速度
-    uint8_t lor;                // 左或右电机标识（0左，1右）
+    volatile int8_t speed;     // 速度  这里的速度是用来储存上一次应用的速度
+    volatile uint8_t dir;      // 方向（1正,0反）
+    volatile int8_t target_speed;   // 目标速度  目标速度用于接收pid系统返值并传参给电机控制函数
+    uint8_t lor;                // 左或右电机标识（0左,1右）
 } Motor;
 
 // PID控制器初始化
@@ -31,7 +31,7 @@ float pid_calculate(PIDController* pid, float setpoint, float feedback);
 void motor_init(void);
 
 // 控制电机运行 (speed: -100 to 100)
-void motor_run(int speed);
+void motor_run(Motor *motor_ptr, int16_t speed);
 
 //左转
 void motor_turnleft(void);
@@ -45,5 +45,7 @@ void motor_coast(void);
 // 刹车
 void motor_stop(void);
 
+extern Motor leftmotor;
+extern Motor rightmotor;
 
 #endif /* __MOTOR_H */
