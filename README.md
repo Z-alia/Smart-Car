@@ -1,11 +1,11 @@
 在此同步进度  
 - [ ] Hardware
-  - [ ] mpu6050
+  - [x] mpu6050
   - [x] lcd
-  - [ ] ov2640
-  - [ ] motor
-  - [ ] motor-encoder
-  - [ ] ecll
+  - [x] ov2640
+  - [x] motor
+  - [x] motor-encoder
+  - [x] ecll
   - [ ] led
   - [ ] buzzer
 - [ ] Software
