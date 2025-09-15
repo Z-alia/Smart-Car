@@ -1,197 +1,183 @@
-/*
- * MPU6050.c
- *
- *  
- */
 
-#include "MPU6050.h"
-#include "inv_mpu.h"
-#include "inv_mpu_dmp_motion_driver.h"
-#include "math.h"
+#include "i2c.h"
+#include "mpu6050.h"
 
-/* The sensors can be mounted onto the board in any orientation. The mounting
- * matrix seen below tells the MPL how to rotate the raw data from thei
- * driver(s).
- * TODO: The following matrices refer to the configuration on an internal test
- * board at Invensense. If needed, please modify the matrices to match the
- * chip-to-body matrix for your particular set up.
- */
-static signed char gyro_orientation[9] = {-1, 0, 0,
-                                           0,-1, 0,
-                                           0, 0, 1};
+int16_t mpu6050_gyro_x = 0, mpu6050_gyro_y = 0, mpu6050_gyro_z = 0;               // ��������������      gyro (������)
+int16_t mpu6050_acc_x = 0, mpu6050_acc_y = 0, mpu6050_acc_z = 0;                  // ������ٶȼ�����    acc (accelerometer ���ٶȼ�)
 
-/* These next two functions converts the orientation matrix (see
- * gyro_orientation) to a scalar representation for use by the DMP.
- * NOTE: These functions are borrowed from Invensense's MPL.
- */
-static unsigned short inv_row_2_scale(const signed char *row)
+
+
+static I2C_HandleTypeDef *g_pHI2C_MPU6050 = &hi2c2;	//Ӳ��I2C���
+
+static int mpu6050_write_register(uint8_t reg, uint8_t data)
 {
-    unsigned short b;
+    uint8_t tmpbuf[2];
 
-    if (row[0] > 0)
-        b = 0;
-    else if (row[0] < 0)
-        b = 4;
-    else if (row[1] > 0)
-        b = 1;
-    else if (row[1] < 0)
-        b = 5;
-    else if (row[2] > 0)
-        b = 2;
-    else if (row[2] < 0)
-        b = 6;
-    else
-        b = 7;      // error
-    return b;
+    tmpbuf[0] = reg;
+    tmpbuf[1] = data;
+    
+	return HAL_I2C_Master_Transmit(g_pHI2C_MPU6050, MPU6050_DEV_ADDR<<1, tmpbuf, 2, MPU6050_TIMEOUT_COUNT);
 }
 
-static unsigned short inv_orientation_matrix_to_scalar(
-    const signed char *mtx)
+int mpu6050_read_register(uint8_t reg, uint8_t* pdata)
 {
-    unsigned short scalar;
-
-    /*
-       XYZ  010_001_000 Identity Matrix
-       XZY  001_010_000
-       YXZ  010_000_001
-       YZX  000_010_001
-       ZXY  001_000_010
-       ZYX  000_001_010
-     */
-
-    scalar = inv_row_2_scale(mtx);
-    scalar |= inv_row_2_scale(mtx + 3) << 3;
-    scalar |= inv_row_2_scale(mtx + 6) << 6;
-
-
-    return scalar;
+	return HAL_I2C_Mem_Read(g_pHI2C_MPU6050, MPU6050_DEV_ADDR<<1, reg, 1, pdata, 1, MPU6050_TIMEOUT_COUNT);
 }
 
-static int run_self_test(void)
+int mpu6050_read_registers(uint8_t reg, uint8_t *pdata,uint8_t len)
 {
-    int result;
-    long gyro[3], accel[3];
-
-    result = mpu_run_self_test(gyro, accel);
-    if (result == 0x3) {
-        /* Test passed. We can trust the gyro data here, so let's push it down
-         * to the DMP.
-         */
-        float sens;
-        unsigned short accel_sens;
-        mpu_get_gyro_sens(&sens);
-        gyro[0] = (long)(gyro[0] * sens);
-        gyro[1] = (long)(gyro[1] * sens);
-        gyro[2] = (long)(gyro[2] * sens);
-        dmp_set_gyro_bias(gyro);
-        mpu_get_accel_sens(&accel_sens);
-        accel[0] *= accel_sens;
-        accel[1] *= accel_sens;
-        accel[2] *= accel_sens;
-        dmp_set_accel_bias(accel);
-    } else {
-        return -1;
-    }
-
-    return 0;
+	return HAL_I2C_Mem_Read(g_pHI2C_MPU6050, MPU6050_DEV_ADDR<<1, reg, 1, pdata, len, MPU6050_TIMEOUT_COUNT);
 }
 
-int MPU6050_DMP_init(void)
-{
-    int ret;
-    struct int_param_s int_param;
-    //mpu_init
-    ret = mpu_init(&int_param);
-    if(ret != 0)
-    {
-        return ERROR_MPU_INIT;
-    }
-    //设置传感器
-    ret = mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-    if(ret != 0)
-    {
-        return ERROR_SET_SENSOR;
-    }
-    //设置fifo
-    ret = mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-    if(ret != 0)
-    {
-        return ERROR_CONFIG_FIFO;
-    }
-    //设置采样率
-    ret = mpu_set_sample_rate(DEFAULT_MPU_HZ);
-    if(ret != 0)
-    {
-        return ERROR_SET_RATE;
-    }
-    //加载DMP固件
-    ret = dmp_load_motion_driver_firmware();
-    if(ret != 0)
-    {
-        return ERROR_LOAD_MOTION_DRIVER;
-    }
-    //设置陀螺仪方向
-    ret = dmp_set_orientation(inv_orientation_matrix_to_scalar(gyro_orientation));
-    if(ret != 0)
-    {
-        return ERROR_SET_ORIENTATION;
-    }
-    //设置DMP功能
-    ret = dmp_enable_feature(DMP_FEATURE_6X_LP_QUAT | DMP_FEATURE_TAP |
-            DMP_FEATURE_ANDROID_ORIENT | DMP_FEATURE_SEND_RAW_ACCEL |
-            DMP_FEATURE_SEND_CAL_GYRO | DMP_FEATURE_GYRO_CAL);
-    if(ret != 0)
-    {
-        return ERROR_ENABLE_FEATURE;
-    }
-    //设置输出速率
-    ret = dmp_set_fifo_rate(DEFAULT_MPU_HZ);
-    if(ret != 0)
-    {
-        return ERROR_SET_FIFO_RATE;
-    }
-    //自检
-    ret = run_self_test();
-    if(ret != 0)
-    {
-        return ERROR_SELF_TEST;
-    }
-    //使能DMP
-    ret = mpu_set_dmp_state(1);
-    if(ret != 0)
-    {
-        return ERROR_DMP_STATE;
-    }
 
-    return 0;
+//-------------------------------------------------------------------------------------------------------------------
+// �������     MPU6050 �Լ�
+// ����˵��     void
+// ���ز���     uint8           1-�Լ�ʧ�� 0-�Լ�ɹ�
+// ʹ��ʾ��     if(mpu6050_self1_check())
+// ��ע��Ϣ     �ڲ�����
+//-------------------------------------------------------------------------------------------------------------------
+static uint8_t mpu6050_self1_check (void)
+{
+    uint8_t dat = 0, return_state = 0;
+    uint16_t timeout_count = 0;
+
+    mpu6050_write_register(MPU6050_PWR_MGMT_1, 0x00);                           // �������״̬
+    mpu6050_write_register(MPU6050_SMPLRT_DIV, 0x07);                           // 125HZ������
+    while(0x07 != dat)
+    {
+        if(MPU6050_TIMEOUT_COUNT < timeout_count ++)
+        {
+            return_state =  1;
+            break;
+        }
+		
+		mpu6050_read_register(MPU6050_SMPLRT_DIV,&dat);
+        HAL_Delay(10);
+    }
+    return return_state;
 }
 
-int MPU6050_DMP_Get_Date(float *pitch, float *roll, float *yaw)
+//-------------------------------------------------------------------------------------------------------------------
+// �������     ��ȡ MPU6050 ���ٶȼ�����
+// ����˵��     void
+// ���ز���     void
+// ʹ��ʾ��     mpu6050_get_acc();                                              // ִ�иú�����ֱ�Ӳ鿴��Ӧ�ı�������
+// ��ע��Ϣ     
+//-------------------------------------------------------------------------------------------------------------------
+void mpu6050_get_acc (void)
 {
-    float q0 = 1.0f, q1 = 0.0f, q2 = 0.0f, q3 = 0.0f;
-    short gyro[3];
-    short accel[3];
-    long quat[4];
-    unsigned long timestamp;
-    short sensors;
-    unsigned char more;
-    if(dmp_read_fifo(gyro, accel, quat, &timestamp, &sensors, &more))
-    {
-        return -1;
-    }
+    uint8_t dat[6];
 
-    if(sensors & INV_WXYZ_QUAT)
-    {
-        q0 = quat[0] / Q30;
-        q1 = quat[1] / Q30;
-        q2 = quat[2] / Q30;
-        q3 = quat[3] / Q30;
-
-        *pitch = asin(-2 * q1 * q3 + 2 * q0 * q2) * 57.3; // pitch
-        *roll = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2 * q2 + 1) * 57.3; // roll
-        *yaw = atan2(2 * (q0 * q3 + q1 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3) * 57.3; // yaw
-    }
-
-    return 0;
+    mpu6050_read_registers(MPU6050_ACCEL_XOUT_H, dat, 6);  
+    mpu6050_acc_x = (int16_t)(((uint16_t)dat[0] << 8 | dat[1]));
+    mpu6050_acc_y = (int16_t)(((uint16_t)dat[2] << 8 | dat[3]));
+    mpu6050_acc_z = (int16_t)(((uint16_t)dat[4] << 8 | dat[5]));
 }
 
+//-------------------------------------------------------------------------------------------------------------------
+// �������     ��ȡ MPU6050 ����������
+// ����˵��     void
+// ���ز���     void
+// ʹ��ʾ��     mpu6050_get_gyro();                                             // ִ�иú�����ֱ�Ӳ鿴��Ӧ�ı�������
+// ��ע��Ϣ     
+//-------------------------------------------------------------------------------------------------------------------
+void mpu6050_get_gyro (void)
+{
+    uint8_t dat[6];
+
+    mpu6050_read_registers(MPU6050_GYRO_XOUT_H, dat, 6);  
+    mpu6050_gyro_x = (int16_t)(((uint16_t)dat[0] << 8 | dat[1]));
+    mpu6050_gyro_y = (int16_t)(((uint16_t)dat[2] << 8 | dat[3]));
+    mpu6050_gyro_z = (int16_t)(((uint16_t)dat[4] << 8 | dat[5]));
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+// �������     �� MPU6050 ���ٶȼ�����ת��Ϊʵ����������
+// ����˵��     gyro_value      ������ļ��ٶȼ�����
+// ���ز���     void
+// ʹ��ʾ��     float data = mpu6050_acc_transition(mpu6050_acc_x);                // ��λΪ g(m/s^2)
+// ��ע��Ϣ
+//-------------------------------------------------------------------------------------------------------------------
+float mpu6050_acc_transition (int16_t acc_value)
+{
+    float acc_data = 0;
+    switch(MPU6050_ACC_SAMPLE)
+    {
+        case 0x00: acc_data = (float)acc_value / 16384; break;                  // 0x00 ���ٶȼ�����Ϊ:��2 g    ��ȡ���ļ��ٶȼ����� ���� 16384      ����ת��Ϊ��������λ������ (g �����������ٶ� ����ѧ���� һ������� g ȡ 9.8 m/s^2 Ϊ��׼ֵ)
+        case 0x08: acc_data = (float)acc_value / 8192;  break;                  // 0x08 ���ٶȼ�����Ϊ:��4 g    ��ȡ���ļ��ٶȼ����� ���� 8192       ����ת��Ϊ��������λ������ (g �����������ٶ� ����ѧ���� һ������� g ȡ 9.8 m/s^2 Ϊ��׼ֵ)
+        case 0x10: acc_data = (float)acc_value / 4096;  break;                  // 0x10 ���ٶȼ�����Ϊ:��8 g    ��ȡ���ļ��ٶȼ����� ���� 4096       ����ת��Ϊ��������λ������ (g �����������ٶ� ����ѧ���� һ������� g ȡ 9.8 m/s^2 Ϊ��׼ֵ)
+        case 0x18: acc_data = (float)acc_value / 2048;  break;                  // 0x18 ���ٶȼ�����Ϊ:��16g    ��ȡ���ļ��ٶȼ����� ���� 2048       ����ת��Ϊ��������λ������ (g �����������ٶ� ����ѧ���� һ������� g ȡ 9.8 m/s^2 Ϊ��׼ֵ)
+        default: break;
+    }
+    return acc_data;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+// �������     �� MPU6050 ����������ת��Ϊʵ����������
+// ����˵��     gyro_value      �����������������
+// ���ز���     void
+// ʹ��ʾ��     float data = mpu6050_gyro_transition(mpu6050_gyro_x);           // ��λΪ��/s
+// ��ע��Ϣ
+//-------------------------------------------------------------------------------------------------------------------
+float mpu6050_gyro_transition (int16_t gyro_value)
+{
+    float gyro_data = 0;
+    switch(MPU6050_GYR_SAMPLE)
+    {
+        case 0x00: gyro_data = (float)gyro_value / 131.0f;  break;              // 0x00 ����������Ϊ:��250 dps     ��ȡ�������������ݳ��� 131           ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+        case 0x08: gyro_data = (float)gyro_value / 65.5f;   break;              // 0x08 ����������Ϊ:��500 dps     ��ȡ�������������ݳ��� 65.5          ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+        case 0x10: gyro_data = (float)gyro_value / 32.8f;   break;              // 0x10 ����������Ϊ:��1000dps     ��ȡ�������������ݳ��� 32.8          ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+        case 0x18: gyro_data = (float)gyro_value / 16.4f;   break;              // 0x18 ����������Ϊ:��2000dps     ��ȡ�������������ݳ��� 16.4          ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+        default: break;
+    }
+    return gyro_data;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+// �������     ��ʼ�� MPU6050
+// ����˵��     void
+// ���ز���     uint8           1-��ʼ��ʧ�� 0-��ʼ���ɹ�
+// ʹ��ʾ��     mpu6050_init();
+// ��ע��Ϣ     
+//-------------------------------------------------------------------------------------------------------------------
+uint8_t mpu6050_init (void)
+{
+    uint8_t return_state = 0;
+	
+	MX_I2C2_Init();//Ӳ��I2C��ʼ��
+	HAL_Delay(100);                                                       // �ϵ���ʱ
+	
+    do
+    {
+        if(mpu6050_self1_check())
+        {
+            // �������������˶�����Ϣ ������ʾ����λ��������
+            // ��ô���� MPU6050 �Լ��������ʱ�˳���
+            // ���һ�½�����û������ ���û������ܾ��ǻ���
+            return_state = 1;
+            break;
+        }
+        mpu6050_write_register(MPU6050_PWR_MGMT_1, 0x00);                       // �������״̬
+        mpu6050_write_register(MPU6050_SMPLRT_DIV, 0x07);                       // 125HZ������
+        mpu6050_write_register(MPU6050_CONFIG, 0x04);
+
+        mpu6050_write_register(MPU6050_GYRO_CONFIG, MPU6050_GYR_SAMPLE);        // 2000
+        // GYRO_CONFIG�Ĵ���
+        // ����Ϊ:0x00 ����������Ϊ:��250 dps     ��ȡ�������������ݳ���131.2         ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+        // ����Ϊ:0x08 ����������Ϊ:��500 dps     ��ȡ�������������ݳ���65.6          ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+        // ����Ϊ:0x10 ����������Ϊ:��1000dps     ��ȡ�������������ݳ���32.8          ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+        // ����Ϊ:0x18 ����������Ϊ:��2000dps     ��ȡ�������������ݳ���16.4          ����ת��Ϊ��������λ�����ݣ���λΪ����/s
+
+        mpu6050_write_register(MPU6050_ACCEL_CONFIG, MPU6050_ACC_SAMPLE);       // 8g
+        // ACCEL_CONFIG�Ĵ���
+        // ����Ϊ:0x00 ���ٶȼ�����Ϊ:��2g          ��ȡ���ļ��ٶȼ����� ����16384      ����ת��Ϊ��������λ�����ݣ���λ��g(m/s^2)
+        // ����Ϊ:0x08 ���ٶȼ�����Ϊ:��4g          ��ȡ���ļ��ٶȼ����� ����8192       ����ת��Ϊ��������λ�����ݣ���λ��g(m/s^2)
+        // ����Ϊ:0x10 ���ٶȼ�����Ϊ:��8g          ��ȡ���ļ��ٶȼ����� ����4096       ����ת��Ϊ��������λ�����ݣ���λ��g(m/s^2)
+        // ����Ϊ:0x18 ���ٶȼ�����Ϊ:��16g         ��ȡ���ļ��ٶȼ����� ����2048       ����ת��Ϊ��������λ�����ݣ���λ��g(m/s^2)
+
+        mpu6050_write_register(MPU6050_USER_CONTROL, 0x00);
+        mpu6050_write_register(MPU6050_INT_PIN_CFG, 0x02);
+    }while(0);
+    return return_state;
+}

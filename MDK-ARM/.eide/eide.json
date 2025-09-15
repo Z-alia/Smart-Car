@@ -45,6 +45,9 @@
                     "path": "../Core/Src/spi.c"
                   },
                   {
+                    "path": "../Core/Src/tim.c"
+                  },
+                  {
                     "path": "../Core/Src/stm32h7xx_it.c"
                   },
                   {
@@ -147,13 +150,14 @@
   "deviceName": null,
   "packDir": null,
   "miscInfo": {
-    "uid": "4b45626a2b85295e1e1af4e509ad72c6"
+    "uid": "17065a3e5e155779b46f88b6503f43d4"
   },
   "targets": {
     "SMARTCAR": {
       "excludeList": [
-        "code/Inc/inv_mpu.c",
-        "code/Inc/inv_mpu_dmp_motion_driver.c"
+        "code/main_mpu.c",
+        "code/Src/inv_mpu_dmp_motion_driver.c",
+        "code/Src/inv_mpu.c"
       ],
       "toolchain": "AC5",
       "compileConfig": {

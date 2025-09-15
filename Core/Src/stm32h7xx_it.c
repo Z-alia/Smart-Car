@@ -22,6 +22,7 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "ec11.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -198,6 +199,67 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32h7xx.s).                    */
 /******************************************************************************/
 
+/**
+  * @brief This function handles EXTI line0 interrupt.
+  */
+void EXTI0_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI0_IRQn 0 */
+  if(__HAL_GPIO_EXTI_GET_IT(EC11_B_PIN) != RESET) {
+        __HAL_GPIO_EXTI_CLEAR_IT(EC11_B_PIN);
+        
+        uint8_t currentState = (HAL_GPIO_ReadPin(EC11_B_PORT, EC11_B_PIN) << 1) | 
+                               HAL_GPIO_ReadPin(EC11_C_PORT, EC11_C_PIN);
+        
+        // 状态机判断旋转方向
+        if(lastState == 0x00) {
+            if(currentState == 0x02) encoderCount++;  // 顺时针
+            else if(currentState == 0x01) encoderCount--; // 逆时针
+        } else if(lastState == 0x02) {
+            if(currentState == 0x03) encoderCount++;  // 顺时针
+            else if(currentState == 0x00) encoderCount--; // 逆时针
+        } else if(lastState == 0x03) {
+            if(currentState == 0x01) encoderCount++;  // 顺时针
+            else if(currentState == 0x02) encoderCount--; // 逆时针
+        } else if(lastState == 0x01) {
+            if(currentState == 0x00) encoderCount++;  // 顺时针
+            else if(currentState == 0x03) encoderCount--; // 逆时针
+        }
+        
+        lastState = currentState;
+    }
+  
+  /* USER CODE END EXTI0_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
+  /* USER CODE BEGIN EXTI0_IRQn 1 */
+
+  /* USER CODE END EXTI0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line4 interrupt.
+  */
+void EXTI4_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI4_IRQn 0 */
+if(__HAL_GPIO_EXTI_GET_IT(EC11_SW_PIN) != RESET) {
+        __HAL_GPIO_EXTI_CLEAR_IT(EC11_SW_PIN);
+        
+        // 去抖
+        HAL_Delay(10);
+        if(HAL_GPIO_ReadPin(EC11_SW_PORT, EC11_SW_PIN) == GPIO_PIN_RESET) {
+            buttonPressed = 1;
+        }
+    }
+  /* USER CODE END EXTI4_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
+  /* USER CODE BEGIN EXTI4_IRQn 1 */
+
+  /* USER CODE END EXTI4_IRQn 1 */
+}
+
 /* USER CODE BEGIN 1 */
+
+
 
 /* USER CODE END 1 */

@@ -21,8 +21,8 @@
 #include "dcmi.h"
 #include "i2c.h"
 #include "spi.h"
+#include "tim.h"
 #include "gpio.h"
-#include "mpu6050.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -97,7 +97,9 @@ int main(void)
   MX_DCMI_Init();
   MX_SPI4_Init();
   MX_I2C2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);//启动ec11
 
   /* USER CODE END 2 */
 
@@ -105,6 +107,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    uint32_t num=0;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
