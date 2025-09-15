@@ -4,10 +4,14 @@
             "path": "."
         }
     ],
+<<<<<<< Updated upstream
     "settings": {
         "files.associations": {
             "stm32h7xx_it.h": "c"
         }
     },
+=======
+    "settings": {},
+>>>>>>> Stashed changes
     "extensions": {}
 }
