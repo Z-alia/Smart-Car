@@ -12,7 +12,7 @@
   - [ ] camera
   - [ ] imu
   - [ ] motor-pid
-
+- [ ] 校准pid控制器
 
 
 ## 说明
