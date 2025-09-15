@@ -11,13 +11,15 @@ typedef struct {
     volatile float integral;     // 积分项
     volatile float derivative;   // 微分项
     volatile float output;       // 输出值
+    float integral_limit;        // 积分限幅，初始化控制器时赋值
+    float output_limit;          // 输出限幅
 } PIDController;
 
 // 单电机控制结构体
 typedef struct {
-    volatile int8_t speed;     // 速度  这里的速度是用来储存上一次应用的速度
+    volatile int16_t speed;     // 速度  这里的速度储存编码器测速值 其实暂时没什么用 后面可以试试与target_speed做差进行分段速度变化
     volatile uint8_t dir;      // 方向（1正,0反）
-    volatile int8_t target_speed;   // 目标速度  目标速度用于接收pid系统返值并传参给电机控制函数
+    volatile int16_t target_speed;   // 目标速度  目标速度用于接收pid系统返值并传参给电机控制函数
     uint8_t lor;                // 左或右电机标识（0左,1右）
 } Motor;
 

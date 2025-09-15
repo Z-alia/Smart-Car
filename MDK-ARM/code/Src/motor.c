@@ -19,16 +19,18 @@ void pid_init(PIDController* pid, float kp, float ki, float kd) {
     pid->integral = 0.0;
     pid->derivative = 0.0;
     pid->output = 0.0;
+    pid->integral_limit = 500.0;
+    pid->output_limit = 500.0;
 }
 
-//pid计算
+//pid计算 setpoint希望是0 feedback时摄像头输出的偏差值
 float pid_calculate(PIDController* pid, float setpoint, float feedback) {
     // 计算误差
     pid->error = setpoint - feedback;
     
     // 计算积分项
     pid->integral += pid->error;
-    
+    pid->integral = (pid->integral > pid->integral_limit) ? pid->integral_limit : ((pid->integral < -pid->integral_limit) ? -pid->integral_limit : pid->integral);
     // 计算微分项
     pid->derivative = pid->error - pid->last_error;
     
@@ -36,7 +38,7 @@ float pid_calculate(PIDController* pid, float setpoint, float feedback) {
     float output = pid->kp * pid->error + 
                   pid->ki * pid->integral + 
                   pid->kd * pid->derivative;
-    pid->output = (output > 500)?500:((output<-500)?-500:output);
+    pid->output = (output > pid->output_limit) ? pid->output_limit : ((output < -pid->output_limit) ? -pid->output_limit : output);
     // 保存上次误差
     pid->last_error = pid->error;
     
