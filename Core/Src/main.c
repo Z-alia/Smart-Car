@@ -101,6 +101,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM6_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   // 1. 启动TIM2,3，使其在后台开始硬件计数
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
