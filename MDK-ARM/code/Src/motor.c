@@ -52,13 +52,14 @@ void motor_init(void)
     HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin|MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
-    //这里记得加个停车/滑行
-
+    motor_stop();
 }
 
 // 控制单个电机运行 (speed: -1000 to 1000)
 void motor_run(Motor *motor_ptr, int16_t speed)
 {
+    if ((speed<-1000)||(speed>1000))
+        return;
     motor_ptr->speed = speed;
     if(motor_ptr->lor == 0) // 左电机
     {
@@ -111,8 +112,10 @@ void motor_turnright(void)
 //滑行
 void motor_coast(void)
 {
-    HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin|MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
-    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1|TIM_CHANNEL_3, 0);
+    HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin, GPIO_PIN_RESET);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
 }
 
 // 刹车
