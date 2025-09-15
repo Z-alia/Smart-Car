@@ -13,15 +13,13 @@ typedef struct {
     volatile float output;       // 输出值
 } PIDController;
 
-
-// 电机控制结构体
+// 单电机控制结构体
 typedef struct {
-    volatile int8_t left_speed;     // 左轮速度
-    volatile int8_t right_speed;    // 右轮速度
-    volatile uint8_t left_dir;      // 左轮方向
-    volatile uint8_t right_dir;     // 右轮方向
+    volatile int8_t speed;     // 速度
+    volatile uint8_t dir;      // 方向（1正转）
     volatile int8_t target_speed;   // 目标速度
-} MotorControl;
+    uint8_t lor;                // 左或右电机标识（0左，1右）
+} Motor;
 
 // PID控制器初始化
 void pid_init(PIDController* pid, float kp, float ki, float kd);

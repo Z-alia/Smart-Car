@@ -1,6 +1,7 @@
 #include "motor.h"
 #include "main.h"
 #include "tim.h"
+//本工程的PWM分辨率为1000
 
 //pid控制器初始化
 void pid_init(PIDController* pid, float kp, float ki, float kd) {
@@ -41,13 +42,23 @@ void motor_init(void)
 {
     // 初始化电机控制引脚
     HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin|MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+    //这里记得加个停车/滑行
 
 }
 
-// 控制电机运行 (speed: -100 to 100)
-void motor_run(int speed)
+// 控制单个电机运行 (speed: -1000 to 1000)
+void motor_run(Motor *motor_ptr, int16_t speed)
 {
-
+    if(motor_ptr->lor == 0) // 左电机
+    {
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, speed);
+    }
+    else // 右电机
+    {
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, speed);
+    }
 }
 
 //左转
