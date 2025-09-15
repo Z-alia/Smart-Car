@@ -47,6 +47,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+volatile int16_t encoder_count_left, encoder_count_right = 0;      // 保存当前编码器计数值
+volatile int16_t last_encoder_count_left,last_encoder_count_right = 0; // 保存上一次的计数值
+volatile int16_t motor_speed_left,motor_speed_right = 0; 
 
 /* USER CODE END PV */
 
@@ -99,8 +102,14 @@ int main(void)
   MX_SPI4_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
+  // 1. 启动TIM2,3，使其在后台开始硬件计数
+  HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 
+  // 2. 启动TIM6，使其在后台开始以中断模式计时
+  HAL_TIM_Base_Start_IT(&htim6);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -173,7 +182,26 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+ if (htim->Instance == TIM6)
+    {
+        //每 10ms 执行
 
+        // 1. 读取编码器当前计数值
+        encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
+        encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
+        // 2. 计算速度 (两次计数值的差值)
+        motor_speed_left = encoder_count_left - last_encoder_count_left;
+        motor_speed_right = encoder_count_right - last_encoder_count_right;
+
+        // 3. 更新上一次的计数值，为下一个周期做准备
+        last_encoder_count_left = encoder_count_left;
+        last_encoder_count_right = encoder_count_right;
+
+        // 4. 调用电机PID控制函数
+    }
+}
 /* USER CODE END 4 */
 
  /* MPU Configuration */
