@@ -1129,6 +1129,67 @@ void 	LCD_DrawImage(uint16_t x,uint16_t y,uint16_t width,uint16_t height,const u
 	}	
 }
 
+//-------------------------------------------------------------------------------------------------------------------
+// 函数简介     IPS200 显示 8bit 灰度图像 带二值化阈值
+// 参数说明     x               坐标x方向的起点 参数范围 [0, ips200_width_max-1]
+// 参数说明     y               坐标y方向的起点 参数范围 [0, ips200_height_max-1]
+// 参数说明     *image          图像数组指针
+// 参数说明     width           图像实际宽度
+// 参数说明     height          图像实际高度
+// 参数说明     dis_width       图像显示宽度 参数范围 [0, ips200_width_max]
+// 参数说明     dis_height      图像显示高度 参数范围 [0, ips200_height_max]
+// 参数说明     threshold       二值化显示阈值 0-不开启二值化
+// 返回参数     void
+// 使用示例     ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H,MT9V03X_W, MT9V03X_H, 0);
+// 备注信息     用于显示总钻风的图像
+//              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
+//              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
+//              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
+//-------------------------------------------------------------------------------------------------------------------
+void ips200_show_gray_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold)
+{
+	LCD_SetAddress(x,y,x+dis_width-1,y+dis_height-1);
+
+	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
+	    uint32_t i = 0, j = 0;
+    uint16_t color = 0,temp = 0;
+    uint16_t data_buffer[dis_width];
+		const uint16_t *image_temp;
+// 修改为16位数据宽度，写入数据更加效率，不需要拆分	
+   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
+   HAL_SPI_Init(&LCD_SPI);	    
+	for(j = 0; j < dis_height; j ++)
+    {
+        image_temp = image + j * height / dis_height * width;                   // 直接对 image 操作会 Hardfault 暂时不知道为什么
+        for(i = 0; i < dis_width; i ++)
+        {
+            temp = *(image_temp + i * width / dis_width);                       // 读取像素点
+            if(threshold == 0)
+            {
+                data_buffer[i] = (temp);
+            }
+            else if(temp < (threshold)<<8)
+            {
+                data_buffer[i] = 0;
+            }
+            else
+            {
+                data_buffer[i] =0xffff;
+            }
+        }
+				LCD_SPI_TransmitBuffer(&LCD_SPI, data_buffer,dis_width) ;
+
+    }
+	
+	
+	//LCD_SPI_TransmitBuffer(&LCD_SPI, image,width * height) ;
+	
+//	HAL_SPI_Transmit(&hspi5, (uint8_t *)DataBuff, (x2-x1+1) * (y2-y1+1), 1000) ;
+	
+// 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
+	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
+   HAL_SPI_Init(&LCD_SPI);	
+}
 
 /***************************************************************************************************************************************
 *	函 数 名: LCD_CopyBuffer
