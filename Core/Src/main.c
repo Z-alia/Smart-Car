@@ -25,8 +25,11 @@
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-#include "global.h"
+#include "encoder.h"
+#include "motor.h"
+#include "lcd_spi_200.h"
+#include "lcd_fonts.h"
+#include "ov2640.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
