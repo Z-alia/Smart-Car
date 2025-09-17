@@ -1,10 +1,8 @@
 #ifndef __spi_lcd
 #define __spi_lcd
 
-#include <stdio.h>
 #include "stm32h7xx_hal.h"
 #include "lcd_fonts.h"	// 图片和字库文件不是必须，用户可自行删减
-#include "lcd_image.h"
 
 /*----------------------------------------------- 参数宏 -------------------------------------------*/
 

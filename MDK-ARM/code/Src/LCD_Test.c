@@ -179,72 +179,8 @@ void LCD_Test_Grahic(void)
 	
 	HAL_Delay(2000);		
 }
-/*************************************************************************************************
-*	函 数 名:	LCD_Test_Image
-*
-*	函数功能:	图片显示测试
-*************************************************************************************************/
-void LCD_Test_Image(void)
-{
-	LCD_SetBackColor(LCD_BLACK); 			//	设置背景色
-	LCD_Clear(); 								// 清屏
-	
-	LCD_SetColor( 0xffF6E58D);
-	LCD_DrawImage( 19, 55, 83, 83, Image_Android_83x83) ;	   // 显示图片
 
-	LCD_SetColor( 0xffDFF9FB);
-	LCD_DrawImage( 141, 55, 83, 83, Image_Message_83x83) ;	// 显示图片
-	
-	LCD_SetColor( 0xff9DD3A8);
-	LCD_DrawImage( 19, 175, 83, 83, Image_Toys_83x83) ;		// 显示图片
-	
-	LCD_SetColor( 0xffFF8753);
-	LCD_DrawImage( 141, 175, 83, 83, Image_Video_83x83) ;		// 显示图片
 
-	HAL_Delay(2000);	
-}
-/*************************************************************************************************
-*	函 数 名:	LCD_Test_Direction
-*
-*	函数功能:	更换显示方向
-*************************************************************************************************/
-void  LCD_Test_Direction(void)
-{
-	for(int i=0;i<4;i++)
-	{  
-      LCD_SetBackColor(LCD_BLACK); 			//	设置背景色
-      LCD_Clear(); 								// 清屏
-	   LCD_SetColor( 0xffDFF9FB);         
-		switch (i)		// 切换背景色
-		{
-			case 0:  
-            LCD_SetDirection(Direction_V);		   
-            LCD_DisplayString(20,20,"Direction_V"); 
-         break;	
-
-			case 1:  
-            LCD_SetDirection(Direction_H); 	
-            LCD_DisplayString(20,20,"Direction_H"); 
-         break;	
-
-			case 2:  
-            LCD_SetDirection(Direction_V_Flip); 
-            LCD_DisplayString(20,20,"Direction_V_Flip"); 
-         break;
-			case 3: 
-            LCD_SetDirection(Direction_H_Flip); 	
-            LCD_DisplayString(20,20,"Direction_H_Flip"); 
-         break;
-	
-			default:	break;			
-		}
-      LCD_SetColor( 0xffF6E58D);
-      LCD_DrawImage( 19, 80, 83, 83, Image_Android_83x83) ;	   // 显示图片
-      LCD_SetColor( 0xff9DD3A8);  
-      LCD_SetDirection(Direction_V);	
-      HAL_Delay(1000);	// 延时
-	}
-}
 
 //LCD_显示屏总的测试代码
 void LCD_Test(void)
