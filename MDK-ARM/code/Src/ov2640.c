@@ -20,23 +20,6 @@ volatile uint8_t OV2640_FPS ;          // 帧率
 uint16_t* mt9v03x_image[120]={0};
 
 /***************************************************************************************************************************************
-*	函 数 名: OV2640_Delay
-*	入口参数: Delay - 延时时间，单位 ms 
-*	函数功能: 简单延时函数，不是很精确
-*	说    明: 为了移植的简便性,此处采用软件延时，实际项目中可以替换成RTOS的延时或者HAL库的延时
-*****************************************************************************************************************************************/
-void OV2640_Delay(volatile uint32_t Delay)
-{
-	volatile uint16_t i;
-
-	while (Delay --)				
-	{
-		for (i = 0; i < 40000; i++);
-	}	
-//	HAL_Delay(Delay);	  // 可使用HAL库的延时 或其它OS的延时
-}
-
-/***************************************************************************************************************************************
 *	函 数 名: DCMI_OV2640_Init
 *
 *	函数功能: 初始SCCB、DCMI、DMA以及配置OV2640
@@ -45,15 +28,16 @@ void OV2640_Delay(volatile uint32_t Delay)
 int8_t OV2640_Init(void)
 {
 	uint16_t	Device_ID;		// 定义变量存储器件ID
-	
-	SCCB_GPIO_Config();		               // SCCB引脚初始化
-	OV2640_Reset();	                     // 执行软件复位
-	Device_ID = OV2640_ReadID();		      // 读取器件ID
-	
-	for(uint8_t i=0;i<120;i++)
+	uint8_t i=0;	
+   for(i=0;i<120;i++)
 	{
 		mt9v03x_image[i]=(uint16_t*)Camera_Buffer+188*i;
 	}
+
+	SCCB_GPIO_Config();		               // SCCB引脚初始化
+   MX_DCMI_Init();                        // 初始化DCMI配置引脚  
+	OV2640_Reset();	                     // 执行软件复位
+	Device_ID = OV2640_ReadID();		      // 读取器件ID
 	
 	if( (Device_ID == 0x2640) || (Device_ID == 0x2642) )		// 进行匹配，实际的器件ID可能是 0x2640 或者 0x2642
 	{
@@ -72,7 +56,6 @@ int8_t OV2640_Init(void)
 		OV2640_DCMI_Crop( Display_Width, Display_Height, OV2640_Width, OV2640_Height );	// 将OV2640输出图像裁剪成适应屏幕的大小
 		
 		return OV2640_Success;	 // 返回成功标志		
-		
 	}
 	else
 	{
@@ -226,19 +209,19 @@ int8_t OV2640_DCMI_Crop(uint16_t Displey_XSize,uint16_t Displey_YSize,uint16_t S
 *****************************************************************************************************************************************/
 void OV2640_Reset(void)
 {
-	OV2640_Delay(5);  // 等待模块上电稳定，最少5ms，然后拉低PWDN  	
+	HAL_Delay(5);  // 等待模块上电稳定，最少5ms，然后拉低PWDN  	
 	
 	OV2640_PWDN_OFF;  // PWDN 引脚输出低电平，不开启掉电模式，摄像头正常工作，此时摄像头模块的白色LED会点亮
   
 // 根据OV2640的上电时序，硬件复位的持续时间要>=3ms，反客的OV2640采用硬件RC复位，持续时间大概在6ms左右
 // 因此加入延时，等待硬件复位完成并稳定下来
-	OV2640_Delay(5);    
+	HAL_Delay(5);    
 	
 	SCCB_WriteReg( OV2640_SEL_Registers, OV2640_SEL_SENSOR);   // 选择 SENSOR 寄存器组
 	SCCB_WriteReg( OV2640_SENSOR_COM7, 0x80);                  // 启动软件复位
 
 // 根据OV2640的软件复位时序，软件复位执行后，要>=2ms方可执行SCCB配置，此处采用保守一点的参数，延时10ms
-	OV2640_Delay(10);    
+	HAL_Delay(10);    
 }
 
 /***************************************************************************************************************************************

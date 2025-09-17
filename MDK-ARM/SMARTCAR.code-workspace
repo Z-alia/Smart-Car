@@ -7,7 +7,8 @@
     "settings": {
         "files.associations": {
             "motor.h": "c",
-            "stdint.h": "c"
+            "stdint.h": "c",
+            "stm32h7xx_hal.h": "c"
         },
         "github.copilot.nextEditSuggestions.enabled": true
     },

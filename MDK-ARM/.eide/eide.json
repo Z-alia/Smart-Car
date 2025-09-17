@@ -213,7 +213,7 @@
                 "startAddr": "0x24000000",
                 "size": "0x80000"
               },
-              "isChecked": true,
+              "isChecked": false,
               "noInit": false
             }
           ],

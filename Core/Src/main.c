@@ -53,6 +53,7 @@
 /* USER CODE BEGIN PV */
 MotorSpeed motor_speed;
 PIDController pid;
+//extern uint16_t* mt9v03x_image[120];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -144,6 +145,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    LCD_DisplayString( 84 ,240,"FPS:");
   }
   /* USER CODE END 3 */
 }
