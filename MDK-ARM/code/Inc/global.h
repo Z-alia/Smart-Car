@@ -12,6 +12,7 @@
 #include "lcd_spi_200.h"
 #include "lcd_fonts.h"
 #include "ov2640.h"
+#include "ov2640_cfg.h"
 #include "sccb.h"
 #include "encoder.h"
 #include "motor.h"
