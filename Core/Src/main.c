@@ -28,6 +28,9 @@
 /* USER CODE BEGIN Includes */
 #include "encoder.h"
 #include "motor.h"
+#include "lcd_spi_200.h"
+#include "lcd_fonts.h"
+#include "ov2640.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,6 +81,14 @@ int main(void)
   /* MPU Configuration--------------------------------------------------------*/
   MPU_Config();
 
+  /* Enable the CPU Cache */
+
+  /* Enable I-Cache---------------------------------------------------------*/
+  SCB_EnableICache();
+
+  /* Enable D-Cache---------------------------------------------------------*/
+  SCB_EnableDCache();
+
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -110,12 +121,26 @@ int main(void)
 
   // 2. 启动TIM6，使其在后台开始以中断模式计时
   HAL_TIM_Base_Start_IT(&htim6);
+
+  LCD_Init();     	// 液晶屏及SPI初始化   
+	LCD_SetDirection(Direction_H); 	      //	设置液晶屏显示方向
+
+  OV2640_Init();     // DCMI及OV2640初始化	
+	OV2640_DMA_Transmit_Continuous(Camera_Buffer, OV2640_BufferSize);  // 开启DMA传输模式
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		if (DCMI_FrameState == 1)	// 采集到完整一帧图像
+		{      
+
+  			DCMI_FrameState = 0;		// 清除标志位
+				//mt9v03x_image[0]是摄像头数据首地址指针   mt9v03x_image[120][188]是摄像头二维数组，格式为uint16_t的灰度图
+				ips200_show_gray_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);	
+		}	
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
