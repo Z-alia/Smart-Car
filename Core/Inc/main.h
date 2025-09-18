@@ -57,12 +57,22 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LCD_CS_Pin GPIO_PIN_11
+#define LCD_CS_GPIO_Port GPIOE
+#define LCD_SCL_Pin GPIO_PIN_12
+#define LCD_SCL_GPIO_Port GPIOE
+#define LCD_SDA_Pin GPIO_PIN_14
+#define LCD_SDA_GPIO_Port GPIOE
 #define LCD_DC_Pin GPIO_PIN_15
 #define LCD_DC_GPIO_Port GPIOE
-#define CAMERA_PWDN_Pin GPIO_PIN_14
-#define CAMERA_PWDN_GPIO_Port GPIOD
+#define CAMREA_PWDN_Pin GPIO_PIN_14
+#define CAMREA_PWDN_GPIO_Port GPIOD
 #define LCD_BL_Pin GPIO_PIN_15
 #define LCD_BL_GPIO_Port GPIOD
+#define SCCB_SCL_Pin GPIO_PIN_8
+#define SCCB_SCL_GPIO_Port GPIOB
+#define SCCB_SDA_Pin GPIO_PIN_9
+#define SCCB_SDA_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
