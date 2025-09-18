@@ -1,8 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file            : main.c
-  * @brief           : Main program body
+  * @file           : main.c
+  * @brief          : Main program body
   ******************************************************************************
   * @attention
   *
@@ -25,11 +25,8 @@
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
-#include "encoder.h"
-#include "motor.h"
-#include "lcd_spi_200.h"
-#include "lcd_fonts.h"
-#include "ov2640.h"
+/* USER CODE BEGIN Includes */
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,14 +47,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-MotorSpeed motor_speed;
-PIDController pid;
-//extern uint16_t* mt9v03x_image[120];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -78,17 +72,6 @@ int main(void)
 
   /* USER CODE END 1 */
 
-  /* MPU Configuration--------------------------------------------------------*/
-  MPU_Config();
-
-  /* Enable the CPU Cache */
-
-  /* Enable I-Cache---------------------------------------------------------*/
-  SCB_EnableICache();
-
-  /* Enable D-Cache---------------------------------------------------------*/
-  SCB_EnableDCache();
-
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
@@ -108,44 +91,24 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_DCMI_Init();
   MX_SPI4_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
+  MX_DCMI_Init();
   MX_TIM6_Init();
   MX_TIM1_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
-  // 1. 启动TIM2,3，使其在后台开始硬件计数
-  HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
-  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 
-  // 2. 启动TIM6，使其在后台开始以中断模式计时
-  HAL_TIM_Base_Start_IT(&htim6);
-
-  LCD_Init();     	// 液晶屏及SPI初始化   
-	LCD_SetDirection(Direction_H); 	      //	设置液晶屏显示方向
-
-  OV2640_Init();     // DCMI及OV2640初始化	
-	OV2640_DMA_Transmit_Continuous(Camera_Buffer, OV2640_BufferSize);  // 开启DMA传输模式
-	
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		if (DCMI_FrameState == 1)	// 采集到完整一帧图像
-		{      
-
-  			DCMI_FrameState = 0;		// 清除标志位
-				//mt9v03x_image[0]是摄像头数据首地址指针   mt9v03x_image[120][188]是摄像头二维数组，格式为uint16_t的灰度图
-				ips200_show_gray_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);	
-		}	
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    LCD_DisplayString( 84 ,240,"FPS:");
   }
   /* USER CODE END 3 */
 }
@@ -165,6 +128,11 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+  while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
+
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
@@ -209,51 +177,8 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
- if (htim->Instance == TIM6)
-    {
-        //每 10ms 执行
 
-        // 1. 读取编码器当前计数值
-        motor_speed.encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
-        motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
-        // 2. 计算速度 修正溢出 更新上一次的计数值
-        Encoder_Correct(&motor_speed);
-
-        // 3. 调用电机PID控制函数
-    }
-}
 /* USER CODE END 4 */
-
- /* MPU Configuration */
-
-void MPU_Config(void)
-{
-  MPU_Region_InitTypeDef MPU_InitStruct = {0};
-
-  /* Disables the MPU */
-  HAL_MPU_Disable();
-
-  /** Initializes and configures the Region and the memory to be protected
-  */
-  MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-  MPU_InitStruct.Number = MPU_REGION_NUMBER0;
-  MPU_InitStruct.BaseAddress = 0x0;
-  MPU_InitStruct.Size = MPU_REGION_SIZE_4GB;
-  MPU_InitStruct.SubRegionDisable = 0x87;
-  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_NO_ACCESS;
-  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
-  MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
-
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-  /* Enables the MPU */
-  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.
@@ -269,7 +194,8 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-#ifdef USE_FULL_ASSERT
+
+#ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

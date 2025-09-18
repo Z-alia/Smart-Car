@@ -73,8 +73,8 @@ void Error_Handler(void);
 #define MOTOR_RIGHT_DIRE_GPIO_Port GPIOB
 #define MOTOR_LEFT_DIRE_Pin GPIO_PIN_13
 #define MOTOR_LEFT_DIRE_GPIO_Port GPIOB
-#define CAMERA_PWDN_Pin GPIO_PIN_14
-#define CAMERA_PWDN_GPIO_Port GPIOD
+#define CAMREA_PWDN_Pin GPIO_PIN_14
+#define CAMREA_PWDN_GPIO_Port GPIOD
 #define LCD_BL_Pin GPIO_PIN_15
 #define LCD_BL_GPIO_Port GPIOD
 #define SCCB_SCL_Pin GPIO_PIN_8
