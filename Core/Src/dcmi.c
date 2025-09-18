@@ -55,8 +55,8 @@ void MX_DCMI_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN DCMI_Init 2 */
-	HAL_NVIC_SetPriority(DCMI_IRQn, 0 ,5);    // ÉèÖÃÖÐ¶ÏÓÅÏÈ¼¶
-	HAL_NVIC_EnableIRQ(DCMI_IRQn); 		      // ¿ªÆôDCMIÖÐ¶Ï
+	HAL_NVIC_SetPriority(DCMI_IRQn, 0 ,5);    // ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½È¼ï¿½
+	HAL_NVIC_EnableIRQ(DCMI_IRQn); 		      // ï¿½ï¿½ï¿½ï¿½DCMIï¿½Ð¶ï¿½
   /* USER CODE END DCMI_Init 2 */
 
 }
