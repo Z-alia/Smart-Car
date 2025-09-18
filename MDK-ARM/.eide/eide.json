@@ -2,7 +2,12 @@
   "name": "smartcar",
   "type": "ARM",
   "dependenceList": [],
-  "srcDirs": [],
+  "srcDirs": [
+    "code/Inc",
+    "code/Src",
+    "../Core/Inc",
+    "../Core/Src"
+  ],
   "virtualFolder": {
     "name": "<virtual_root>",
     "files": [],
