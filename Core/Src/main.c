@@ -26,7 +26,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "lcd_spi_200.h"
+#include "dcmi_ov2640.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +54,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -99,13 +99,20 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
-
+	LCD_Init();
+	OV2640_Init();	
+	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+			  	if (DCMI_FrameState == 1)	
+		{
+			DCMI_FrameState = 0;	
+			show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 70);
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
