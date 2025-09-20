@@ -221,7 +221,8 @@
           "../Drivers/CMSIS/Include",
           "../Middlewares/ST/ARM/DSP/Inc",
           ".cmsis/include",
-          "RTE/_smartcar"
+          "RTE/_smartcar",
+          "code/Inc"
         ],
         "libList": [],
         "defineList": [

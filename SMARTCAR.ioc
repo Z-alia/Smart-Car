@@ -2,7 +2,9 @@
 CAD.formats=
 CAD.pinconfig=
 CAD.provider=
-CORTEX_M7.IPParameters=default_mode_Activation
+CORTEX_M7.CPU_DCache=Enabled
+CORTEX_M7.CPU_ICache=Enabled
+CORTEX_M7.IPParameters=default_mode_Activation,CPU_ICache,CPU_DCache
 CORTEX_M7.default_mode_Activation=0
 Dma.DCMI.0.Direction=DMA_PERIPH_TO_MEMORY
 Dma.DCMI.0.EventEnable=DISABLE
