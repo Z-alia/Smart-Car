@@ -1,3 +1,7 @@
 CompileFlags:
-  CompilationDatabase: c:\Users\DX\Desktop\car\Smart-Car\MDK-ARM\out\smartcar\smartcar
-  Add: []
+    CompilationDatabase: ./build/smartcar
+    Add:
+        - -I"null\include"
+    Remove: []
+Diagnostics:
+    Suppress: "*"
