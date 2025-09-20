@@ -57,22 +57,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MOTOR_PWM_LEFT_Pin GPIO_PIN_9
-#define MOTOR_PWM_LEFT_GPIO_Port GPIOE
 #define LCD_CS_Pin GPIO_PIN_11
 #define LCD_CS_GPIO_Port GPIOE
 #define LCD_SCL_Pin GPIO_PIN_12
 #define LCD_SCL_GPIO_Port GPIOE
-#define MOTOR_PWM_RIGHT_Pin GPIO_PIN_13
-#define MOTOR_PWM_RIGHT_GPIO_Port GPIOE
 #define LCD_SDA_Pin GPIO_PIN_14
 #define LCD_SDA_GPIO_Port GPIOE
 #define LCD_DC_Pin GPIO_PIN_15
 #define LCD_DC_GPIO_Port GPIOE
-#define MOTOR_RIGHT_DIRE_Pin GPIO_PIN_12
-#define MOTOR_RIGHT_DIRE_GPIO_Port GPIOB
-#define MOTOR_LEFT_DIRE_Pin GPIO_PIN_13
-#define MOTOR_LEFT_DIRE_GPIO_Port GPIOB
 #define CAMREA_PWDN_Pin GPIO_PIN_14
 #define CAMREA_PWDN_GPIO_Port GPIOD
 #define LCD_BL_Pin GPIO_PIN_15
