@@ -13,7 +13,8 @@
 
 #include <stdint.h>
 #include <stddef.h>
-
+#include <string.h>
+#include <stdio.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,6 +25,15 @@ extern "C" {
 #else
   #define MBP_INLINE static
 #endif
+
+typedef struct Image
+{    
+	uint16_t output_image[120][188];
+    uint16_t original_image[120][188];
+    uint8_t x_points[120];
+    uint8_t y_points[120];
+} Image;
+extern struct Image image_buf;
 
 /* 每行需要的 32bit word 数（例：width=188 → 6 个 word） */
 MBP_INLINE int words_per_row(int width) { return (width + 31) >> 5; }
@@ -55,13 +65,12 @@ void precise_edge_detection_bitpacked(const uint32_t* src_bits,
                                       int width, int height);
 
 /* 适配器：直接以 u16 二值输入，输出 u16（0/0xFFFF） */
-void precise_edge_detection_u16_binary_adapter(const uint16_t* src_u16,
-                                               int width, int height, int src_stride_pixels,
-                                               uint16_t* dst_u16, int dst_stride_pixels,
-                                               uint32_t* tmp1_bits,
-                                               uint32_t* tmp2_bits,
-                                               uint32_t* tmp3_bits,
-                                               uint32_t* out_bits);
+void precise_edge_detection_image_adapter(Image* image_buf,
+                                         int width, int height,
+                                         uint32_t* tmp1_bits,
+                                         uint32_t* tmp2_bits,
+                                         uint32_t* tmp3_bits,
+                                         uint32_t* out_bits);
 
 #ifdef __cplusplus
 }

@@ -1231,42 +1231,58 @@ void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16
 //              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
 //              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
 //-------------------------------------------------------------------------------------------------------------------
-void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold)
+void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height,uint16_t dis_width, uint16_t dis_height,uint8_t threshold,Image *image_buf)
 {
 	LCD_SetAddress(x,y,x+dis_width-1,y+dis_height-1);
 
-	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
+	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
 	uint32_t i = 0, j = 0;
     uint16_t temp = 0;
     uint16_t data_buffer[dis_width];
+	uint8_t flag=0;
 		const uint16_t *image_temp;
-// 修改为16位数据宽度，写入数据更加效率，不需要拆分	
+// 修改为16位数据宽度，写入数据更加效率，不需要拆分
    LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
-   HAL_SPI_Init(&LCD_SPI);	    
+   HAL_SPI_Init(&LCD_SPI);
 	for(j = 0; j < dis_height; j ++)
     {
-        image_temp = image + j * height / dis_height * width;                   // 直接对 image 操作会 Hardfault 暂时不知道为什么
-        for(i = 0; i < dis_width; i ++)
+        image_temp = image + j * height / dis_width*width;                  // 直接取出 image 中的行数据
+        if(threshold == 0)
         {
-            temp = *(image_temp + i * width / dis_width);                       // 读取像素点
-            if(threshold == 0)
-            {
+			for(i = 0; i < dis_width; i ++)
+			{
+				temp = *(image_temp + i*width/dis_width );
                 data_buffer[i] = (temp);
-            }
-            else if(temp < (threshold)<<8)
-            {
-                data_buffer[i] = 0;
-            }
-            else
-            {
-                data_buffer[i] =0xffff;
-            }
+			}
+			LCD_SPI_TransmitBuffer(&LCD_SPI, data_buffer,dis_width);
+			
         }
-		LCD_SPI_TransmitBuffer(&LCD_SPI, data_buffer,dis_width) ;
+		else
+		{
+			for(i = 0; i < dis_width; i ++)
+			{                      // 获取像素点
+				temp = *(image_temp + i*width/dis_width );
+				if(temp < (threshold)<<8)
+				{
+					image_buf->original_image[j][i]=0;
+				}
+				else
+				{
+					image_buf->original_image[j][i]=0xffff;
+				}
+				//LCD_SPI_TransmitBuffer(&LCD_SPI, *((image_buf->output_image)+j),dis_width);
+			}
+			//image_edge_detection_optimized(image_buf, dis_width, dis_height);//边缘检测,在第二次出现完整图象时再开始处理
+			LCD_SPI_TransmitBuffer(&LCD_SPI, *((image_buf->output_image)+j),dis_width);
+		}
+		//image_edge_detection_optimized(image_buf, dis_width, dis_height);//边缘检测,在第二次出现完整图象时再开始处理
+			
     }
+	image_edge_detection_optimized(image_buf, dis_width, dis_height);//边缘检测,在第二次出现完整图象时再开始处理
+
 // 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
 	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
-	HAL_SPI_Init(&LCD_SPI);	
+	HAL_SPI_Init(&LCD_SPI);
 }
 /**********************************************************************************************************************************
 *

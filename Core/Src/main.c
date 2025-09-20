@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "lcd_spi_200.h"
 #include "dcmi_ov2640.h"
+#include "morph_binary_bitpacked.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
