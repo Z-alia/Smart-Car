@@ -3,9 +3,7 @@
 
 #include <stdio.h>
 #include "stm32h7xx_hal.h"
-#include "lcd_fonts.h"	// 图片和字库文件不是必须，用户可自行删减
-#include "lcd_image.h"
-
+#include "morph_binary_bitpacked.h"
 /*----------------------------------------------- 参数宏 -------------------------------------------*/
 
 #define LCD_Width     240		// LCD的像素长度
@@ -70,43 +68,13 @@ void  LCD_SetColor(uint32_t Color); 				   //	设置画笔颜色
 void  LCD_SetBackColor(uint32_t Color);  				//	设置背景颜色
 void  LCD_SetDirection(uint8_t direction);  	      //	设置显示方向
 
-//>>>>>	显示ASCII字符
-void  LCD_SetAsciiFont(pFONT *fonts);										//	设置ASCII字体
-void 	LCD_DisplayChar(uint16_t x, uint16_t y,uint8_t c);				//	显示单个ASCII字符
-void 	LCD_DisplayString( uint16_t x, uint16_t y, char *p);	 		//	显示ASCII字符串
 
-//>>>>>	显示中文字符，包括ASCII码
-void 	LCD_SetTextFont(pFONT *fonts);										// 设置文本字体，包括中文和ASCII字体
-void 	LCD_DisplayChinese(uint16_t x, uint16_t y, char *pText);		// 显示单个汉字
-void 	LCD_DisplayText(uint16_t x, uint16_t y, char *pText) ;		// 显示字符串，包括中文和ASCII字符
 
-//>>>>>	显示整数或小数
-void  LCD_ShowNumMode(uint8_t mode);		// 设置变量显示模式，多余位填充空格还是填充0
-void  LCD_DisplayNumber( uint16_t x, uint16_t y, int32_t number,uint8_t len) ;					// 显示整数
-void  LCD_DisplayDecimals( uint16_t x, uint16_t y, double number,uint8_t len,uint8_t decs);	// 显示小数
-
-//>>>>>	2D图形函数
-void  LCD_DrawPoint(uint16_t x,uint16_t y,uint32_t color);   	//画点
-
-void  LCD_DrawLine_V(uint16_t x, uint16_t y, uint16_t height);          // 画垂直线
-void  LCD_DrawLine_H(uint16_t x, uint16_t y, uint16_t width);           // 画水平线
-void  LCD_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);	// 两点之间画线
-
-void  LCD_DrawRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height);			//画矩形
-void  LCD_DrawCircle(uint16_t x, uint16_t y, uint16_t r);									//画圆
-void  LCD_DrawEllipse(int x, int y, int r1, int r2);											//画椭圆
-
-//>>>>>	区域填充函数
-void  LCD_FillRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height);			//填充矩形
-void  LCD_FillCircle(uint16_t x, uint16_t y, uint16_t r);									//填充圆
-
-//>>>>>	绘制单色图片
-void 	LCD_DrawImage(uint16_t x,uint16_t y,uint16_t width,uint16_t height,const uint8_t *pImage)  ;
 
 //>>>>>	批量复制函数，直接将数据复制到屏幕的显存
 void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16_t *DataBuff);
 //显示摄像头图像
-void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold);
+void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height,uint16_t dis_width, uint16_t dis_height,uint8_t threshold,Image *image_buf);
  /*--------------------------------------------- LCD其它引脚 -----------------------------------------------*/
 
 #define  LCD_Backlight_PIN								GPIO_PIN_15				         // 背光  引脚				

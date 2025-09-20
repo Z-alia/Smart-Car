@@ -28,12 +28,20 @@ extern "C" {
 
 typedef struct Image
 {    
-	uint16_t output_image[120][188];
-    uint16_t original_image[120][188];
-    uint8_t x_points[120];
-    uint8_t y_points[120];
+    uint16_t output_image[120][188];      // 输出图像（边缘检测结果）
+    uint16_t original_image[120][188];    // 原始输入图像
+    uint8_t x_points[120];                // X坐标点数组
+    uint8_t y_points[120];                // Y坐标点数组
+    
+    // 新增：位打包工作缓冲区（内部使用，避免外部分配）
+    uint32_t tmp1_bits[((188 + 31) >> 5) * 120];  // 工作缓冲区1
+    uint32_t tmp2_bits[((188 + 31) >> 5) * 120];  // 工作缓冲区2
+    uint32_t tmp3_bits[((188 + 31) >> 5) * 120];  // 工作缓冲区3
+    uint32_t out_bits[((188 + 31) >> 5) * 120];   // 输出缓冲区
 } Image;
 extern struct Image image_buf;
+//结构体句柄初始化
+void image_process_init(Image *image);
 
 /* 每行需要的 32bit word 数（例：width=188 → 6 个 word） */
 MBP_INLINE int words_per_row(int width) { return (width + 31) >> 5; }
@@ -64,13 +72,18 @@ void precise_edge_detection_bitpacked(const uint32_t* src_bits,
                                       uint32_t* out_bits,
                                       int width, int height);
 
+
 /* 适配器：直接以 u16 二值输入，输出 u16（0/0xFFFF） */
-void precise_edge_detection_image_adapter(Image* image_buf,
-                                         int width, int height,
-                                         uint32_t* tmp1_bits,
-                                         uint32_t* tmp2_bits,
-                                         uint32_t* tmp3_bits,
-                                         uint32_t* out_bits);
+void precise_edge_detection_u16_binary_adapter(const uint16_t* src_u16,
+                                               int width, int height, int src_stride_pixels,
+                                               uint16_t* dst_u16, int dst_stride_pixels,
+                                               uint32_t* tmp1_bits,
+                                               uint32_t* tmp2_bits,
+                                               uint32_t* tmp3_bits,
+                                               uint32_t* out_bits);
+
+/* 支持 Image 结构体的适配器 */
+void precise_edge_detection_image_adapter(Image* image_buf, int width, int height);
 
 #ifdef __cplusplus
 }

@@ -162,7 +162,9 @@
   },
   "targets": {
     "smartcar": {
-      "excludeList": [],
+      "excludeList": [
+        "code/Src/app_main.c"
+      ],
       "toolchain": "AC6",
       "compileConfig": {
         "cpuType": "Cortex-M7",

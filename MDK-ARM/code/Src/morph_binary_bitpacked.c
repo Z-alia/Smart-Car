@@ -207,18 +207,42 @@ void precise_edge_detection_bitpacked(const uint32_t* RESTRICT src_bits,
 
 // 适配器：直接用 u16 二值输入（0/非0），输出 u16（0/0xFFFF）
 // 内部流程：打包 → 形态学流水线 → 解包
-void precise_edge_detection_image_adapter(Image* image_buf,
-                                         int width, int height,
-                                         uint32_t* tmp1_bits,
-                                         uint32_t* tmp2_bits,
-                                         uint32_t* tmp3_bits,
-                                         uint32_t* out_bits) {
-    // 直接调用现有的适配器，传入结构体成员的首地址
+void precise_edge_detection_u16_binary_adapter(const uint16_t* RESTRICT src_u16,
+                                               int width, int height, int src_stride_pixels,
+                                               uint16_t* RESTRICT dst_u16, int dst_stride_pixels,
+                                               uint32_t* RESTRICT tmp1_bits,
+                                               uint32_t* RESTRICT tmp2_bits,
+                                               uint32_t* RESTRICT tmp3_bits,
+                                               uint32_t* RESTRICT out_bits) {
+    // 1) 打包：将 0/非0 u16 压到 bit-packed（非零→1）
+    pack_binary_u16_to_bits(src_u16, width, height, src_stride_pixels, tmp3_bits);
+
+    // 2) 位打包形态学流水线（开→闭→内部梯度）
+    precise_edge_detection_bitpacked(tmp3_bits, tmp1_bits, tmp2_bits, out_bits, width, height);
+
+    // 3) 解包：得到 0/0xFFFF 的 u16 边缘图
+    unpack_bits_to_binary_u16(out_bits, width, height, dst_u16, dst_stride_pixels);
+}
+
+// 适配器：支持 Image 结构体
+void precise_edge_detection_image_adapter(Image* image_buf, int width, int height) {
+    // 直接使用结构体内的缓冲区，无需外部传入
     precise_edge_detection_u16_binary_adapter(
         &image_buf->original_image[0][0],  // 输入：original_image
         width, height, width,              // 输入参数
         &image_buf->output_image[0][0],    // 输出：output_image
         width,                             // 输出步长
-        tmp1_bits, tmp2_bits, tmp3_bits, out_bits  // 工作缓冲区
+        image_buf->tmp1_bits,              // 使用内置缓冲区1
+        image_buf->tmp2_bits,              // 使用内置缓冲区2
+        image_buf->tmp3_bits,              // 使用内置缓冲区3
+        image_buf->out_bits                // 使用内置输出缓冲区
     );
 }
+
+
+//句柄初始化
+void image_process_init(Image *image)
+{
+    memset(image, 0, sizeof(Image));
+}
+Image image_buf;
