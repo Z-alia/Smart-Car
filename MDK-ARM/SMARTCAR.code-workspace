@@ -7,7 +7,7 @@
     "settings": {
         "terminal.integrated.shellIntegration.enabled": false,
         "clangd.arguments": [
-            "--header-insertion=never"
+            "--compile-commands-dir=c:\\Users\\DX\\Desktop\\car\\Smart-Car\\MDK-ARM\\out\\smartcar\\smartcar"
         ],
         "files.autoGuessEncoding": true,
         "C_Cpp.default.configurationProvider": "cl.eide",
@@ -28,7 +28,8 @@
             "editor.insertSpaces": true,
             "editor.tabSize": 4,
             "editor.autoIndent": "advanced"
-        }
+        },
+        "debug.hideSlowPreLaunchWarning": true
     },
     "extensions": {
         "recommendations": [

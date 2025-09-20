@@ -1,0 +1,22 @@
+build-idx:
+  generated-by: csolution version 2.11.0
+  csolution: smartcar.csolution.yml
+  cbuild-run: out/smartcar+smartcar.cbuild-run.yml
+  tmpdir: tmp
+  cprojects:
+    - cproject: smartcar.cproject.yml
+  cbuilds:
+    - cbuild: out/smartcar/smartcar/smartcar+smartcar.cbuild.yml
+      project: smartcar
+      configuration: +smartcar
+      errors: true
+      messages:
+        errors:
+          - file 'C:/Users/DX/Desktop/car/Smart-Car/MDK-ARM/.cmsis/smartcar+smartcar.dbgconf' not found; use --update-rte
+        info:
+          - smartcar.cbuild-pack.yml - file generated successfully
+          - smartcar+smartcar.cbuild-run.yml - file generated successfully
+          - smartcar+smartcar.cbuild.yml - file generated successfully
+      packs-unused:
+        - pack: ARM::CMSIS-DSP@1.16.2
+        - pack: ARM::CMSIS-NN@4.1.0

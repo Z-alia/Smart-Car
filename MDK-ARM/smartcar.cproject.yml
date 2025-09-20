@@ -1,0 +1,122 @@
+project:
+  packs:
+    - pack: ARM::CMSIS@^6.2.0
+    - pack: Keil::STM32H7xx_DFP@^4.1.2
+    - pack: ARM::CMSIS-NN@^4.0.0
+    - pack: ARM::CMSIS-DSP@^1.10.1
+  setups:
+    - setup: Options for smartcar
+      processor:
+        fpu: dp
+      add-path:
+        - ../Core/Inc
+        - ../Drivers/STM32H7xx_HAL_Driver/Inc
+        - ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy
+        - ../Drivers/CMSIS/Device/ST/STM32H7xx/Include
+        - ../Drivers/CMSIS/Include
+        - ../Middlewares/ST/ARM/DSP/Inc
+        - code/Inc
+      debug: "on"
+      define:
+        - USE_HAL_DRIVER
+        - STM32H750xx
+      misc:
+        - C:
+            - -std=c99
+          C-CPP:
+            - -fno-rtti
+            - -funsigned-char
+            - -fshort-enums
+            - -fshort-wchar
+            - -ffunction-sections
+            - -Wno-packed
+            - -Wno-missing-variable-declarations
+            - -Wno-missing-prototypes
+            - -Wno-missing-noreturn
+            - -Wno-sign-conversion
+            - -Wno-nonportable-include-path
+            - -Wno-reserved-id-macro
+            - -Wno-unused-macros
+            - -Wno-documentation-unknown-command
+            - -Wno-documentation
+            - -Wno-license-management
+            - -Wno-parentheses-equality
+          CPP:
+            - -xc++
+            - -std=c++11
+            - -fno-exceptions
+          ASM:
+            - -masm=auto
+          Link:
+            - --map
+            - --load_addr_map_info
+            - --xref
+            - --callgraph
+            - --symbols
+            - --info sizes
+            - --info totals
+            - --info unused
+            - --info veneers
+            - --strict
+            - --summary_stderr
+            - --info summarysizes
+  linker:
+    - script: smartcar_smartcar.sct
+  groups:
+    - group: Application/MDK-ARM
+      files:
+        - file: startup_stm32h750xx.s
+    - group: Application/User/Core
+      files:
+        - file: ../Core/Src/main.c
+        - file: ../Core/Src/gpio.c
+        - file: ../Core/Src/dcmi.c
+        - file: ../Core/Src/dma.c
+        - file: ../Core/Src/spi.c
+        - file: ../Core/Src/tim.c
+        - file: ../Core/Src/stm32h7xx_it.c
+        - file: ../Core/Src/stm32h7xx_hal_msp.c
+    - group: Drivers/STM32H7xx_HAL_Driver
+      files:
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dcmi.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rcc_ex.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_flash_ex.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_gpio.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_hsem.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dma_ex.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mdma.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_pwr_ex.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c_ex.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_exti.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi_ex.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.c
+        - file: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c
+    - group: Drivers/CMSIS
+      files:
+        - file: ../Core/Src/system_stm32h7xx.c
+    - group: code
+      files:
+        - file: code/Src/dcmi_ov2640.c
+        - file: code/Src/lcd_fonts.c
+        - file: code/Src/lcd_image.c
+        - file: code/Src/lcd_spi_200.c
+        - file: code/Src/motor.c
+        - file: code/Src/sccb.c
+        - file: code/Inc/dcmi_ov2640.h
+        - file: code/Inc/dcmi_ov2640_cfg.h
+        - file: code/Inc/encoder.h
+        - file: code/Inc/lcd_fonts.h
+        - file: code/Inc/lcd_image.h
+        - file: code/Inc/lcd_spi_200.h
+        - file: code/Inc/motor.h
+        - file: code/Inc/sccb.h
+  components:
+    - component: ARM::CMSIS:CORE
