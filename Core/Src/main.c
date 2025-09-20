@@ -120,7 +120,7 @@ int main(void)
 			  	if (DCMI_FrameState == 1)	
 		{
 			DCMI_FrameState = 0;	
-			show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 70, &image_buf);
+			show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 100, &image_buf);
 		}
     /* USER CODE END WHILE */
 

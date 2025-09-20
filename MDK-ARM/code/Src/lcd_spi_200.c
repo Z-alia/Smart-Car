@@ -453,6 +453,20 @@ void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16
    HAL_SPI_Init(&LCD_SPI);		
 	
 }
+
+// 提取出的单行二值化函数：对第 row 行做二值化，结果写入 dst_row（每像素 0 或 0xFFFF）
+static void OV2640_Binarize_Row(const uint16_t *image, uint16_t *dst_row,
+                                uint16_t width, uint16_t height,
+                                uint16_t dis_width, uint16_t dis_height,
+                                uint16_t row, uint8_t threshold)
+{
+    const uint16_t *image_temp = image + (row * height / dis_height) * width;
+    for (uint16_t i = 0; i < dis_width; i++)
+    {
+        uint16_t temp = *(image_temp + i * width / dis_width);
+        dst_row[i] = (temp < ((uint16_t)threshold << 8)) ? 0x0000 : 0xFFFF;
+    }
+}
 //-------------------------------------------------------------------------------------------------------------------
 // 函数简介     IPS200 显示 16bit 灰度图像 带二值化阈值
 // 参数说明     x               坐标x方向的起点 参数范围 [0, ips200_width_max-1]
@@ -472,57 +486,55 @@ void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16
 //-------------------------------------------------------------------------------------------------------------------
 void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height,uint16_t dis_width, uint16_t dis_height,uint8_t threshold,Image *image_buf)
 {
-	LCD_SetAddress(x,y,x+dis_width-1,y+dis_height-1);
+    LCD_SetAddress(x,y,x+dis_width-1,y+dis_height-1);
 
-	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
-	uint32_t i = 0, j = 0;
+    LCD_DC_Data;
+    uint32_t i = 0, j = 0;
     uint16_t temp = 0;
     uint16_t data_buffer[dis_width];
-	uint8_t flag=0;
-		const uint16_t *image_temp;
-// 修改为16位数据宽度，写入数据更加效率，不需要拆分
-   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
+    uint8_t flag=0;
+    const uint16_t *image_temp;
+
+   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;
    HAL_SPI_Init(&LCD_SPI);
-	for(j = 0; j < dis_height; j ++)
+
+    // 如果需要二值化+精确边缘检测：先生成整张二值图，再调用位打包流水线（只调用一次）
+    if (threshold != 0)
     {
-        image_temp = image + j * height / dis_width*width;                  // 直接取出 image 中的行数据
+        // 1) 逐行二值化到 image_buf->original_image
+        for (j = 0; j < dis_height; j++)
+        {
+            OV2640_Binarize_Row(image, (uint16_t *)image_buf->original_image[j],
+                                width, height, dis_width, dis_height, j, threshold);
+        }
+
+        // 2) 调用位打包形态学适配器（使用 image_buf 内部工作缓冲区）
+        precise_edge_detection_image_adapter(image_buf, width, height);
+        // 此时结果在 image_buf->output_image 中（0x0000 / 0xFFFF per pixel）
+    }
+
+    for(j = 0; j < dis_height; j ++)
+    {
+        image_temp = image + (j * height / dis_width)*width;
         if(threshold == 0)
         {
-			for(i = 0; i < dis_width; i ++)
-			{
-				temp = *(image_temp + i*width/dis_width );
+            for(i = 0; i < dis_width; i ++)
+            {
+                temp = *(image_temp + i*width/dis_width );
                 data_buffer[i] = (temp);
-			}
-			LCD_SPI_TransmitBuffer(&LCD_SPI, data_buffer,dis_width);
-			
+            }
+            LCD_SPI_TransmitBuffer(&LCD_SPI, data_buffer,dis_width);
         }
-		else
-		{
-			for(i = 0; i < dis_width; i ++)
-			{                      // 获取像素点
-				temp = *(image_temp + i*width/dis_width );
-				if(temp < (threshold)<<8)
-				{
-					image_buf->original_image[j][i]=0;
-				}
-				else
-				{
-					image_buf->original_image[j][i]=0xffff;
-				}
-				//LCD_SPI_TransmitBuffer(&LCD_SPI, *((image_buf->output_image)+j),dis_width);
-			}
-			//image_edge_detection_optimized(image_buf, dis_width, dis_height);//边缘检测,在第二次出现完整图象时再开始处理
-			LCD_SPI_TransmitBuffer(&LCD_SPI, *((image_buf->output_image)+j),dis_width);
-		}
-		//image_edge_detection_optimized(image_buf, dis_width, dis_height);//边缘检测,在第二次出现完整图象时再开始处理
-			
+        else
+        {
+            // 直接发送已由 precise_edge_detection_image_adapter 计算好的二值边缘行
+            LCD_SPI_TransmitBuffer(&LCD_SPI, image_buf->output_image[j], dis_width);
+        }
     }
-	precise_edge_detection_image_adapter(image_buf,dis_width, dis_height);//边缘检测,在第二次出现完整图象时再开始处理
 
-// 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
-	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
-	HAL_SPI_Init(&LCD_SPI);
-}
+    LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;
+    HAL_SPI_Init(&LCD_SPI);
+}  
 /**********************************************************************************************************************************
 *
 * 以下几个函数修改于HAL的库函数，目的是为了SPI传输数据不限数据长度的写入，并且提高清屏的速度
