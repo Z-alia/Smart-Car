@@ -2,6 +2,15 @@ CompileFlags:
     CompilationDatabase: ./build/smartcar
     Add:
         - -I"null\include"
+        - -Id:\Keil\ARM\ARMCLANG\bin/include
+        - -Id:\Keil\ARM\ARMCLANG\bin/include/libcxx
+        - -ID:\Keil\ARM\ARMCLANG\bin/include
+        - -ID:\Keil\ARM\ARMCLANG\bin/include/libcxx
+        - -ID:\Keil\ARM\ARMCLANG/include
+        - -ID:\Keil\ARM\ARMCLANG/include/libcxx
+        - -Inull/include
+        - -Inull/include/libcxx
     Remove: []
+    Compiler: null\bin\armclang.exe
 Diagnostics:
     Suppress: "*"
