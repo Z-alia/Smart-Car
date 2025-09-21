@@ -6,100 +6,100 @@
 #include "dcmi.h"
 #include "lcd_spi_200.h"
 
- // DCMI×´Ì¬±êÖ¾£¬µ±Êı¾İÖ¡´«ÊäÍê³ÉÊ±£¬»á±» HAL_DCMI_FrameEventCallback() ÖĞ¶Ï»Øµ÷º¯ÊıÖÃ 1 
-extern volatile uint8_t DCMI_FrameState;  // ÉùÃ÷±äÁ¿£¬·½±ãÆäËüÎÄ¼ş½øĞĞµ÷ÓÃ
-extern volatile uint8_t OV2640_FPS ;      // Ö¡ÂÊ
-extern uint16_t* mt9v03x_image[120];	// Í¼ÏñÊı¾İ´æ´¢Êı×é
+ // DCMIçŠ¶æ€æ ‡å¿—ï¼Œå½“æ•°æ®å¸§ä¼ è¾“å®Œæˆæ—¶ï¼Œä¼šè¢« HAL_DCMI_FrameEventCallback() ä¸­æ–­å›è°ƒå‡½æ•°ç½® 1 
+extern volatile uint8_t DCMI_FrameState;  // å£°æ˜å˜é‡ï¼Œæ–¹ä¾¿å…¶å®ƒæ–‡ä»¶è¿›è¡Œè°ƒç”¨
+extern volatile uint8_t OV2640_FPS ;      // å¸§ç‡
+extern uint16_t* mt9v03x_image[120];	// å›¾åƒæ•°æ®å­˜å‚¨æ•°ç»„
 
-#define  OV2640_Success   0            // Í¨Ñ¶³É¹¦±êÖ¾
-#define  OV2640_Error     -1           // Í¨Ñ¶´íÎó
+#define  OV2640_Success   0            // é€šè®¯æˆåŠŸæ ‡å¿—
+#define  OV2640_Error     -1           // é€šè®¯é”™è¯¯
 
 #define  OV2640_Enable    1
 #define  OV2640_Disable   0
 
-// ÓÃÓÚÉèÖÃÊä³öµÄ¸ñÊ½£¬±» OV2640_Set_Pixformat() ÒıÓÃ
+// ç”¨äºè®¾ç½®è¾“å‡ºçš„æ ¼å¼ï¼Œè¢« OV2640_Set_Pixformat() å¼•ç”¨
 #define Pixformat_RGB565   0
 #define Pixformat_JPEG     1
 
-// OV2640µÄÌØĞ§Ä£Ê½£¬±» OV2640_Set_Effect() ÒıÓÃ
-#define  OV2640_Effect_Normal       0  // Õı³£Ä£Ê½
-#define  OV2640_Effect_Negative     1  // ¸ºÆ¬Ä£Ê½£¬Ò²¾ÍÊÇÑÕÉ«È«²¿È¡·´
-#define  OV2640_Effect_BW           2  // ºÚ°×Ä£Ê½
-#define  OV2640_Effect_BW_Negative  3  // ºÚ°×Ä£Ê½+¸ºÆ¬Ä£Ê½
+// OV2640çš„ç‰¹æ•ˆæ¨¡å¼ï¼Œè¢« OV2640_Set_Effect() å¼•ç”¨
+#define  OV2640_Effect_Normal       0  // æ­£å¸¸æ¨¡å¼
+#define  OV2640_Effect_Negative     1  // è´Ÿç‰‡æ¨¡å¼ï¼Œä¹Ÿå°±æ˜¯é¢œè‰²å…¨éƒ¨å–å
+#define  OV2640_Effect_BW           2  // é»‘ç™½æ¨¡å¼
+#define  OV2640_Effect_BW_Negative  3  // é»‘ç™½æ¨¡å¼+è´Ÿç‰‡æ¨¡å¼
 
-// 1. ¶¨ÒåOV2640Êµ¼ÊÊä³öµÄÍ¼Ïñ´óĞ¡£¬¿ÉÒÔ¸ù¾İÊµ¼ÊµÄÓ¦ÓÃ»òÕßÏÔÊ¾ÆÁ½øĞĞµ÷Õû£¨Í¬Ê±Ò²ÒªĞŞ¸ÄÅäÖÃ²ÎÊıÀïµÄÊ±ÖÓ·ÖÆµ£©
-// 2. ÕâÁ½¸ö²ÎÊı²»»áÓ°ÏìÖ¡ÂÊ£¬ÇÒ²»ÄÜ³¬¹ı¶ÔÓ¦Ä£Ê½µÄ×î´ó³ß´ç
-// 3. SVGAÄ£Ê½ÏÂ£¬Êä³öÍ¼Ïñ×î´ó·Ö±æÂÊÎª 800*600,  ×î´óÖ¡ÂÊ30Ö¡
-// 4. UXGAÄ£Ê½ÏÂ£¬Êä³öÍ¼Ïñ×î´ó·Ö±æÂÊÎª 1600*1200,×î´óÖ¡ÂÊ15Ö¡
-// 5. ÒªÉèÖÃµÄÍ¼Ïñ³¤¡¢¿í±ØĞëÄÜ±»4Õû³ı£¡
-// 6. ÒªÉèÖÃµÄÍ¼Ïñ³¤¡¢¿í±È±ØĞëÂú×ã4:3£¬²»È»»­Ãæ»á±»À­Éì»û±ä
-#define OV2640_Width          480   // Í¼Ïñ³¤¶È 
-#define OV2640_Height         360  // Í¼Ïñ¿í¶È
+// 1. å®šä¹‰OV2640å®é™…è¾“å‡ºçš„å›¾åƒå¤§å°ï¼Œå¯ä»¥æ ¹æ®å®é™…çš„åº”ç”¨æˆ–è€…æ˜¾ç¤ºå±è¿›è¡Œè°ƒæ•´ï¼ˆåŒæ—¶ä¹Ÿè¦ä¿®æ”¹é…ç½®å‚æ•°é‡Œçš„æ—¶é’Ÿåˆ†é¢‘ï¼‰
+// 2. è¿™ä¸¤ä¸ªå‚æ•°ä¸ä¼šå½±å“å¸§ç‡ï¼Œä¸”ä¸èƒ½è¶…è¿‡å¯¹åº”æ¨¡å¼çš„æœ€å¤§å°ºå¯¸
+// 3. SVGAæ¨¡å¼ä¸‹ï¼Œè¾“å‡ºå›¾åƒæœ€å¤§åˆ†è¾¨ç‡ä¸º 800*600,  æœ€å¤§å¸§ç‡30å¸§
+// 4. UXGAæ¨¡å¼ä¸‹ï¼Œè¾“å‡ºå›¾åƒæœ€å¤§åˆ†è¾¨ç‡ä¸º 1600*1200,æœ€å¤§å¸§ç‡15å¸§
+// 5. è¦è®¾ç½®çš„å›¾åƒé•¿ã€å®½å¿…é¡»èƒ½è¢«4æ•´é™¤ï¼
+// 6. è¦è®¾ç½®çš„å›¾åƒé•¿ã€å®½æ¯”å¿…é¡»æ»¡è¶³4:3ï¼Œä¸ç„¶ç”»é¢ä¼šè¢«æ‹‰ä¼¸ç•¸å˜
+#define OV2640_Width          480   // å›¾åƒé•¿åº¦ 
+#define OV2640_Height         360  // å›¾åƒå®½åº¦
 
-// 1. ¶¨ÒåÒªÏÔÊ¾µÄ»­Ãæ´óĞ¡£¬ÊıÖµÒ»¶¨ÒªÄÜ±»4Õû³ı£¡£¡
-// 2. RGB565¸ñÊ½ÏÂ£¬×îÖÕ»áÓÉDCMI½«OV2640Êä³öµÄ4:3Í¼Ïñ²Ã¼ôÎªÊÊÓ¦ÆÁÄ»µÄ±ÈÀı
-// 3. ´Ë´¦µÄ·Ö±æÂÊ²»ÄÜ³¬¹ı OV2640_Width ºÍ OV2640_Height
-// 4. ·Ö±æÂÊÌ«¸ßÊ±£¬ĞèÒªĞŞ¸ÄPCLKµÄÊ±ÖÓËÙ¶È£¬ÏêÏ¸¼ÆËãËµÃ÷¿É²Î¿¼ dcmi_ov2640_cfg.h ÀïµÄ 0xd3 ¼Ä´æÆ÷ÅäÖÃ
+// 1. å®šä¹‰è¦æ˜¾ç¤ºçš„ç”»é¢å¤§å°ï¼Œæ•°å€¼ä¸€å®šè¦èƒ½è¢«4æ•´é™¤ï¼ï¼
+// 2. RGB565æ ¼å¼ä¸‹ï¼Œæœ€ç»ˆä¼šç”±DCMIå°†OV2640è¾“å‡ºçš„4:3å›¾åƒè£å‰ªä¸ºé€‚åº”å±å¹•çš„æ¯”ä¾‹
+// 3. æ­¤å¤„çš„åˆ†è¾¨ç‡ä¸èƒ½è¶…è¿‡ OV2640_Width å’Œ OV2640_Height
+// 4. åˆ†è¾¨ç‡å¤ªé«˜æ—¶ï¼Œéœ€è¦ä¿®æ”¹PCLKçš„æ—¶é’Ÿé€Ÿåº¦ï¼Œè¯¦ç»†è®¡ç®—è¯´æ˜å¯å‚è€ƒ dcmi_ov2640_cfg.h é‡Œçš„ 0xd3 å¯„å­˜å™¨é…ç½®
 #define	Display_Width			188
 #define	Display_Height			120
 
-#define Camera_Buffer	0x24000000    // ÉãÏñÍ·Í¼Ïñ»º³åÇø
+#define Camera_Buffer	0x24000000    // æ‘„åƒå¤´å›¾åƒç¼“å†²åŒº
 
-// 1.RGB565Ä£Ê½ÏÂ£¬ĞèÒª Í¼Ïñ·Ö±æÂÊ*2 µÄ´óĞ¡
-// 2.JPGÄ£Ê½ÏÂ£¬ĞèÒªµÄ»º³åÇø´óĞ¡²¢²»ÊÇ¹Ì¶¨µÄ£¬ÀıÈç 640*480·Ö±æÂÊ£¬JPGÍ¼Ïñ´ó¸ÅÒªÕ¼30K£¬
-//   »º³åÇøÔ¤Áô2±¶×óÓÒ´óĞ¡¼´¿É£¬ÓÃ»§¿É¸ù¾İÊµ¼ÊÇé¿öÈ¥ÉèÖÃ,
-#define 	OV2640_BufferSize     Display_Width * Display_Height*2 /4   // DMA´«ÊäÊı¾İ´óĞ¡£¨32Î»¿í£©
-//#define 	OV2640_BufferSize     	100*1024/4   // DMA´«ÊäÊı¾İ´óĞ¡£¨32Î»¿í£©
+// 1.RGB565æ¨¡å¼ä¸‹ï¼Œéœ€è¦ å›¾åƒåˆ†è¾¨ç‡*2 çš„å¤§å°
+// 2.JPGæ¨¡å¼ä¸‹ï¼Œéœ€è¦çš„ç¼“å†²åŒºå¤§å°å¹¶ä¸æ˜¯å›ºå®šçš„ï¼Œä¾‹å¦‚ 640*480åˆ†è¾¨ç‡ï¼ŒJPGå›¾åƒå¤§æ¦‚è¦å 30Kï¼Œ
+//   ç¼“å†²åŒºé¢„ç•™2å€å·¦å³å¤§å°å³å¯ï¼Œç”¨æˆ·å¯æ ¹æ®å®é™…æƒ…å†µå»è®¾ç½®,
+#define 	OV2640_BufferSize     Display_Width * Display_Height*2 /4   // DMAä¼ è¾“æ•°æ®å¤§å°ï¼ˆ32ä½å®½ï¼‰
+//#define 	OV2640_BufferSize     	100*1024/4   // DMAä¼ è¾“æ•°æ®å¤§å°ï¼ˆ32ä½å®½ï¼‰
 
-#define  OV2640_SEL_Registers       0xFF	// ¼Ä´æÆ÷×éÑ¡Ôñ¼Ä´æÆ÷
-#define  OV2640_SEL_DSP             0x00	// ÉèÖÃÎª0x00Ê±£¬Ñ¡Ôñ  DSP    ¼Ä´æÆ÷×é
-#define  OV2640_SEL_SENSOR          0x01	// ÉèÖÃÎª0x01Ê±£¬Ñ¡Ôñ  SENSOR ¼Ä´æÆ÷×é
+#define  OV2640_SEL_Registers       0xFF	// å¯„å­˜å™¨ç»„é€‰æ‹©å¯„å­˜å™¨
+#define  OV2640_SEL_DSP             0x00	// è®¾ç½®ä¸º0x00æ—¶ï¼Œé€‰æ‹©  DSP    å¯„å­˜å™¨ç»„
+#define  OV2640_SEL_SENSOR          0x01	// è®¾ç½®ä¸º0x01æ—¶ï¼Œé€‰æ‹©  SENSOR å¯„å­˜å™¨ç»„
 
 
-// DSP ¼Ä´æÆ÷×é (0xFF = 0x00) 
-#define 	OV2640_DSP_RESET           0xE0	// ¿ÉÑ¡Ôñ¸´Î» ¿ØÖÆÆ÷¡¢SCCBµ¥Ôª¡¢JPEGµ¥Ôª¡¢DVP½Ó¿Úµ¥ÔªµÈ
-#define 	OV2640_DSP_BPADDR          0x7C	// ¼ä½Ó¼Ä´æÆ÷·ÃÎÊ:µØÖ·
-#define 	OV2640_DSP_BPDATA          0x7D	// ¼ä½Ó¼Ä´æÆ÷·ÃÎÊ:Êı¾İ
+// DSP å¯„å­˜å™¨ç»„ (0xFF = 0x00) 
+#define 	OV2640_DSP_RESET           0xE0	// å¯é€‰æ‹©å¤ä½ æ§åˆ¶å™¨ã€SCCBå•å…ƒã€JPEGå•å…ƒã€DVPæ¥å£å•å…ƒç­‰
+#define 	OV2640_DSP_BPADDR          0x7C	// é—´æ¥å¯„å­˜å™¨è®¿é—®:åœ°å€
+#define 	OV2640_DSP_BPDATA          0x7D	// é—´æ¥å¯„å­˜å™¨è®¿é—®:æ•°æ®
 
-// SENSOR ¼Ä´æÆ÷×é (0xFF = 0x01) 
-#define 	OV2640_SENSOR_COM7         0x12	// ¹«¹²¿ØÖÆ,ÏµÍ³¸´Î»¡¢ÉãÏñÍ··Ö±æÂÊÑ¡Ôñ¡¢Ëõ·ÅÄ£Ê½¡¢ÑÕÉ«²ÊÌõÉèÖÃ 
-#define 	OV2640_SENSOR_REG04        0x04	// ¼Ä´æÆ÷×é4,¿ÉÉèÖÃÉãÏñÍ·É¨Ãè·½ÏòµÈ
-#define  OV2640_SENSOR_PIDH         0x0a	// ID¸ß×Ö½Ú
-#define  OV2640_SENSOR_PIDL         0x0b	// IDµÍ×Ö½Ú
+// SENSOR å¯„å­˜å™¨ç»„ (0xFF = 0x01) 
+#define 	OV2640_SENSOR_COM7         0x12	// å…¬å…±æ§åˆ¶,ç³»ç»Ÿå¤ä½ã€æ‘„åƒå¤´åˆ†è¾¨ç‡é€‰æ‹©ã€ç¼©æ”¾æ¨¡å¼ã€é¢œè‰²å½©æ¡è®¾ç½® 
+#define 	OV2640_SENSOR_REG04        0x04	// å¯„å­˜å™¨ç»„4,å¯è®¾ç½®æ‘„åƒå¤´æ‰«ææ–¹å‘ç­‰
+#define  OV2640_SENSOR_PIDH         0x0a	// IDé«˜å­—èŠ‚
+#define  OV2640_SENSOR_PIDL         0x0b	// IDä½å­—èŠ‚
 
-/*------------------------------------------------------------ º¯ÊıÉùÃ÷ ------------------------------------------------*/
+/*------------------------------------------------------------ å‡½æ•°å£°æ˜ ------------------------------------------------*/
 
-int8_t   OV2640_Init(void);	// ³õÊ¼SCCB¡¢DCMI¡¢DMAÒÔ¼°ÅäÖÃOV2640
+int8_t   OV2640_Init(void);	// åˆå§‹SCCBã€DCMIã€DMAä»¥åŠé…ç½®OV2640
 
-void     OV2640_DMA_Transmit_Continuous(uint32_t DMA_Buffer,uint32_t DMA_BufferSize);	// Æô¶¯DMA´«Êä£¬Á¬ĞøÄ£Ê½
-void     OV2640_DMA_Transmit_Snapshot(uint32_t DMA_Buffer,uint32_t DMA_BufferSize);		//  Æô¶¯DMA´«Êä£¬¿ìÕÕÄ£Ê½£¬´«ÊäÒ»Ö¡Í¼ÏñºóÍ£Ö¹
-void     OV2640_DCMI_Suspend(void);		// ¹ÒÆğDCMI£¬Í£Ö¹²¶»ñÊı¾İ
-void     OV2640_DCMI_Resume(void);		// »Ö¸´DCMI£¬¿ªÊ¼²¶»ñÊı¾İ
-void     OV2640_DCMI_Stop(void);			// ½ûÖ¹DCMIµÄDMAÇëÇó£¬Í£Ö¹DCMI²¶»ñ£¬½ûÖ¹DCMIÍâÉè
-int8_t 	OV2640_DCMI_Crop(uint16_t Displey_XSize,uint16_t Displey_YSize,uint16_t Sensor_XSize,uint16_t Sensor_YSize );	// ²Ã¼ô»­Ãæ
+void     OV2640_DMA_Transmit_Continuous(uint32_t DMA_Buffer,uint32_t DMA_BufferSize);	// å¯åŠ¨DMAä¼ è¾“ï¼Œè¿ç»­æ¨¡å¼
+void     OV2640_DMA_Transmit_Snapshot(uint32_t DMA_Buffer,uint32_t DMA_BufferSize);		//  å¯åŠ¨DMAä¼ è¾“ï¼Œå¿«ç…§æ¨¡å¼ï¼Œä¼ è¾“ä¸€å¸§å›¾åƒååœæ­¢
+void     OV2640_DCMI_Suspend(void);		// æŒ‚èµ·DCMIï¼Œåœæ­¢æ•è·æ•°æ®
+void     OV2640_DCMI_Resume(void);		// æ¢å¤DCMIï¼Œå¼€å§‹æ•è·æ•°æ®
+void     OV2640_DCMI_Stop(void);			// ç¦æ­¢DCMIçš„DMAè¯·æ±‚ï¼Œåœæ­¢DCMIæ•è·ï¼Œç¦æ­¢DCMIå¤–è®¾
+int8_t 	OV2640_DCMI_Crop(uint16_t Displey_XSize,uint16_t Displey_YSize,uint16_t Sensor_XSize,uint16_t Sensor_YSize );	// è£å‰ªç”»é¢
 
-void     OV2640_Reset(void);				//	Ö´ĞĞÈí¼ş¸´Î»		
-uint16_t OV2640_ReadID(void);				// ¶ÁÈ¡Æ÷¼şID
-void     OV2640_Config( const uint8_t (*ConfigData)[2] );		// ÅäÖÃ¸÷Ïî²ÎÊı
-void     OV2640_Set_Pixformat(uint8_t pixformat);					// ÉèÖÃÍ¼ÏñÊä³ö¸ñÊ½
-int8_t   OV2640_Set_Framesize(uint16_t width,uint16_t height);	// ÉèÖÃÊµ¼ÊÊä³öµÄÍ¼Ïñ´óĞ¡
-int8_t   OV2640_Set_Horizontal_Mirror( int8_t ConfigState );	// ÓÃÓÚÉèÖÃÊä³öµÄÍ¼ÏñÊÇ·ñ½øĞĞË®Æ½¾µÏñ
-int8_t   OV2640_Set_Vertical_Flip( int8_t ConfigState );			//	ÓÃÓÚÉèÖÃÊä³öµÄÍ¼ÏñÊÇ·ñ½øĞĞ´¹Ö±·­×ª 
-void     OV2640_Set_Saturation(int8_t Saturation);					// ÉèÖÃ±¥ºÍ¶È
-void     OV2640_Set_Brightness(int8_t Brightness);					// ÉèÖÃÁÁ¶È
-void     OV2640_Set_Contrast(int8_t Contrast);						// ÉèÖÃ¶Ô±È¶È
-void     OV2640_Set_Effect(uint8_t effect_Mode );					// ÓÃÓÚÉèÖÃÌØĞ§£¬Õı³£¡¢¸ºÆ¬¡¢ºÚ°×¡¢ºÚ°×+¸ºÆ¬µÈÄ£Ê½
+void     OV2640_Reset(void);				//	æ‰§è¡Œè½¯ä»¶å¤ä½		
+uint16_t OV2640_ReadID(void);				// è¯»å–å™¨ä»¶ID
+void     OV2640_Config( const uint8_t (*ConfigData)[2] );		// é…ç½®å„é¡¹å‚æ•°
+void     OV2640_Set_Pixformat(uint8_t pixformat);					// è®¾ç½®å›¾åƒè¾“å‡ºæ ¼å¼
+int8_t   OV2640_Set_Framesize(uint16_t width,uint16_t height);	// è®¾ç½®å®é™…è¾“å‡ºçš„å›¾åƒå¤§å°
+int8_t   OV2640_Set_Horizontal_Mirror( int8_t ConfigState );	// ç”¨äºè®¾ç½®è¾“å‡ºçš„å›¾åƒæ˜¯å¦è¿›è¡Œæ°´å¹³é•œåƒ
+int8_t   OV2640_Set_Vertical_Flip( int8_t ConfigState );			//	ç”¨äºè®¾ç½®è¾“å‡ºçš„å›¾åƒæ˜¯å¦è¿›è¡Œå‚ç›´ç¿»è½¬ 
+void     OV2640_Set_Saturation(int8_t Saturation);					// è®¾ç½®é¥±å’Œåº¦
+void     OV2640_Set_Brightness(int8_t Brightness);					// è®¾ç½®äº®åº¦
+void     OV2640_Set_Contrast(int8_t Contrast);						// è®¾ç½®å¯¹æ¯”åº¦
+void     OV2640_Set_Effect(uint8_t effect_Mode );					// ç”¨äºè®¾ç½®ç‰¹æ•ˆï¼Œæ­£å¸¸ã€è´Ÿç‰‡ã€é»‘ç™½ã€é»‘ç™½+è´Ÿç‰‡ç­‰æ¨¡å¼
 
-/*-------------------------------------------------------------- Òı½ÅÅäÖÃºê ---------------------------------------------*/
+/*-------------------------------------------------------------- å¼•è„šé…ç½®å® ---------------------------------------------*/
 
-#define OV2640_PWDN_PIN            			 GPIO_PIN_14        				 	// PWDN Òı½Å      
-#define OV2640_PWDN_PORT           			 GPIOD                 			 	// PWDN GPIO¶Ë¿Ú     
-#define GPIO_OV2640_PWDN_CLK_ENABLE    	__HAL_RCC_GPIOD_CLK_ENABLE() 		// PWDN GPIO¶Ë¿ÚÊ±ÖÓ
+#define OV2640_PWDN_PIN            			 GPIO_PIN_14        				 	// PWDN å¼•è„š      
+#define OV2640_PWDN_PORT           			 GPIOD                 			 	// PWDN GPIOç«¯å£     
+#define GPIO_OV2640_PWDN_CLK_ENABLE    	__HAL_RCC_GPIOD_CLK_ENABLE() 		// PWDN GPIOç«¯å£æ—¶é’Ÿ
 
-// µÍµçÆ½£¬²»¿ªÆôµôµçÄ£Ê½£¬ÉãÏñÍ·Õı³£¹¤×÷
+// ä½ç”µå¹³ï¼Œä¸å¼€å¯æ‰ç”µæ¨¡å¼ï¼Œæ‘„åƒå¤´æ­£å¸¸å·¥ä½œ
 #define	OV2640_PWDN_OFF	HAL_GPIO_WritePin(OV2640_PWDN_PORT, OV2640_PWDN_PIN, GPIO_PIN_RESET)	
 
-// ¸ßµçÆ½£¬½øÈëµôµçÄ£Ê½£¬ÉãÏñÍ·Í£Ö¹¹¤×÷£¬´ËÊ±¹¦ºÄ½µµ½×îµÍ
+// é«˜ç”µå¹³ï¼Œè¿›å…¥æ‰ç”µæ¨¡å¼ï¼Œæ‘„åƒå¤´åœæ­¢å·¥ä½œï¼Œæ­¤æ—¶åŠŸè€—é™åˆ°æœ€ä½
 #define 	OV2640_PWDN_ON		HAL_GPIO_WritePin(OV2640_PWDN_PORT, OV2640_PWDN_PIN, GPIO_PIN_SET)	
   
  
