@@ -225,10 +225,9 @@ void internal_gradient_bitpacked(const uint32_t* RESTRICT clean_bits, const uint
     }
 }
 
-// 高层流水线0：闭运算 这里用不到tmp2_bits写出是为了形式统一
+// 高层流水线0：闭运算
 void close_bitpacked(const uint32_t* RESTRICT src_bits,
                      uint32_t* RESTRICT tmp1_bits,
-                     uint32_t* RESTRICT tmp2_bits,
                      uint32_t* RESTRICT out_bits,
                      int width, int height) {
     // 先膨胀（填小孔/断裂）再腐蚀（恢复边界）
@@ -236,10 +235,9 @@ void close_bitpacked(const uint32_t* RESTRICT src_bits,
     erode3x3_bitpacked(tmp1_bits, out_bits, width, height);
 }
 
-// 高层流水线1：开运算 -> 闭运算 这里用不到tmp2_bits写出是为了形式统一
+// 高层流水线1：开运算 -> 闭运算
 void open_close_bitpacked(const uint32_t* RESTRICT src_bits,
                           uint32_t* RESTRICT tmp1_bits,
-                          uint32_t* RESTRICT tmp2_bits,
                           uint32_t* RESTRICT out_bits,
                           int width, int height) {
     // 开运算：先腐蚀（去小噪点）再膨胀（恢复主体形状）
@@ -254,20 +252,19 @@ void open_close_bitpacked(const uint32_t* RESTRICT src_bits,
 // 高层流水线2：开运算 -> 闭运算 -> 内部梯度（最终得到单像素边缘）
 void precise_edge_detection_bitpacked(const uint32_t* RESTRICT src_bits,
                                       uint32_t* RESTRICT tmp1_bits,
-                                      uint32_t* RESTRICT tmp2_bits,
                                       uint32_t* RESTRICT out_bits,
                                       int width, int height) {
     // 开运算：先腐蚀（去小噪点）再膨胀（恢复主体形状）
     erode3x3_bitpacked(src_bits, tmp1_bits, width, height);
-    dilate3x3_bitpacked(tmp1_bits, tmp2_bits, width, height);
+    dilate3x3_bitpacked(tmp1_bits, src_bits, width, height);
 
     // 闭运算：先膨胀（填小孔/断裂）再腐蚀（恢复边界）
-    dilate3x3_bitpacked(tmp2_bits, tmp1_bits, width, height);
-    erode3x3_bitpacked(tmp1_bits, tmp2_bits, width, height); // tmp2 变为“干净图像”
+    dilate3x3_bitpacked(src_bits, tmp1_bits, width, height);
+    erode3x3_bitpacked(tmp1_bits, out_bits, width, height); // out_bits 变为“干净图像”
 
     // 内部梯度：clean - erode(clean)（二值下等价 AND NOT）
-    erode3x3_bitpacked(tmp2_bits, tmp1_bits, width, height);
-    internal_gradient_bitpacked(tmp2_bits, tmp1_bits, out_bits, width, height);
+    erode3x3_bitpacked(out_bits, tmp1_bits, width, height);
+    internal_gradient_bitpacked(out_bits, tmp1_bits, out_bits, width, height);
 }
 
 // 适配器：对 u16 二值图进行形态学清洗（开运算+闭运算）
@@ -292,9 +289,9 @@ void morph_clean_u16_binary_adapter(const uint16_t* RESTRICT src_u16,
     uint32_t* out_buf    = s_buf3;
 
     pack_binary_u16_to_bits(src_u16, width, height, width, packed_src);
-    //close_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);
-    //open_close_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);
-    precise_edge_detection_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);//前两个流水线函数的第三个参数可以换成别的 但这个不行 只能是out_buf
+    //close_bitpacked(packed_src, tmp_buf,  out_buf, width, height);
+    open_close_bitpacked(packed_src, tmp_buf,  out_buf, width, height);
+    //precise_edge_detection_bitpacked(packed_src, tmp_buf, out_buf, width, height);
     unpack_bits_to_binary_u16(out_buf, width, height, dst_u16, width);
 }
 
@@ -310,8 +307,8 @@ void morph_clean_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
     uint32_t* out_buf    = s_buf3;
 
     pack_binary_u8_to_bits(src_u8, width, height, width, packed_src);
-    //close_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);
-    //open_close_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);
-    precise_edge_detection_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);
+    //close_bitpacked(packed_src, tmp_buf, out_buf,  width, height);
+    open_close_bitpacked(packed_src, tmp_buf, out_buf,  width, height);
+    //precise_edge_detection_bitpacked(packed_src, tmp_buf, out_buf, width, height);
     unpack_bits_to_binary_u8(out_buf, width, height, dst_u8, width);
 }

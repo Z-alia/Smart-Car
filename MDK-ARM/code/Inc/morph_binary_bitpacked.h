@@ -58,12 +58,14 @@ void dilate3x3_bitpacked(const uint32_t* src_bits, uint32_t* dst_bits, int width
 void internal_gradient_bitpacked(const uint32_t* clean_bits, const uint32_t* eroded_bits,
                                  uint32_t* output_bits, int width, int height);
 
-/* 高层流水线：开(腐->膨) → 闭(膨->腐) */
-void open_close_bitpacked(const uint32_t* src_bits,
-                          uint32_t* tmp1_bits,
-                          uint32_t* tmp2_bits,
-                          uint32_t* out_bits,
-                          int width, int height);
+// 高层流水线0：闭运算
+void close_bitpacked(const uint32_t* src_bits, uint32_t* tmp1_bits, uint32_t* out_bits, int width, int height);
+
+/* 高层流水线1：开(腐->膨) → 闭(膨->腐) */
+void open_close_bitpacked(const uint32_t* src_bits, uint32_t* tmp1_bits, uint32_t* out_bits, int width, int height);
+
+// 高层流水线2：开运算 -> 闭运算 -> 内部梯度（最终得到单像素边缘）
+void precise_edge_detection_bitpacked(const uint32_t* src_bits, uint32_t* tmp1_bits, uint32_t* out_bits, int width, int height);
 
 /* 适配器：对 u16 二值图进行形态学清洗（开运算+闭运算） */
 void morph_clean_u16_binary_adapter(const uint16_t* src_u16,

@@ -31,6 +31,7 @@
 #include "Binarization.h"
 #include "morph_binary_bitpacked.h"
 #include "element_recognition.h"
+#include "scan_line.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -127,9 +128,9 @@ int main(void)
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
 			/* 二值化阈值限幅 */
-			if(watch.threshold>120)
+			if(watch.threshold>200)
 			{
-				watch.threshold=120;
+				watch.threshold=200;
 			}
 			else if(watch.threshold<80)
 			{
@@ -143,10 +144,10 @@ int main(void)
       morph_clean_u8_binary_adapter(Grayscale[0], Display_Width, Display_Height, imo[0]);
 
 			/* 扫描赛道边线 */
-			//scan_line();
+			scan_line();
 			
 			/* 在图像上绘制出赛道边线 */
-			//draw_edge();
+			draw_edge();
 			
 			/* 显示摄像头图像 */
 			//显示原图像

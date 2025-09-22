@@ -113,25 +113,10 @@ void Binarization()
 void draw_edge()
 {
 	int row=0,colum;
-    for(row=0;row<120;row++)
+	for(row=0;row<120;row++)
     {
-        for(colum=0;colum<Display_Width;colum++)
-        {
-            if(Grayscale[row][colum]==0)
-			{
-                imo[row][colum]=0;
-			}
-            else
-			{
-                imo[row][colum]=255;
-			}
-        }
-
-    }
-	//for(row=0;row<120;row++)
-    //{
-	//	imo[119-row][lineinfo[row].left]=1;
-	//	imo[119-row][lineinfo[row].right]=2;
-	//}
+		imo[119-row][lineinfo[row].left]=1;
+		imo[119-row][lineinfo[row].right]=2;
+	  }
 }
 
