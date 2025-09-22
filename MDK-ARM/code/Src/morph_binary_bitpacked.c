@@ -225,69 +225,59 @@ void internal_gradient_bitpacked(const uint32_t* RESTRICT clean_bits, const uint
     }
 }
 
-// 高层流水线：开运算 -> 闭运算 -> 内部梯度（最终得到单像素边缘）
-void precise_edge_detection_bitpacked(const uint32_t* RESTRICT src_bits,
-                                      uint32_t* RESTRICT tmp1_bits,
-                                      uint32_t* RESTRICT tmp2_bits,
-                                      uint32_t* RESTRICT out_bits,
-                                      int width, int height) {
+// 高层流水线：开运算 -> 闭运算
+void open_close_bitpacked(const uint32_t* RESTRICT src_bits,
+                          uint32_t* RESTRICT tmp1_bits,
+                          uint32_t* RESTRICT tmp2_bits,
+                          uint32_t* RESTRICT out_bits,
+                          int width, int height) {
     // 开运算：先腐蚀（去小噪点）再膨胀（恢复主体形状）
     erode3x3_bitpacked(src_bits, tmp1_bits, width, height);
-    dilate3x3_bitpacked(tmp1_bits, tmp2_bits, width, height);
+    dilate3x3_bitpacked(tmp1_bits, out_bits, width, height); // out_bits 存开运算结果
 
     // 闭运算：先膨胀（填小孔/断裂）再腐蚀（恢复边界）
-    dilate3x3_bitpacked(tmp2_bits, tmp1_bits, width, height);
-    erode3x3_bitpacked(tmp1_bits, tmp2_bits, width, height); // tmp2 变为“干净图像”
-
-    // 内部梯度：clean - erode(clean)（二值下等价 AND NOT）
-    erode3x3_bitpacked(tmp2_bits, tmp1_bits, width, height);
-    internal_gradient_bitpacked(tmp2_bits, tmp1_bits, out_bits, width, height);
+    dilate3x3_bitpacked(out_bits, tmp1_bits, width, height);
+    erode3x3_bitpacked(tmp1_bits, out_bits, width, height); // out_bits 存最终干净图像
 }
 
-// 适配器：直接用 u16 二值输入（0/非0），输出 u16（0/0xFFFF）
-// 内部在栈上动态分配所需内存
-void precise_edge_detection_u16_binary_adapter(const uint16_t* RESTRICT src_u16,
-                                               int width, int height, int src_stride_pixels,
-                                               uint16_t* RESTRICT dst_u16, int dst_stride_pixels) {
-    // 根据图像尺寸计算缓冲区大小
-    int num_words = total_words(width, height);
-    
-    // 在栈上分配所有需要的缓冲区
-    uint32_t* tmp1_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
-    uint32_t* tmp2_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
-    uint32_t* tmp3_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
-    uint32_t* out_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+// 适配器：对 u16 二值图进行形态学清洗（开运算+闭运算）
+// 适配器使用的静态缓冲区
+#define IMG_WIDTH 188
+#define IMG_HEIGHT 120
+#define NUM_WORDS (((IMG_WIDTH + 31) >> 5) * IMG_HEIGHT)
 
-    // 1) 打包：将 0/非0 u16 压到 bit-packed（非零→1）
-    pack_binary_u16_to_bits(src_u16, width, height, src_stride_pixels, tmp3_bits);
+static uint32_t s_buf1[NUM_WORDS];
+static uint32_t s_buf2[NUM_WORDS];
+static uint32_t s_buf3[NUM_WORDS];
 
-    // 2) 位打包形态学流水线（开→闭→内部梯度）
-    precise_edge_detection_bitpacked(tmp3_bits, tmp1_bits, tmp2_bits, out_bits, width, height);
+// 适配器：对 u16 二值图进行形态学清洗（开运算+闭运算）
+void morph_clean_u16_binary_adapter(const uint16_t* RESTRICT src_u16,
+                                    int width, int height,
+                                    uint16_t* RESTRICT dst_u16) {
+    // 注意：此函数现在假定图像尺寸不超过静态缓冲区的大小
+    // (void)width; (void)height; // 在此实现中，参数仅用于接口兼容性
 
-    // 3) 解包：得到 0/0xFFFF 的 u16 边缘图
-    unpack_bits_to_binary_u16(out_bits, width, height, dst_u16, dst_stride_pixels);
+    uint32_t* packed_src = s_buf1;
+    uint32_t* tmp_buf    = s_buf2;
+    uint32_t* out_buf    = s_buf3;
+
+    pack_binary_u16_to_bits(src_u16, width, height, width, packed_src);
+    open_close_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);
+    unpack_bits_to_binary_u16(out_buf, width, height, dst_u16, width);
 }
 
-// 适配器：直接用 u8 二值输入（0/非0），输出 u8（0/0xFF）
-// 内部在栈上动态分配所需内存
-void precise_edge_detection_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
-                                              int width, int height, int src_stride_pixels,
-                                              uint8_t* RESTRICT dst_u8, int dst_stride_pixels) {
-    // 根据图像尺寸计算缓冲区大小
-    int num_words = total_words(width, height);
-    
-    // 在栈上分配所有需要的缓冲区
-    uint32_t* tmp1_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
-    uint32_t* tmp2_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
-    uint32_t* tmp3_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
-    uint32_t* out_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+// 适配器：对 u8 二值图进行形态学清洗（开运算+闭运算）
+void morph_clean_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
+                                   int width, int height,
+                                   uint8_t* RESTRICT dst_u8) {
+    // 注意：此函数现在假定图像尺寸不超过静态缓冲区的大小
+    // (void)width; (void)height; // 在此实现中，参数仅用于接口兼容性
 
-    // 1) 打包：将 0/非0 u8 压到 bit-packed（非零→1）
-    pack_binary_u8_to_bits(src_u8, width, height, src_stride_pixels, tmp3_bits);
+    uint32_t* packed_src = s_buf1;
+    uint32_t* tmp_buf    = s_buf2;
+    uint32_t* out_buf    = s_buf3;
 
-    // 2) 位打包形态学流水线（开→闭→内部梯度）
-    precise_edge_detection_bitpacked(tmp3_bits, tmp1_bits, tmp2_bits, out_bits, width, height);
-
-    // 3) 解包：得到 0/0xFF 的 u8 边缘图
-    unpack_bits_to_binary_u8(out_bits, width, height, dst_u8, dst_stride_pixels);
+    pack_binary_u8_to_bits(src_u8, width, height, width, packed_src);
+    open_close_bitpacked(packed_src, tmp_buf, out_buf, out_buf, width, height);
+    unpack_bits_to_binary_u8(out_buf, width, height, dst_u8, width);
 }

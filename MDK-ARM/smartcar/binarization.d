@@ -1,4 +1,4 @@
-smartcar/dcmi_ov2640.o: code\Src\dcmi_ov2640.c code\Inc\dcmi_ov2640.h \
+smartcar/binarization.o: code\Src\Binarization.c code\Inc\Binarization.h \
   ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -28,5 +28,7 @@ smartcar/dcmi_ov2640.o: code\Src\dcmi_ov2640.c code\Inc\dcmi_ov2640.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  code\Inc\sccb.h ..\Core\Inc\dcmi.h code\Inc\lcd_spi_200.h \
-  code\Inc\morph_binary_bitpacked.h code\Inc\dcmi_ov2640_cfg.h
+  code\Inc\type_def.h code\Inc\dcmi_ov2640.h code\Inc\sccb.h \
+  ..\Core\Inc\dcmi.h code\Inc\lcd_spi_200.h \
+  code\Inc\morph_binary_bitpacked.h code\Inc\scan_line.h \
+  code\Inc\Element_recognition.h

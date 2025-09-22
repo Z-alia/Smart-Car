@@ -74,7 +74,8 @@ void  LCD_SetDirection(uint8_t direction);  	      //	设置显示方向
 //>>>>>	批量复制函数，直接将数据复制到屏幕的显存
 void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16_t *DataBuff);
 //显示摄像头图像
-void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height,uint16_t dis_width, uint16_t dis_height,uint8_t threshold,Image *image_buf);
+void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold);
+uint16_t RGB888_to_RGB565(uint32_t Color);
 void show_ov2640_image_int8(uint16_t x, uint16_t y, const uint8_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height);
 /*--------------------------------------------- LCD其它引脚 -----------------------------------------------*/
 

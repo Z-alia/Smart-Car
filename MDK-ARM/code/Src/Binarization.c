@@ -135,21 +135,3 @@ void draw_edge()
 	//}
 }
 
-// 使用位运算形态学处理图像
-void process_image_morphology()
-{
-    // 1. 将二值化后的 Grayscale 图像打包
-    pack_binary_u16_to_bits((const uint16_t*)Grayscale, 188, 120, 188, image_buf.tmp1_bits);
-
-    // 2. 执行精确边缘检测
-    precise_edge_detection_bitpacked(
-        image_buf.tmp1_bits,
-        image_buf.tmp2_bits,
-        image_buf.tmp3_bits,
-        image_buf.out_bits,
-        188, 120
-    );
-
-    // 3. 将结果解包回 imo 图像
-    unpack_bits_to_binary_u8(image_buf.out_bits, 188, 120, (uint8_t*)image_buf.imo, 188);
-}

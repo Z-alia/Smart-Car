@@ -455,7 +455,7 @@ void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-// 函数简介     IPS200 显示 16bit 灰度图像 带二值化阈值
+// 函数简介     LCD_200 显示 16bit 灰度图像 带二值化阈值
 // 参数说明     x               坐标x方向的起点 参数范围 [0, ips200_width_max-1]
 // 参数说明     y               坐标y方向的起点 参数范围 [0, ips200_height_max-1]
 // 参数说明     *image          图像数组指针
@@ -465,7 +465,7 @@ void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16
 // 参数说明     dis_height      图像显示高度 参数范围 [0, ips200_height_max]
 // 参数说明     threshold       二值化显示阈值 0-不开启二值化
 // 返回参数     void
-// 使用示例     ips200_show_gray_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H,MT9V03X_W, MT9V03X_H, 0);
+// 使用示例     show_ov2640_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H,MT9V03X_W, MT9V03X_H, 0);
 // 备注信息     用于显示摄像头的图像
 //              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
 //              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
@@ -521,6 +521,7 @@ uint16_t RGB888_to_RGB565(uint32_t Color)
 	
 	return Final_Color;	
 }
+
 // 函数简介     LCD200 显示 8bit 调试图像 带二值化阈值
 void show_ov2640_image_int8(uint16_t x, uint16_t y, const uint8_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height)
 {

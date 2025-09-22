@@ -139,11 +139,14 @@ int main(void)
 			/* 二值化 */
 			Binarization();
 			
+      //洗图、提取边缘
+      morph_clean_u8_binary_adapter(Grayscale[0], Display_Width, Display_Height, imo[0]);
+
 			/* 扫描赛道边线 */
-			scan_line();
+			//scan_line();
 			
 			/* 在图像上绘制出赛道边线 */
-			draw_edge();
+			//draw_edge();
 			
 			/* 显示摄像头图像 */
 			//显示原图像

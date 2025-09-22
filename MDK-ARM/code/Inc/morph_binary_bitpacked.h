@@ -58,23 +58,22 @@ void dilate3x3_bitpacked(const uint32_t* src_bits, uint32_t* dst_bits, int width
 void internal_gradient_bitpacked(const uint32_t* clean_bits, const uint32_t* eroded_bits,
                                  uint32_t* output_bits, int width, int height);
 
-/* 高层流水线：开(腐->膨) → 闭(膨->腐) → 内部梯度（输出单像素边缘） */
-void precise_edge_detection_bitpacked(const uint32_t* src_bits,
-                                      uint32_t* tmp1_bits,
-                                      uint32_t* tmp2_bits,
-                                      uint32_t* out_bits,
-                                      int width, int height);
+/* 高层流水线：开(腐->膨) → 闭(膨->腐) */
+void open_close_bitpacked(const uint32_t* src_bits,
+                          uint32_t* tmp1_bits,
+                          uint32_t* tmp2_bits,
+                          uint32_t* out_bits,
+                          int width, int height);
 
+/* 适配器：对 u16 二值图进行形态学清洗（开运算+闭运算） */
+void morph_clean_u16_binary_adapter(const uint16_t* src_u16,
+                                    int width, int height,
+                                    uint16_t* dst_u16);
 
-/* 适配器：直接以 u16 二值输入，输出 u16（0/0xFFFF） */
-void precise_edge_detection_u16_binary_adapter(const uint16_t* src_u16,
-                                               int width, int height, int src_stride_pixels,
-                                               uint16_t* dst_u16, int dst_stride_pixels);
-
-/* 适配器：直接以 u8 二值输入，输出 u8（0/0xFF） */
-void precise_edge_detection_u8_binary_adapter(const uint8_t* src_u8,
-                                              int width, int height, int src_stride_pixels,
-                                              uint8_t* dst_u8, int dst_stride_pixels);
+/* 适配器：对 u8 二值图进行形态学清洗（开运算+闭运算） */
+void morph_clean_u8_binary_adapter(const uint8_t* src_u8,
+                                   int width, int height,
+                                   uint8_t* dst_u8);
 
 #ifdef __cplusplus
 }

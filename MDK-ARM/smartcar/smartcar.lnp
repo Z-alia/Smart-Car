@@ -31,11 +31,13 @@
 "smartcar\stm32h7xx_hal_tim_ex.o"
 "smartcar\system_stm32h7xx.o"
 "smartcar\dcmi_ov2640.o"
-"smartcar\lcd_fonts.o"
-"smartcar\lcd_image.o"
 "smartcar\lcd_spi_200.o"
 "smartcar\motor.o"
 "smartcar\sccb.o"
+"smartcar\binarization.o"
+"smartcar\element_recognition.o"
+"smartcar\morph_binary_bitpacked.o"
+"smartcar\scan_line.o"
 --strict --scatter "smartcar\smartcar.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
