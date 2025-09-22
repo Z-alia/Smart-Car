@@ -28,7 +28,9 @@
 /* USER CODE BEGIN Includes */
 #include "lcd_spi_200.h"
 #include "dcmi_ov2640.h"
+#include "Binarization.h"
 #include "morph_binary_bitpacked.h"
+#include "element_recognition.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -117,10 +119,37 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-			  	if (DCMI_FrameState == 1)	
+	  	if (DCMI_FrameState == 1)	// 采集到了一帧图像
 		{
-			DCMI_FrameState = 0;	
-			show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 100, &image_buf);
+			DCMI_FrameState = 0;		// 清零标志位
+			
+			/* 大津法计算二值化阈值 */
+			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
+			
+			/* 二值化阈值限幅 */
+			if(watch.threshold>120)
+			{
+				watch.threshold=120;
+			}
+			else if(watch.threshold<80)
+			{
+				watch.threshold=80;
+			}
+			
+			/* 二值化 */
+			Binarization();
+			
+			/* 扫描赛道边线 */
+			scan_line();
+			
+			/* 在图像上绘制出赛道边线 */
+			draw_edge();
+			
+			/* 显示摄像头图像 */
+			//显示原图像
+			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
+			//显示二值化扫线图
+			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
 		}
     /* USER CODE END WHILE */
 

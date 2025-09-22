@@ -38,6 +38,28 @@ void pack_binary_u16_to_bits(const uint16_t* RESTRICT src, int width, int height
     }
 }
 
+// 将 u8 二值图打包到位域：非零即 1（bit=1 表前景）
+void pack_binary_u8_to_bits(const uint8_t* RESTRICT src, int width, int height, int src_stride_pixels,
+                            uint32_t* RESTRICT dst_bits) {
+    int wpw = words_per_row(width);
+    uint32_t tail = last_word_mask(width);
+    for (int y = 0; y < height; y++) {
+        const uint8_t* s = src + (size_t)y * src_stride_pixels;
+        uint32_t* d = dst_bits + (size_t)y * wpw;
+        int x = 0; // 当前像素索引
+        for (int i = 0; i < wpw; i++) {
+            uint32_t w = 0;
+            // 将连续 32 个像素压成一个 32 位 word
+            for (int b = 0; b < 32 && x < width; b++, x++) {
+                if (s[x]) w |= (1u << b);  // 非零即前景 1
+            }
+            d[i] = w;
+        }
+        // 清除行尾无效位，避免后续位运算引入假信号
+        d[wpw - 1] &= tail;
+    }
+}
+
 // 将位域解包为 u16：bit=1 → 0xFFFF，bit=0 → 0
 void unpack_bits_to_binary_u16(const uint32_t* RESTRICT src_bits, int width, int height,
                                uint16_t* RESTRICT dst, int dst_stride_pixels) {
@@ -50,6 +72,23 @@ void unpack_bits_to_binary_u16(const uint32_t* RESTRICT src_bits, int width, int
             uint32_t w = s[i];
             for (int b = 0; b < 32 && x < width; b++, x++) {
                 d[x] = (w & (1u << b)) ? 0xFFFFu : 0u;
+            }
+        }
+    }
+}
+
+// 将位域解包为 u8：bit=1 → 0xFF，bit=0 → 0
+void unpack_bits_to_binary_u8(const uint32_t* RESTRICT src_bits, int width, int height,
+                              uint8_t* RESTRICT dst, int dst_stride_pixels) {
+    int wpw = words_per_row(width);
+    for (int y = 0; y < height; y++) {
+        const uint32_t* s = src_bits + (size_t)y * wpw;
+        uint8_t* d = dst + (size_t)y * dst_stride_pixels;
+        int x = 0;
+        for (int i = 0; i < wpw; i++) {
+            uint32_t w = s[i];
+            for (int b = 0; b < 32 && x < width; b++, x++) {
+                d[x] = (w & (1u << b)) ? 0xFFu : 0u;
             }
         }
     }
@@ -206,14 +245,19 @@ void precise_edge_detection_bitpacked(const uint32_t* RESTRICT src_bits,
 }
 
 // 适配器：直接用 u16 二值输入（0/非0），输出 u16（0/0xFFFF）
-// 内部流程：打包 → 形态学流水线 → 解包
+// 内部在栈上动态分配所需内存
 void precise_edge_detection_u16_binary_adapter(const uint16_t* RESTRICT src_u16,
                                                int width, int height, int src_stride_pixels,
-                                               uint16_t* RESTRICT dst_u16, int dst_stride_pixels,
-                                               uint32_t* RESTRICT tmp1_bits,
-                                               uint32_t* RESTRICT tmp2_bits,
-                                               uint32_t* RESTRICT tmp3_bits,
-                                               uint32_t* RESTRICT out_bits) {
+                                               uint16_t* RESTRICT dst_u16, int dst_stride_pixels) {
+    // 根据图像尺寸计算缓冲区大小
+    int num_words = total_words(width, height);
+    
+    // 在栈上分配所有需要的缓冲区
+    uint32_t* tmp1_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+    uint32_t* tmp2_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+    uint32_t* tmp3_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+    uint32_t* out_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+
     // 1) 打包：将 0/非0 u16 压到 bit-packed（非零→1）
     pack_binary_u16_to_bits(src_u16, width, height, src_stride_pixels, tmp3_bits);
 
@@ -224,25 +268,26 @@ void precise_edge_detection_u16_binary_adapter(const uint16_t* RESTRICT src_u16,
     unpack_bits_to_binary_u16(out_bits, width, height, dst_u16, dst_stride_pixels);
 }
 
-// 适配器：支持 Image 结构体
-void precise_edge_detection_image_adapter(Image* image_buf, int width, int height) {
-    // 直接使用结构体内的缓冲区，无需外部传入
-    precise_edge_detection_u16_binary_adapter(
-        &image_buf->original_image[0][0],  // 输入：original_image
-        width, height, width,              // 输入参数
-        &image_buf->output_image[0][0],    // 输出：output_image
-        width,                             // 输出步长
-        image_buf->tmp1_bits,              // 使用内置缓冲区1
-        image_buf->tmp2_bits,              // 使用内置缓冲区2
-        image_buf->tmp3_bits,              // 使用内置缓冲区3
-        image_buf->out_bits                // 使用内置输出缓冲区
-    );
-}
+// 适配器：直接用 u8 二值输入（0/非0），输出 u8（0/0xFF）
+// 内部在栈上动态分配所需内存
+void precise_edge_detection_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
+                                              int width, int height, int src_stride_pixels,
+                                              uint8_t* RESTRICT dst_u8, int dst_stride_pixels) {
+    // 根据图像尺寸计算缓冲区大小
+    int num_words = total_words(width, height);
+    
+    // 在栈上分配所有需要的缓冲区
+    uint32_t* tmp1_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+    uint32_t* tmp2_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+    uint32_t* tmp3_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
+    uint32_t* out_bits = (uint32_t*)alloca(num_words * sizeof(uint32_t));
 
+    // 1) 打包：将 0/非0 u8 压到 bit-packed（非零→1）
+    pack_binary_u8_to_bits(src_u8, width, height, src_stride_pixels, tmp3_bits);
 
-//句柄初始化
-void image_process_init(Image *image)
-{
-    memset(image, 0, sizeof(Image));
+    // 2) 位打包形态学流水线（开→闭→内部梯度）
+    precise_edge_detection_bitpacked(tmp3_bits, tmp1_bits, tmp2_bits, out_bits, width, height);
+
+    // 3) 解包：得到 0/0xFF 的 u8 边缘图
+    unpack_bits_to_binary_u8(out_bits, width, height, dst_u8, dst_stride_pixels);
 }
-Image image_buf;
