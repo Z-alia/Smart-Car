@@ -93,7 +93,7 @@ int main(void)
   /* USER CODE BEGIN Init */
   MotorSpeed motor_speed={0};
   LCD_SetAsciiFont(&ASCII_Font20);      // 设置字体（可选，根据你的字体库）
-LCD_ShowNumMode(Fill_Zero);           // 设置多余位补0（可选，Fill_Space 为补空格）
+LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Space 为补空格）
 
   /* USER CODE END Init */
 
@@ -160,13 +160,13 @@ LCD_ShowNumMode(Fill_Zero);           // 设置多余位补0（可选，Fill_Spa
 			/* 显示摄像头图像 */
 			//显示原图像
 			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
-			//显示二值化扫线图
-      LCD_DisplayNumber( 250, 250, motor_speed.motor_speed_left, 5);
+			//显示二值化扫线图;
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
 		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    LCD_DisplayNumber( 250, 250, motor_speed.motor_speed_left, 5);
   }
   /* USER CODE END 3 */
 }
