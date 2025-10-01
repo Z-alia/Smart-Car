@@ -1,5 +1,5 @@
-base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+smartcar/encoder.o: code\Src\encoder.c code\Inc\encoder.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -27,16 +27,4 @@ base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  ..\Core\Inc\dcmi.h ..\Core\Inc\dma.h ..\Core\Inc\spi.h \
-<<<<<<< Updated upstream:MDK-ARM/base_project/main.d
-  ..\Core\Inc\tim.h ..\Core\Inc\gpio.h inc\lcd_spi_200.h inc\lcd_fonts.h \
-  inc\lcd_image.h inc\image_process.h inc\global.h inc\dcmi_ov2640.h \
-  inc\sccb.h
-=======
-  ..\Core\Inc\tim.h ..\Core\Inc\gpio.h code\Inc\lcd_spi_200.h \
-  code\Inc\morph_binary_bitpacked.h code\Inc\dcmi_ov2640.h \
-  code\Inc\sccb.h code\Inc\Binarization.h code\Inc\type_def.h \
-  code\Inc\element_recognition.h code\Inc\scan_line.h code\Inc\encoder.h \
-  code\Inc\motor.h
->>>>>>> Stashed changes:MDK-ARM/smartcar/main.d
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h

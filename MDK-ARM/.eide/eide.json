@@ -1,5 +1,9 @@
 {
+<<<<<<< Updated upstream
   "name": "base_project",
+=======
+  "name": "SMARTCAR",
+>>>>>>> Stashed changes
   "type": "ARM",
   "dependenceList": [],
   "srcDirs": [],
@@ -143,6 +147,7 @@
         ]
       },
       {
+<<<<<<< Updated upstream
         "name": "New Group",
         "files": [
           {
@@ -186,6 +191,36 @@
           },
           {
             "path": "src/sccb.c"
+=======
+        "name": "code",
+        "files": [
+          {
+            "path": "code/Src/dcmi_ov2640.c"
+          },
+          {
+            "path": "code/Src/lcd_spi_200.c"
+          },
+          {
+            "path": "code/Src/motor.c"
+          },
+          {
+            "path": "code/Src/sccb.c"
+          },
+          {
+            "path": "code/Src/Binarization.c"
+          },
+          {
+            "path": "code/Src/Element_recognition.c"
+          },
+          {
+            "path": "code/Src/morph_binary_bitpacked.c"
+          },
+          {
+            "path": "code/Src/scan_line.c"
+          },
+          {
+            "path": "code/Src/encoder.c"
+>>>>>>> Stashed changes
           }
         ],
         "folders": []
@@ -204,7 +239,11 @@
     "uid": "eb8c26c11975fcef782b69e88a41ff0e"
   },
   "targets": {
+<<<<<<< Updated upstream
     "base_project": {
+=======
+    "smartcar": {
+>>>>>>> Stashed changes
       "excludeList": [],
       "toolchain": "AC6",
       "compileConfig": {
@@ -213,6 +252,10 @@
         "floatingPointHardware": "double",
         "scatterFilePath": "",
         "useCustomScatterFile": false,
+<<<<<<< Updated upstream
+=======
+        "scatterFilePath": "",
+>>>>>>> Stashed changes
         "storageLayout": {
           "RAM": [
             {
@@ -343,9 +386,15 @@
           "../Drivers/CMSIS/Device/ST/STM32H7xx/Include",
           "../Drivers/CMSIS/Include",
           "../Middlewares/ST/ARM/DSP/Inc",
+<<<<<<< Updated upstream
           "inc",
           ".cmsis/include",
           "RTE/_base_project"
+=======
+          "code/Inc",
+          ".cmsis/include",
+          "RTE/_smartcar"
+>>>>>>> Stashed changes
         ],
         "libList": [],
         "defineList": [

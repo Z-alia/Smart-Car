@@ -611,6 +611,7 @@
           <GroupName>New Group</GroupName>
           <Files>
             <File>
+<<<<<<< Updated upstream:MDK-ARM/base_project.uvprojx
               <FileName>dcmi_ov2640.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\dcmi_ov2640.h</FilePath>
@@ -652,6 +653,29 @@
             </File>
             <File>
               <FileName>dcmi_ov2640.c</FileName>
+=======
+              <FileName>dcmi_ov2640.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\dcmi_ov2640.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_spi_200.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\lcd_spi_200.c</FilePath>
+            </File>
+            <File>
+              <FileName>motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>sccb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\sccb.c</FilePath>
+            </File>
+            <File>
+              <FileName>Binarization.c</FileName>
+>>>>>>> Stashed changes:MDK-ARM/SMARTCAR.uvprojx
               <FileType>1</FileType>
               <FilePath>.\src\dcmi_ov2640.c</FilePath>
             </File>
@@ -679,6 +703,11 @@
               <FileName>sccb.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\sccb.c</FilePath>
+            </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\encoder.c</FilePath>
             </File>
           </Files>
         </Group>
