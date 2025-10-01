@@ -47,7 +47,7 @@ MotorSpeed motor_speed;
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+  uint16_t a=0;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -166,7 +166,7 @@ LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Sp
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    LCD_DisplayNumber( 250, 250, motor_speed.motor_speed_left, 5);
+    LCD_DisplayNumber( 250, 250, a, 5);
   }
   /* USER CODE END 3 */
 }
@@ -246,7 +246,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
         // 2. 计算速度 修正溢出 更新上一次的计数值
         Encoder_Correct(&motor_speed);
-
+        a++;
         // 3. 调用电机PID控制函数
     }
 }
