@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "stm32h7xx_hal.h"
 #include "morph_binary_bitpacked.h"
+#include "lcd_fonts.h"
 /*----------------------------------------------- 参数宏 -------------------------------------------*/
 
 #define LCD_Width     240		// LCD的像素长度
@@ -77,6 +78,14 @@ void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16
 void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold);
 uint16_t RGB888_to_RGB565(uint32_t Color);
 void show_ov2640_image_int8(uint16_t x, uint16_t y, const uint8_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height);
+
+void LCD_SetAsciiFont(pFONT *Asciifonts);
+void LCD_DisplayChar(uint16_t x, uint16_t y,uint8_t c);
+void LCD_DisplayString( uint16_t x, uint16_t y, char *p);
+void LCD_ShowNumMode(uint8_t mode);
+void  LCD_DisplayNumber( uint16_t x, uint16_t y, int32_t number, uint8_t len);
+void  LCD_DisplayDecimals( uint16_t x, uint16_t y, double decimals, uint8_t len, uint8_t decs);
+
 /*--------------------------------------------- LCD其它引脚 -----------------------------------------------*/
 
 #define  LCD_Backlight_PIN								GPIO_PIN_15				         // 背光  引脚				

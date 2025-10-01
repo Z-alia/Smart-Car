@@ -190,7 +190,7 @@
               "tag": "IROM",
               "id": 1,
               "mem": {
-                "startAddr": "0x8000000",
+                "startAddr": "0x80000000",
                 "size": "0x20000"
               },
               "isChecked": true,
@@ -207,7 +207,7 @@
         "resetMode": "default",
         "runAfterProgram": true,
         "speed": 4000,
-        "address": "0x8000000",
+        "address": "0x80000000",
         "elFile": "None",
         "optionBytes": ".eide/smartcar.st.option.bytes.ini",
         "otherCmds": ""

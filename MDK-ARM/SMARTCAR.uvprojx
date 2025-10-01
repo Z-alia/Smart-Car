@@ -581,36 +581,6 @@
               <FilePath>.\code\Src\sccb.c</FilePath>
             </File>
             <File>
-              <FileName>dcmi_ov2640.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\code\Inc\dcmi_ov2640.h</FilePath>
-            </File>
-            <File>
-              <FileName>dcmi_ov2640_cfg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\code\Inc\dcmi_ov2640_cfg.h</FilePath>
-            </File>
-            <File>
-              <FileName>encoder.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\code\Inc\encoder.h</FilePath>
-            </File>
-            <File>
-              <FileName>lcd_spi_200.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\code\Inc\lcd_spi_200.h</FilePath>
-            </File>
-            <File>
-              <FileName>motor.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\code\Inc\motor.h</FilePath>
-            </File>
-            <File>
-              <FileName>sccb.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\code\Inc\sccb.h</FilePath>
-            </File>
-            <File>
               <FileName>Binarization.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\code\Src\Binarization.c</FilePath>
@@ -629,6 +599,16 @@
               <FileName>scan_line.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\code\Src\scan_line.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_fonts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\lcd_fonts.c</FilePath>
+            </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\encoder.c</FilePath>
             </File>
           </Files>
         </Group>

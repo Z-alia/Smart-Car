@@ -32,11 +32,12 @@
 #include "morph_binary_bitpacked.h"
 #include "element_recognition.h"
 #include "scan_line.h"
+#include "encoder.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+MotorSpeed motor_speed;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -90,7 +91,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  MotorSpeed motor_speed={0};
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -114,6 +115,10 @@ int main(void)
 	LCD_Init();
 	OV2640_Init();	
 	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	
+	HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
+	HAL_TIM_Base_Start_IT(&htim6);
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -154,6 +159,7 @@ int main(void)
 			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 			//显示二值化扫线图
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
+		  LCD_DisplayNumber( 200, 200, motor_speed.motor_speed_left, 5);
 		}
     /* USER CODE END WHILE */
 
@@ -226,7 +232,21 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+ if (htim->Instance == TIM6)
+    {
+        //每 10ms 执行
 
+        // 1. 读取编码器当前计数值
+        motor_speed.encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
+        motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
+        // 2. 计算速度 修正溢出 更新上一次的计数值
+        Encoder_Correct(&motor_speed);
+
+        // 3. 调用电机PID控制函数
+    }
+}
 /* USER CODE END 4 */
 
 /**

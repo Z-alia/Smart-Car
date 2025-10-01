@@ -38,6 +38,8 @@
 "smartcar\element_recognition.o"
 "smartcar\morph_binary_bitpacked.o"
 "smartcar\scan_line.o"
+"smartcar\lcd_fonts.o"
+"smartcar\encoder.o"
 --strict --scatter "smartcar\smartcar.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

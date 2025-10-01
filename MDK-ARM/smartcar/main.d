@@ -30,6 +30,7 @@ smartcar/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Core\Inc\dcmi.h ..\Core\Inc\dma.h ..\Core\Inc\spi.h \
   ..\Core\Inc\tim.h ..\Core\Inc\gpio.h code\Inc\lcd_spi_200.h \
-  code\Inc\morph_binary_bitpacked.h code\Inc\dcmi_ov2640.h \
-  code\Inc\sccb.h code\Inc\Binarization.h code\Inc\type_def.h \
-  code\Inc\element_recognition.h code\Inc\scan_line.h
+  code\Inc\morph_binary_bitpacked.h code\Inc\lcd_fonts.h \
+  code\Inc\dcmi_ov2640.h code\Inc\sccb.h code\Inc\Binarization.h \
+  code\Inc\type_def.h code\Inc\element_recognition.h \
+  code\Inc\scan_line.h code\Inc\encoder.h
