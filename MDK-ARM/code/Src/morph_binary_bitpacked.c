@@ -103,11 +103,17 @@ static inline void clear_borders_bitpacked_row(uint32_t* rowWords, int width, in
         return;
     }
     // 清最左列 bit0
-    rowWords[0] &= ~1u;
-    // 清最右列 bit(width-1)
+    //rowWords[0] &= ~1u;
+    // 复制最左列 bit0
+    rowWords[0] |= (rowWords[0] >> 1) & 1u;
+    // 每行最右压缩word索引
     int lastIdx = wpw - 1;
+    //最右像素在压缩word内索引
     int bitPos = (width - 1) & 31;
-    rowWords[lastIdx] &= ~(1u << bitPos);
+    // 清最右列
+    //rowWords[lastIdx] &= ~(1u << bitPos);
+    // 复制最右列 bit(width-1)
+    rowWords[lastIdx] |= (rowWords[lastIdx]  & (1u << (bitPos-1))<<1);
 }
 
 // 3×3 腐蚀（位打包版）
