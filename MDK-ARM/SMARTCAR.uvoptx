@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>smartcar</TargetName>
+    <TargetName>SMARTCAR</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -103,7 +103,7 @@
         <bEvRecOn>1</bEvRecOn>
         <bSchkAxf>0</bSchkAxf>
         <bTchkAxf>0</bTchkAxf>
-        <nTsel>6</nTsel>
+        <nTsel>5</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -667,7 +667,7 @@
       <GroupNumber>5</GroupNumber>
       <FileNumber>38</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\code\Src\morph_binary_bitpacked.c</PathWithFileName>
@@ -691,7 +691,7 @@
       <GroupNumber>5</GroupNumber>
       <FileNumber>40</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\code\Src\lcd_fonts.c</PathWithFileName>
@@ -703,7 +703,7 @@
       <GroupNumber>5</GroupNumber>
       <FileNumber>41</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\code\Src\encoder.c</PathWithFileName>

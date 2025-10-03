@@ -33,4 +33,5 @@ smartcar/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   code\Inc\morph_binary_bitpacked.h code\Inc\lcd_fonts.h \
   code\Inc\dcmi_ov2640.h code\Inc\sccb.h code\Inc\Binarization.h \
   code\Inc\type_def.h code\Inc\element_recognition.h \
-  code\Inc\scan_line.h code\Inc\encoder.h
+  code\Inc\scan_line.h code\Inc\encoder.h code\Inc\ec11.h \
+  ..\Core\Inc\stm32h7xx_it.h code\Inc\motor.h

@@ -33,6 +33,8 @@
 #include "element_recognition.h"
 #include "scan_line.h"
 #include "encoder.h"
+#include "ec11.h"
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,12 +44,12 @@ MotorSpeed motor_speed;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+void take_image(struct watch_o *watch,PIDController* pid);
+uint8_t flag=0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-  uint16_t a=0;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -91,9 +93,8 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  MotorSpeed motor_speed={0};
-  LCD_SetAsciiFont(&ASCII_Font20);      // 设置字体（可选，根据你的字体库）
-LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Space 为补空格）
+  LCD_SetAsciiFont(&ASCII_Font20);      // 设置字体
+  LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Space 为补空格）
 
   /* USER CODE END Init */
 
@@ -121,13 +122,27 @@ LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Sp
 	HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim6);
+	pid_init(&PID,0.9,0,0.2);//直线pid
+	pid_init(&PID_curve,2,0,0.2);//弯道pid
+	motor_init();
+	Clear_Recognition_Flag(&watch);
+	//调参阶段while
 	
+	while(1)
+	{
+		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4)==GPIO_PIN_RESET)
+			break;
+	}
+	HAL_TIM_Base_Start_IT(&htim7);
+	//HAL_Delay(5000);
+	HAL_TIM_Base_Start_IT(&htim7);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  //pid_calculate(&PID);
 	  	if (DCMI_FrameState == 1)	// 采集到了一帧图像
 		{
 			DCMI_FrameState = 0;		// 清零标志位
@@ -140,9 +155,9 @@ LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Sp
 			{
 				watch.threshold=200;
 			}
-			else if(watch.threshold<80)
+			else if(watch.threshold<150)//将80改为130
 			{
-				watch.threshold=80;
+				watch.threshold=150;
 			}
 			
 			/* 二值化 */
@@ -166,7 +181,13 @@ LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Sp
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    LCD_DisplayNumber( 250, 250, a, 5);
+    LCD_DisplayNumber( 250, 250, watch.Curve_flag, 5);
+	LCD_DisplayNumber( 250, 270, watch.Curve_left_flag, 5);
+	LCD_DisplayNumber( 250, 290, watch.Curve_right_flag, 5);
+	LCD_DisplayNumber( 250, 310, watch.Straight_flag, 5);
+	LCD_DisplayNumber( 250, 330, (int16_t)PID.error, 5);
+	LCD_DisplayNumber( 250, 350, watch.threshold, 5);
+		
   }
   /* USER CODE END 3 */
 }
@@ -242,14 +263,50 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         //每 10ms 执行
 
         // 1. 读取编码器当前计数值
-        motor_speed.encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
-        motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
+        //motor_speed.encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
+        //motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
         // 2. 计算速度 修正溢出 更新上一次的计数值
-        Encoder_Correct(&motor_speed);
-        a++;
+        //Encoder_Correct(&motor_speed);
         // 3. 调用电机PID控制函数
+		if(watch.Straight_flag==1)
+	straight_error_get(&PID,lineinfo);
+	else if(watch.Curve_flag==1)
+		straight_error_get(&PID_curve,lineinfo);
+		
+		
+		//4.赛道识别
+		Island_loop_and_curve_recognition(&watch,lineinfo);
+		//Cross_recognition(&watch,lineinfo);
+		
     }
+if (htim->Instance == TIM7)
+{
+	if(watch.Straight_flag==1)
+	run_follow(&PID);//电机注释，调试图像
+	else if(watch.Curve_flag==1)
+		motor_follow_line_curve(&PID_curve);
+		
+	//motor_run(&rightmotor,100);//电机测试
+	Straight_recognition(&watch,lineinfo);
+	take_image(&watch,&PID_curve);
+	
 }
+
+}
+
+void take_image(struct watch_o *watch,PIDController* pid)
+{
+	if(watch->Curve_flag==1&&pid->error>=15)
+	{
+		
+		if(watch->Curve_left_flag==1)
+			motor_turnright();
+		else if(watch->Curve_right_flag==1)
+			motor_turnleft();
+	 
+	}
+}
+
 /* USER CODE END 4 */
 
 /**

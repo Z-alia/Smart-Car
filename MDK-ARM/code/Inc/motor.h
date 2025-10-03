@@ -1,6 +1,7 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
 #include "stdint.h"
+#include "scan_line.h"
 // PID控制结构体
 typedef struct {
     volatile float kp;           // 比例系数
@@ -15,11 +16,14 @@ typedef struct {
     float output_limit;          // 输出限幅
 } PIDController;
 
+extern PIDController PID;
+extern PIDController PID_curve;
+
 // 单电机控制结构体
 typedef struct {
-    volatile int16_t speed;     // 速度  这里的速度储存编码器测速值 其实暂时没什么用 后面可以试试与target_speed做差进行分段速度变化
+    volatile int32_t speed;     // 速度  这里的速度储存编码器测速值 其实暂时没什么用 后面可以试试与target_speed做差进行分段速度变化
     volatile uint8_t dir;      // 方向（1正,0反）
-    volatile int16_t target_speed;   // 目标速度  目标速度用于接收pid系统返值并传参给电机控制函数
+    volatile int32_t target_speed;   // 目标速度  目标速度用于接收pid系统返值并传参给电机控制函数
     uint8_t lor;                // 左或右电机标识（0左,1右）
 } Motor;
 
@@ -27,13 +31,16 @@ typedef struct {
 void pid_init(PIDController* pid, float kp, float ki, float kd);
 
 //pid计算
-float pid_calculate(PIDController* pid, float setpoint, float feedback);
+float pid_calculate(PIDController* pid);
 
 // 初始化电机驱动
 void motor_init(void);
 
 // 控制电机运行 (speed: -1000 to 1000)
-void motor_run(Motor *motor_ptr, int16_t speed);
+void motor_run(Motor *motor_ptr, int32_t speed);
+
+//pid循迹
+void run_follow(PIDController* pid);
 
 //左转
 void motor_turnleft(void);
@@ -48,9 +55,13 @@ void motor_coast(void);
 void motor_stop(void);
 
 //循迹
-void motor_follow_line(void);
+//void motor_follow_line_straight(PIDController* pid);
+void motor_follow_line_curve(PIDController* pid);
+
+void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[]);
 
 extern Motor leftmotor;
 extern Motor rightmotor;
+extern volatile int32_t delta_v;
 
 #endif /* __MOTOR_H */

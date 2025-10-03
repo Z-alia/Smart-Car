@@ -2,6 +2,8 @@
 #define ELEMENT_RECOGNITION_H_
 #include "main.h"
 #include "type_def.h"
+#include "scan_line.h"
+
 
 //祖传摄像头处理代码的结构体，里面主要是摄像头识别的赛道信息，后续可以在此添加自己的代码
 struct watch_o
@@ -22,8 +24,26 @@ struct watch_o
 
 	/* 斑马线相关 */
     int ZebraInLine;
+
+    /* 赛道类型标志位 */
+    uint8_t Straight_flag;	//直道标志位
+    uint8_t Curve_right_flag;	//右弯道标志位
+    uint8_t Curve_left_flag;	//左弯道标志位
+    uint8_t Curve_flag;		//弯道标志位
+    uint8_t Cross_flag;		//十字路口标志位
+    uint8_t Crossroads_flag;	//环岛标志位
 };
 
 extern struct watch_o watch;
+
+void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
+void Clear_Recognition_Flag(struct watch_o *watch);
+void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
+void Cross_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
+/*
+void Island_loop_and_curve_recognition(struct watch_o *watch);
+void Cross_recognition(struct watch_o *watch);
+void Straight_recognition(struct watch_o *watch);
+void Clear_Recognition_Flag(struct watch_o *watch);*/
 
 #endif /* CODE_CAMERA_PROCESS_ELEMENT_RECOGNITION_H_ */

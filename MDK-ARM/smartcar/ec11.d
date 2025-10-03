@@ -1,5 +1,5 @@
-smartcar/motor.o: code\Src\motor.c code\Inc\motor.h code\Inc\scan_line.h \
-  ..\Core\Inc\main.h ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
+smartcar/ec11.o: code\Src\ec11.c ..\Core\Inc\stm32h7xx_it.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h \
@@ -28,4 +28,4 @@ smartcar/motor.o: code\Src\motor.c code\Inc\motor.h code\Inc\scan_line.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  code\Inc\type_def.h ..\Core\Inc\tim.h code\Inc\Binarization.h
+  code\Inc\ec11.h
