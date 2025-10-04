@@ -94,7 +94,7 @@ void unpack_bits_to_binary_u8(const uint32_t* RESTRICT src_bits, int width, int 
     }
 }
 
-// 复制（可改清除）边界一圈像素（防止 3×3 核在边缘处因外部隐含 0/复制策略不同导致伪影）
+// 清除边界一圈像素（防止 3×3 核在边缘处因外部隐含 0/复制策略不同导致伪影）
 // - 顶/底行：整行置零
 // - 中间行：清最左列与最右列的 1 个像素位
 static inline void clear_borders_bitpacked_row(uint32_t* rowWords, int width, int wpw, int isTopOrBottom) {
@@ -102,17 +102,12 @@ static inline void clear_borders_bitpacked_row(uint32_t* rowWords, int width, in
         memset(rowWords, 0, (size_t)wpw * sizeof(uint32_t));
         return;
     }
-    // 左边：把 bit1 复制到 bit0
-    rowWords[0] = (rowWords[0] & ~1u) | ((rowWords[0] >> 1) & 1u);
-
-    // 右边：复制 (bitPos-1) 到 bitPos
-    int lastIdx = wpw - 1;              // 最后一段 word 下标
-    int bitPos  = (width - 1) & 31;     // 最后一个有效像素在该 word 的 bit 位置
-    uint32_t w  = rowWords[lastIdx];
-    uint32_t nb = (w >> (bitPos - 1)) & 1u; // 右列要复制的邻居位
-    w &= ~(1u << bitPos);                    // 先清目标位
-    w |= nb << bitPos;                       // 再写入复制位
-    rowWords[lastIdx] = w;
+    // 清最左列 bit0
+    rowWords[0] &= ~1u;
+    // 清最右列 bit(width-1)
+    int lastIdx = wpw - 1;
+    int bitPos = (width - 1) & 31;
+    rowWords[lastIdx] &= ~(1u << bitPos);
 }
 
 // 3×3 腐蚀（位打包版）
