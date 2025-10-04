@@ -13,8 +13,8 @@
 #define weight_dw 0.4
 PIDController PID;
 PIDController PID_curve;
-Motor leftmotor={0, 1, 0, 0};
-Motor rightmotor={0, 1, 0, 1};
+Motor leftmotor={0, 1, 0, 1};
+Motor rightmotor={0, 0, 0, 0};
 
 //pid控制器初始化
 void pid_init(PIDController* pid, float kp, float ki, float kd) {
@@ -56,7 +56,7 @@ float pid_calculate(PIDController* pid) {
 void motor_init(void)
 {
     // 初始化电机控制引脚
-    HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin, GPIO_PIN_SET);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
@@ -64,49 +64,48 @@ void motor_init(void)
 }
 
 // 控制单个电机运行 (speed: -1000 to 1000)
+// 通道：ch1左 ch2右
 void motor_run(Motor *motor_ptr, int32_t speed)
 {
     if ((speed<-1000)||(speed>1000))
         return;
     motor_ptr->speed = speed;
-    if(motor_ptr->lor == 0) // 左电机
-    {
-        if(speed >= 0)
-        {
-            motor_ptr->dir = 1; // 正转
-            HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
-            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, speed);
-        }
-        else if(speed < 0)
-        {
-            motor_ptr->dir = 0; // 反转
-            speed = -speed;
-            HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_SET);
-            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, speed);
-        }
-    }
-    else // 右电机
+    if(motor_ptr->lor == 0) // 右电机
     {
         if(speed >= 0)
         {
             motor_ptr->dir = 1; // 正转
             HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin, GPIO_PIN_SET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, speed);
+        }
+        else if(speed < 0)
+        {
+            motor_ptr->dir = 0; // 反转
+            HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin, GPIO_PIN_RESET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, -speed);
+        }
+    }
+    else if(motor_ptr->lor == 1) // 左电机
+    {
+        if(speed >= 0)
+        {
+            motor_ptr->dir = 1; // 正转
+            HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_RESET);
             __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, speed);
         }
         else if(speed < 0)
         {
             motor_ptr->dir = 0; // 反转
-            speed = -speed;
-            HAL_GPIO_WritePin(GPIOB, MOTOR_RIGHT_DIRE_Pin, GPIO_PIN_RESET);
-            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, speed);
+            HAL_GPIO_WritePin(GPIOB, MOTOR_LEFT_DIRE_Pin, GPIO_PIN_SET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, -speed);
         }
     }
 }
 
 void run_follow(PIDController* pid)
 {
-	motor_run(&leftmotor,tgtspd-pid_calculate(pid));
-	motor_run(&rightmotor,tgtspd+pid_calculate(pid));
+	motor_run(&leftmotor,tgtspd+pid_calculate(pid)/2);
+	motor_run(&rightmotor,tgtspd-pid_calculate(pid)/2);
 }
 
 //左转
@@ -166,6 +165,6 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[])
 void motor_follow_line_curve(PIDController* pid)
 {
 	motor_stop();
-	motor_run(&leftmotor,tgtspd_curve-pid_calculate(pid));
-	motor_run(&rightmotor,tgtspd_curve+pid_calculate(pid));
+	motor_run(&leftmotor,tgtspd_curve+pid_calculate(pid));
+	motor_run(&rightmotor,tgtspd_curve-pid_calculate(pid));
 }
