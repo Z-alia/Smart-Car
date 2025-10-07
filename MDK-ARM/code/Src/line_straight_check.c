@@ -20,20 +20,29 @@ void check_line_straight(uint8_t start, uint8_t end, float area_threshold)
     uint8_t idx1 = start;
     uint8_t idx2 = start + step;
     uint8_t idx3 = end;
-    // 左边缘点
-    int16_t x1 = lineinfo[idx1].left;
-    int16_t y1 = lineinfo[idx1].y;
-    int16_t x2 = lineinfo[idx2].left;
-    int16_t y2 = lineinfo[idx2].y;
-    int16_t x3 = lineinfo[idx3].left;
-    int16_t y3 = lineinfo[idx3].y;
-    left_straight = is_points_straight(x1, y1, x2, y2, x3, y3, area_threshold);
-    // 右边缘点
-    x1 = lineinfo[idx1].right;
-    y1 = lineinfo[idx1].y;
-    x2 = lineinfo[idx2].right;
-    y2 = lineinfo[idx2].y;
-    x3 = lineinfo[idx3].right;
-    y3 = lineinfo[idx3].y;
-    right_straight = is_points_straight(x1, y1, x2, y2, x3, y3, area_threshold);
+    // 左边缘点（只判断非丢线点）
+    if (!lineinfo[idx1].left_lost && !lineinfo[idx2].left_lost && !lineinfo[idx3].left_lost) {
+        int16_t x1 = lineinfo[idx1].left;
+        int16_t y1 = lineinfo[idx1].y;
+        int16_t x2 = lineinfo[idx2].left;
+        int16_t y2 = lineinfo[idx2].y;
+        int16_t x3 = lineinfo[idx3].left;
+        int16_t y3 = lineinfo[idx3].y;
+        left_straight = is_points_straight(x1, y1, x2, y2, x3, y3, area_threshold);
+    } else {
+        left_straight = 0;
+    }
+
+    // 右边缘点（只判断非丢线点）
+    if (!lineinfo[idx1].right_lost && !lineinfo[idx2].right_lost && !lineinfo[idx3].right_lost) {
+        int16_t x1 = lineinfo[idx1].right;
+        int16_t y1 = lineinfo[idx1].y;
+        int16_t x2 = lineinfo[idx2].right;
+        int16_t y2 = lineinfo[idx2].y;
+        int16_t x3 = lineinfo[idx3].right;
+        int16_t y3 = lineinfo[idx3].y;
+        right_straight = is_points_straight(x1, y1, x2, y2, x3, y3, area_threshold);
+    } else {
+        right_straight = 0;
+    }
 }
