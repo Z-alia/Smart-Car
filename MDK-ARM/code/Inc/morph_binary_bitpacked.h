@@ -77,6 +77,91 @@ void morph_clean_u8_binary_adapter(const uint8_t* src_u8,
                                    int width, int height,
                                    uint8_t* dst_u8);
 
+/* ============================================================================
+ * 八邻域巡线辅助函数（位打包格式）
+ * ============================================================================
+ * 这些函数提供在压缩/位打包状态下进行八邻域操作的能力，适用于：
+ * - 边缘跟踪（巡线）
+ * - 连通性分析
+ * - 骨架提取
+ * - 其他需要访问邻域像素的图像处理算法
+ * 
+ * 八邻域定义（相对于中心像素(x,y)的位置）：
+ *   7  0  1
+ *   6  *  2     * = 中心像素 (x, y)
+ *   5  4  3
+ * 
+ * 索引对应方向：
+ *   0:上(0,-1),    1:上右(1,-1),  2:右(1,0),   3:右下(1,1),
+ *   4:下(0,1),     5:下左(-1,1),  6:左(-1,0),  7:左上(-1,-1)
+ */
+
+/* 获取位打包图像中指定位置的像素值（0 或 1）
+ * 参数：
+ *   bits   - 位打包图像数据
+ *   x, y   - 像素坐标
+ *   width  - 图像宽度（像素）
+ *   height - 图像高度（像素）
+ * 返回：像素值（0 或 1），越界返回 0
+ */
+MBP_INLINE int get_pixel_bitpacked(const uint32_t* bits, int x, int y, int width, int height) {
+    if (x < 0 || x >= width || y < 0 || y >= height) return 0;
+    int wpw = words_per_row(width);
+    int word_idx = x >> 5;           // x / 32
+    int bit_pos = x & 31;            // x % 32
+    return (bits[y * wpw + word_idx] >> bit_pos) & 1u;
+}
+
+/* 设置位打包图像中指定位置的像素值（0 或 1）
+ * 参数：
+ *   bits   - 位打包图像数据
+ *   x, y   - 像素坐标
+ *   width  - 图像宽度（像素）
+ *   height - 图像高度（像素）
+ *   value  - 要设置的值（0 或非0，非0视为1）
+ */
+MBP_INLINE void set_pixel_bitpacked(uint32_t* bits, int x, int y, int width, int height, int value) {
+    if (x < 0 || x >= width || y < 0 || y >= height) return;
+    int wpw = words_per_row(width);
+    int word_idx = x >> 5;
+    int bit_pos = x & 31;
+    if (value) {
+        bits[y * wpw + word_idx] |= (1u << bit_pos);   // 设置为 1
+    } else {
+        bits[y * wpw + word_idx] &= ~(1u << bit_pos);  // 设置为 0
+    }
+}
+
+/* 获取八邻域像素值（按顺序：上、上右、右、右下、下、下左、左、左上）
+ * 参数：
+ *   bits      - 位打包图像数据
+ *   x, y      - 中心像素坐标
+ *   width     - 图像宽度（像素）
+ *   height    - 图像高度（像素）
+ *   neighbors - 输出数组[8]，存储8个邻域像素值（0或1），由调用者分配
+ * 
+ * 用途示例：
+ *   int neighbors[8];
+ *   get_8neighbors_bitpacked(bits, x, y, width, height, neighbors);
+ *   // neighbors[0] = 上方像素, neighbors[2] = 右方像素, 等等
+ */
+void get_8neighbors_bitpacked(const uint32_t* bits, int x, int y, int width, int height, int* neighbors);
+
+/* 统计八邻域中前景像素的数量
+ * 参数：
+ *   bits   - 位打包图像数据
+ *   x, y   - 中心像素坐标
+ *   width  - 图像宽度（像素）
+ *   height - 图像高度（像素）
+ * 返回：邻域中值为1的像素数量（0-8）
+ * 
+ * 用途示例：
+ *   - 判断是否为边界点（count < 8）
+ *   - 判断是否为端点（count == 1）
+ *   - 判断是否为分支点（count >= 3）
+ */
+int count_8neighbors_bitpacked(const uint32_t* bits, int x, int y, int width, int height);
+
 #ifdef __cplusplus
 }
 #endif

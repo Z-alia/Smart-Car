@@ -312,3 +312,75 @@ void morph_clean_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
     //precise_edge_detection_bitpacked(packed_src, tmp_buf, out_buf, width, height);
     unpack_bits_to_binary_u8(out_buf, width, height, dst_u8, width);
 }
+
+// ============================================================================
+// 八邻域巡线辅助函数（位打包格式）
+// ============================================================================
+//
+// 使用示例：
+// 
+// 示例1：检查某个像素是否为边界点
+//   if (get_pixel_bitpacked(bits, x, y, width, height)) {
+//       int count = count_8neighbors_bitpacked(bits, x, y, width, height);
+//       if (count < 8) {
+//           // 这是一个边界点（至少有一个邻域为背景）
+//       }
+//   }
+//
+// 示例2：获取所有邻域并判断连通方向（用于巡线）
+//   int neighbors[8];
+//   get_8neighbors_bitpacked(bits, x, y, width, height, neighbors);
+//   for (int i = 0; i < 8; i++) {
+//       if (neighbors[i]) {
+//           // 在方向 i 上有连通的前景像素，可以继续追踪
+//       }
+//   }
+//
+// 示例3：判断骨架端点或分支点
+//   int count = count_8neighbors_bitpacked(bits, x, y, width, height);
+//   if (count == 1) {
+//       // 端点：只有一个邻域连通
+//   } else if (count >= 3) {
+//       // 分支点：有三个或更多邻域连通
+//   }
+//
+
+// 获取八邻域像素值（按顺序：上、上右、右、右下、下、下左、左、左上）
+// neighbors[8] 数组由调用者提供，函数填充邻域值
+void get_8neighbors_bitpacked(const uint32_t* RESTRICT bits, int x, int y, int width, int height, int* neighbors) {
+    // 八邻域偏移：(dx, dy)
+    // 0:上(0,-1), 1:上右(1,-1), 2:右(1,0), 3:右下(1,1),
+    // 4:下(0,1), 5:下左(-1,1), 6:左(-1,0), 7:左上(-1,-1)
+    static const int dx[8] = { 0,  1,  1,  1,  0, -1, -1, -1};
+    static const int dy[8] = {-1, -1,  0,  1,  1,  1,  0, -1};
+    
+    int wpw = words_per_row(width);
+    
+    for (int i = 0; i < 8; i++) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+        
+        // 边界检查
+        if (nx < 0 || nx >= width || ny < 0 || ny >= height) {
+            neighbors[i] = 0;
+            continue;
+        }
+        
+        // 获取像素值
+        int word_idx = nx >> 5;      // nx / 32
+        int bit_pos = nx & 31;       // nx % 32
+        neighbors[i] = (bits[ny * wpw + word_idx] >> bit_pos) & 1u;
+    }
+}
+
+// 检查八邻域是否有前景像素（返回前景邻域数量）
+int count_8neighbors_bitpacked(const uint32_t* RESTRICT bits, int x, int y, int width, int height) {
+    int neighbors[8];
+    get_8neighbors_bitpacked(bits, x, y, width, height, neighbors);
+    
+    int count = 0;
+    for (int i = 0; i < 8; i++) {
+        count += neighbors[i];
+    }
+    return count;
+}
