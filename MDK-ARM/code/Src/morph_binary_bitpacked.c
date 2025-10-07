@@ -344,6 +344,40 @@ void morph_clean_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
 //       // 分支点：有三个或更多邻域连通
 //   }
 //
+// 示例4：完整的巡线追踪示例（从某个起点开始追踪连通路径）
+//   void trace_line_bitpacked(const uint32_t* bits, int start_x, int start_y, int width, int height) {
+//       int x = start_x, y = start_y;
+//       int visited[IMG_HEIGHT][IMG_WIDTH] = {0};  // 标记已访问的点
+//       
+//       while (get_pixel_bitpacked(bits, x, y, width, height)) {
+//           visited[y][x] = 1;
+//           
+//           // 获取八邻域
+//           int neighbors[8];
+//           get_8neighbors_bitpacked(bits, x, y, width, height, neighbors);
+//           
+//           // 寻找下一个未访问的连通点
+//           int found = 0;
+//           for (int i = 0; i < 8; i++) {
+//               if (neighbors[i]) {
+//                   // 计算邻域坐标
+//                   const int dx[8] = { 0,  1,  1,  1,  0, -1, -1, -1};
+//                   const int dy[8] = {-1, -1,  0,  1,  1,  1,  0, -1};
+//                   int nx = x + dx[i];
+//                   int ny = y + dy[i];
+//                   
+//                   if (nx >= 0 && nx < width && ny >= 0 && ny < height && !visited[ny][nx]) {
+//                       x = nx;
+//                       y = ny;
+//                       found = 1;
+//                       break;
+//                   }
+//               }
+//           }
+//           if (!found) break;  // 没有找到下一个点，追踪结束
+//       }
+//   }
+//
 
 // 获取八邻域像素值（按顺序：上、上右、右、右下、下、下左、左、左上）
 // neighbors[8] 数组由调用者提供，函数填充邻域值
