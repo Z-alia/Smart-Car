@@ -1,8 +1,8 @@
 #include "scan_line.h"
 #include <stdint.h>
-
-uint8_t left_straight = 0;
-uint8_t right_straight = 0;
+//0直1曲2丢
+uint8_t left_straight = 2;
+uint8_t right_straight = 2;
 
 // 判断三点是否近似共线（面积小于阈值）
 static uint8_t is_points_straight(int16_t x1, int16_t y1, int16_t x2, int16_t y2, int16_t x3, int16_t y3, float area_threshold)
@@ -30,7 +30,7 @@ void check_line_straight(uint8_t start, uint8_t end, float area_threshold)
         int16_t y3 = lineinfo[idx3].y;
         left_straight = is_points_straight(x1, y1, x2, y2, x3, y3, area_threshold);
     } else {
-        left_straight = 0;
+        left_straight = 2;
     }
 
     // 右边缘点（只判断非丢线点）
@@ -43,6 +43,6 @@ void check_line_straight(uint8_t start, uint8_t end, float area_threshold)
         int16_t y3 = lineinfo[idx3].y;
         right_straight = is_points_straight(x1, y1, x2, y2, x3, y3, area_threshold);
     } else {
-        right_straight = 0;
+        right_straight = 2;
     }
 }
