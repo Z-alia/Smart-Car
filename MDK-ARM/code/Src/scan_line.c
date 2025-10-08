@@ -32,6 +32,7 @@ void scan_line()
         line_findnext(&lineinfo[y], Grayscale[119-y], &lineinfo[y - 1]);
         watch.watch_line = y;
     }
+
     //line_findnext(&lineinfo[base_line], Grayscale[119-base_line], &lineinfo[base_line - 1]);
 }
 
@@ -48,6 +49,9 @@ int line_single(struct lineinfo_s *lineinfo, unsigned char *inputimg)
 
     //得到最大边沿
     get_max_edge(lineinfo, edge_store);
+    //得到中线位置
+    get_mid_line(lineinfo);
+
     return 0;
 }
 
@@ -69,6 +73,8 @@ int line_findnext(struct lineinfo_s *lineinfo, uint8_t *inputimg, struct lineinf
      }
     //得到最佳边沿
     get_best_edge(lineinfo, edge_store, lineinfo_ref);
+    //得到中线位置
+    get_mid_line(lineinfo);
     //Junc_detect(lineinfo, edge_store, inputimg); //apriltag检测
 
     return 0;
@@ -277,6 +283,12 @@ int get_best_edge(struct lineinfo_s *lineinfo, uint8_t *edge_store, struct linei
 	{
         lineinfo->left_lost = 0;
 	}
+    return 0;
+}
+
+int get_mid_line(struct lineinfo_s *lineinfo)
+{
+    lineinfo->mid = (lineinfo->left + lineinfo->right) / 2;
     return 0;
 }
 

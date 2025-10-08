@@ -145,19 +145,19 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[])
 	
     for(uint8_t i=1;i<30;i++)
     {
-       temp+=((uint16_t)lineinfo[i].left+(uint16_t)lineinfo[i].right)/2;
+       temp+=((uint16_t)lineinfo[i].mid);
     }
 	sum+=(temp/29)*weight_dw;
 	temp=0.0;
 	for(uint8_t i=30;i<60;i++)
     {
-       temp+=((uint16_t)lineinfo[i].left+(uint16_t)lineinfo[i].right)/2;
+       temp+=((uint16_t)lineinfo[i].mid);
     }
 	sum+=(temp/29)*weight_md;
 	temp=0.0;
 	for(uint8_t i=60;i<120;i++)
     {
-       temp+=((uint16_t)lineinfo[i].left+(uint16_t)lineinfo[i].right)/2;
+       temp+=((uint16_t)lineinfo[i].mid);
     }
 	sum+=(temp/59)*weight_up;
     PID->error = sum- 94.0;

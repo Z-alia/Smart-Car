@@ -117,6 +117,7 @@ void draw_edge()
     {
 		imo[119-row][lineinfo[row].left]=1;
 		imo[119-row][lineinfo[row].right]=2;
+        imo[119-row][lineinfo[row].mid]=3;
 	  }
 }
 
