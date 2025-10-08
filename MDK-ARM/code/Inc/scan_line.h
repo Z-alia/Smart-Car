@@ -5,8 +5,8 @@
  *      Author: Admin
  */
 
-#ifndef CODE_CAMERA_PROCESS_SCAN_LINE_H_
-#define CODE_CAMERA_PROCESS_SCAN_LINE_H_
+#ifndef SCAN_LINE_H_
+#define SCAN_LINE_H_
 #include "main.h"
 #include "type_def.h"
 
@@ -45,7 +45,9 @@ extern struct lineinfo_s lineinfo[120];
 
 uint8 get_orign_edges(uint8 *inputimg, uint8 *edge_store);
 int get_best_edge(struct lineinfo_s *lineinfo, uint8 *edge_store, struct lineinfo_s *lineinfo_ref);
+
 int get_mid_line(struct lineinfo_s *lineinfo);
+
 int get_max_edge(struct lineinfo_s *lineinfo, uint8 *edge_store);
 int line_single(struct lineinfo_s *lineinfo, unsigned char *inputimg);
 int line_findnext(struct lineinfo_s *lineinfo, uint8 *inputimg, struct lineinfo_s *lineinfo_ref);

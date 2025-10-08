@@ -28,4 +28,5 @@ smartcar/motor.o: code\Src\motor.c code\Inc\motor.h code\Inc\scan_line.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  code\Inc\type_def.h ..\Core\Inc\tim.h code\Inc\Binarization.h
+  code\Inc\type_def.h code\Inc\Element_recognition.h ..\Core\Inc\tim.h \
+  code\Inc\Binarization.h

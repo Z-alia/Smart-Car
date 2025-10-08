@@ -46,6 +46,7 @@ MotorSpeed motor_speed;
 /* USER CODE BEGIN PD */
 void take_image(struct watch_o *watch,PIDController* pid);
 uint8_t flag=0;
+uint8_t pre_flag=0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -187,6 +188,9 @@ int main(void)
 	LCD_DisplayNumber( 250, 310, watch.Straight_flag, 5);
 	LCD_DisplayNumber( 250, 330, (int16_t)PID.error, 5);
 	LCD_DisplayNumber( 250, 350, watch.threshold, 5);
+	LCD_DisplayNumber( 0, 450, watch.Left_Break_flag, 5);
+	LCD_DisplayNumber( 0, 430, watch.Right_Break_flag, 5);
+	LCD_DisplayNumber( 350, 330, watch.Crossroads_flag_left, 5);
 		
   }
   /* USER CODE END 3 */
@@ -268,11 +272,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         // 2. 计算速度 修正溢出 更新上一次的计数值
         //Encoder_Correct(&motor_speed);
         // 3. 调用电机PID控制函数
-		if(watch.Straight_flag==1)
-	straight_error_get(&PID,lineinfo);
-	else if(watch.Curve_flag==1)
-		straight_error_get(&PID_curve,lineinfo);
-		
+		if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
+		straight_error_get(&PID,lineinfo,&watch,0);
+	else if(watch.Curve_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
+		straight_error_get(&PID_curve,lineinfo,&watch,0);
+		else if(watch.Crossroads_flag_left==1)
+			straight_error_get(&PID_curve,lineinfo,&watch,10);
 		
 		//4.赛道识别
 		Island_loop_and_curve_recognition(&watch,lineinfo);
@@ -285,10 +290,12 @@ if (htim->Instance == TIM7)
 	run_follow(&PID);//电机注释，调试图像
 	else if(watch.Curve_flag==1)
 		motor_follow_line_curve(&PID_curve);
+	else if(watch.Crossroads_flag_left==1)
+		motor_follow_line_curve(&PID_curve);
 		
 	//motor_run(&rightmotor,100);//电机测试
 	Straight_recognition(&watch,lineinfo);
-	take_image(&watch,&PID_curve);
+	//take_image(&watch,&PID_curve);
 	
 }
 

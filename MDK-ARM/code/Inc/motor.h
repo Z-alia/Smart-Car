@@ -2,6 +2,7 @@
 #define __MOTOR_H
 #include "stdint.h"
 #include "scan_line.h"
+#include "Element_recognition.h"
 // PID控制结构体
 typedef struct {
     volatile float kp;           // 比例系数
@@ -58,7 +59,7 @@ void motor_stop(void);
 //void motor_follow_line_straight(PIDController* pid);
 void motor_follow_line_curve(PIDController* pid);
 
-void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[]);
+void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta);
 
 extern Motor leftmotor;
 extern Motor rightmotor;

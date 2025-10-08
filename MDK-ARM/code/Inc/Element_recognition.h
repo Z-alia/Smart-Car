@@ -31,7 +31,16 @@ struct watch_o
     uint8_t Curve_left_flag;	//左弯道标志位
     uint8_t Curve_flag;		//弯道标志位
     uint8_t Cross_flag;		//十字路口标志位
-    uint8_t Crossroads_flag;	//环岛标志位
+
+    uint8_t Crossroads_flag_left;	//左环岛标志位
+	uint8_t Crossroads_flag_right;//右环岛标志位
+    uint8_t Left_Break_flag;	//左断续线标志位
+    uint8_t Right_Break_flag;	//右断续线标志位
+    uint8_t CurrentY;           //当前的Y值
+	uint8_t LastY;              //之前的Y值 注意不一定是上一行的Y
+	int16_t CurrentMid;
+	int16_t LastMid;
+    uint8_t Midline_Lost_Count; //中线丢失行数
 };
 
 extern struct watch_o watch;

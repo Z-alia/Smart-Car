@@ -13,7 +13,7 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
     uint8_t line=0;
 	uint16_t flag_lt=0,flag_rt=0;
     //弯道识别代码
-    if(watch->Curve_flag == 0 && watch->Cross_flag == 0 && watch->Crossroads_flag == 0)
+    if(watch->Curve_flag == 0 && watch->Cross_flag == 0 )
     {
         for (line = 10; line < 60; line++)//10 60
         {
@@ -53,41 +53,24 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
 		}		
     }
     line=0;
-/*
+
     //环岛识别代码
-    if(watch->Curve_flag == 1 && watch->Cross_flag == 0 && watch->Crossroads_flag == 0)
+    if(watch->Cross_flag == 0 && watch->Crossroads_flag_left == 0&&watch->Crossroads_flag_right == 0)
     {
-        uint8_t flag=0;
-        for (uint8_t line = 100; line > 80; line--)
-        {
-            for (uint8_t px = 1; px < 188 ; px++)
-            {
-                //if ((inputimg[px - 1]-watch.threshold)*(inputimg[px]-watch.threshold) <= 0) //分布在watch.threshold两侧认为是跳边沿。。不稳定
-                if(!((imo[line][px-1]>watch->threshold&&imo[line][px]<watch->threshold)||(imo[line][px-1]<watch->threshold&&imo[line][px]>watch->threshold)))    //可变灰度区分值
-                    continue;
-                if (edge_store_idx >= _EDGE_STORE_SIZE)
-                    break;
-                edge_store_idx++;
-            }
-            if( edge_store_idx >= 8)
-            {
-                // 进行标志位重置
-               flag++;
-            }
-            edge_store_idx=0;
-        }
-        if(flag>=10) //连续检测到10次则认定为环岛
-        {
-            watch->Crossroads_flag=1;
-            watch->Curve_flag=0; //检测到环岛则弯道标志位清零
-            watch->Straight_flag=0; //检测到环岛则直道标志位清零
-        }
-        else
-        {
-            watch->Crossroads_flag=0;
-        }
+        
+		if(watch->Left_Break_flag==1)
+			pre_flag=1;
+		if(pre_flag==1)
+		{
+			if(watch->Right_Break_flag==1)
+			{
+				watch->Crossroads_flag_left=1;	
+				pre_flag=0;
+			}
+		}
+        
     }
-        */
+        
 }
 
 //十字路口识别(判断更具特点，优先级最高)
@@ -137,7 +120,8 @@ void Clear_Recognition_Flag(struct watch_o *watch)
 {
     watch->Curve_flag=0;
     watch->Cross_flag=0;
-    watch->Crossroads_flag=0;
+    watch->Crossroads_flag_left=0;
+	watch->Crossroads_flag_right=0;
 	watch->Curve_left_flag=0;
 	watch->Curve_right_flag=0;
 }

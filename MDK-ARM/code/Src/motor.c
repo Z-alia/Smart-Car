@@ -3,6 +3,7 @@
 #include "tim.h"
 #include "scan_line.h"
 #include "Binarization.h"
+#include "Element_recognition.h"
 //本工程的PWM分辨率为1000
 #define tgtspd 200 //700改70
 #define tgtspd_curve 150
@@ -138,16 +139,19 @@ void motor_stop(void)
     motor_run(&rightmotor, 0);
 }
 //图像到误差转换
-void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[])
+void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta)
 {
     float sum=0.0,temp=0.0; // 平均值，可后加加权
-	
+	uint16_t length=0;
 	
     for(uint8_t i=1;i<30;i++)
     {
+		if(lineinfo[i].mid!=0)
+			length++;
        temp+=((uint16_t)lineinfo[i].mid);
     }
-	sum+=(temp/29)*weight_dw;
+	sum+=(temp/length)*weight_dw;
+	length=0;
 	temp=0.0;
 	for(uint8_t i=30;i<60;i++)
     {
@@ -160,7 +164,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[])
        temp+=((uint16_t)lineinfo[i].mid);
     }
 	sum+=(temp/59)*weight_up;
-    PID->error = sum- 94.0;
+    PID->error = sum- (94.0+derta);
 }
 void motor_follow_line_curve(PIDController* pid)
 {
