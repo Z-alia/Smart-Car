@@ -15,36 +15,37 @@ struct lineinfo_s lineinfo[120];
 #define LINE_WIDTH 188
 
 //中线断裂判断
-void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_ref,struct watch_o *watch, int16 threshold)
+void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_ref,struct watch_o *watch, int16 thresholdx,int16 thresholdy)
 {
-
-    if(watch->Midline_Lost_Count>=6)
+    //如果丢中线行数过多 上方若重新出现中点也不认为其具有意义 全部清除
+    if(watch->Midline_Lost_Count>=thresholdy)
     {
+    lineinfo->mid=0;
+        //清到顶行时置零标志位 扫描下一张图
         if(lineinfo->y==114)
         {
             watch->Midline_Lost_Count=0;
             return;
-        }    
-    lineinfo->mid=0;
+        }
     return;
     }
 	
-    //读取上一行的mid值 如果当前行中点不存在 则保留
+    //读取上一行的mid值 如果当前行中点不存在 则保留此值直到扫描到中点计算error
 	if(watch->Midline_Lost_Count==0)
        watch->LastMid = lineinfo_ref->mid;
-    //本行的mid值
+    //本行的mid值 实时刷新
     watch->CurrentMid = lineinfo->mid;
 
-    //相邻行中点x做差 threshold默认为5
+    //相邻行中点x作差 thresholdx默认为5 error超过5认为是断裂
     //中点未丢失
     if(watch->CurrentMid!=0)
     {
-        // （若丢过中线 但丢线行数在threshold内）当中线重新出现时，重置丢失计数器
+        // （若丢过中线 但丢线行数在thresholdy内）当中线重新出现时，重置丢失计数器
         watch->Midline_Lost_Count = 0;
         // 断裂判断
             int16 error=watch->CurrentMid-watch->LastMid;
             //中线断裂 且远处中线残骸在右
-            if(error>threshold)
+            if(error>=thresholdx)
             /********************
                      |
                      |
@@ -52,10 +53,11 @@ void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_re
                   |
             *********************/
             {
+                watch->Left_Break_flag=0;
                 watch->Right_Break_flag=1;
             }
             //中线断裂 且远处中线残骸在左
-            else if(error<-threshold)
+            else if(error<=-thresholdx)
             /********************
                     |
                     |
@@ -64,6 +66,7 @@ void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_re
             *********************/
             {
                 watch->Left_Break_flag=1;
+                watch->Right_Break_flag=0;
             }
             // 如果没有断裂，清除标志位
             else
@@ -73,7 +76,7 @@ void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_re
             }
         
     }
-    //若中线断裂且丢失 记录行数
+    //若中线断裂丢失 记录行数
     else if(watch->CurrentMid==0)
     {
         watch->Midline_Lost_Count++;
@@ -143,7 +146,7 @@ int line_findnext(struct lineinfo_s *lineinfo, uint8_t *inputimg, struct lineinf
     //得到中线位置
     get_mid_line(lineinfo);
 	//断裂检测
-	is_midline_lost(lineinfo, lineinfo_ref, &watch, 5);
+	is_midline_lost(lineinfo, lineinfo_ref, &watch, 5 , 10);
     //Junc_detect(lineinfo, edge_store, inputimg); //apriltag检测
 
     return 0;
