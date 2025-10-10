@@ -5,8 +5,8 @@
 #include "Binarization.h"
 #include "Element_recognition.h"
 //本工程的PWM分辨率为1000
-#define tgtspd 200 //700改70
-#define tgtspd_curve 150
+#define tgtspd 300 //700改70
+#define tgtspd_curve 200
 #define TL_tgtspd 250
 #define TR_tgtspd 250
 #define weight_up 0.05//下部为0-30 中部为30-60 上部为60-120

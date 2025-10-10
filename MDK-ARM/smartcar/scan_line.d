@@ -29,4 +29,5 @@ smartcar/scan_line.o: code\Src\scan_line.c code\Inc\scan_line.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   code\Inc\type_def.h code\Inc\Binarization.h \
-  code\Inc\Element_recognition.h
+  code\Inc\Element_recognition.h code\Inc\lcd_spi_200.h \
+  code\Inc\morph_binary_bitpacked.h code\Inc\lcd_fonts.h

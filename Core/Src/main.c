@@ -124,7 +124,7 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim6);
 	pid_init(&PID,0.9,0,0.2);//直线pid
-	pid_init(&PID_curve,2,0,0.2);//弯道pid
+	pid_init(&PID_curve,2.5,0,0.2);//弯道pid
 	motor_init();
 	Clear_Recognition_Flag(&watch);
 	//调参阶段while
@@ -152,9 +152,9 @@ int main(void)
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
 			/* 二值化阈值限幅 */
-			if(watch.threshold>200)
+			if(watch.threshold>180)
 			{
-				watch.threshold=200;
+				watch.threshold=180;
 			}
 			else if(watch.threshold<150)//将80改为130
 			{
@@ -188,10 +188,12 @@ int main(void)
 	LCD_DisplayNumber( 250, 310, watch.Straight_flag, 5);
 	LCD_DisplayNumber( 250, 330, (int16_t)PID.error, 5);
 	LCD_DisplayNumber( 250, 350, watch.threshold, 5);
-	LCD_DisplayNumber( 0, 450, watch.Left_Break_flag, 5);
-	LCD_DisplayNumber( 0, 430, watch.Right_Break_flag, 5);
+
+	LCD_DisplayNumber( 0, 430, watch.Left_Break_flag, 5);
+	LCD_DisplayNumber( 0, 450, watch.Right_Break_flag, 5);
+	LCD_DisplayNumber( 0, 470, watch.Midline_Lost_Count, 5);
 	LCD_DisplayNumber( 350, 330, watch.Crossroads_flag_left, 5);
-		
+
   }
   /* USER CODE END 3 */
 }

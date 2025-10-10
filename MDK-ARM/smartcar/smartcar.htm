@@ -3,7 +3,7 @@
 <title>Static Call Graph - [smartcar\smartcar.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image smartcar\smartcar.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Wed Oct  8 23:36:59 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Fri Oct 10 15:32:37 2025
 <BR><P>
 <H3>Maximum Stack Usage =        448 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2105,7 +2105,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[14e]"></a>line_findnext</STRONG> (Thumb, 380 bytes, Stack size 32 bytes, scan_line.o(.text.line_findnext))
+<P><STRONG><a name="[14e]"></a>line_findnext</STRONG> (Thumb, 240 bytes, Stack size 32 bytes, scan_line.o(.text.line_findnext))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = line_findnext &rArr; get_best_edge
 </UL>
 <BR>[Calls]<UL><LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_best_edge
@@ -2119,7 +2119,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;scan_line
 </UL>
 
-<P><STRONG><a name="[bf]"></a>main</STRONG> (Thumb, 788 bytes, Stack size 24 bytes, main.o(.text.main))
+<P><STRONG><a name="[bf]"></a>main</STRONG> (Thumb, 804 bytes, Stack size 24 bytes, main.o(.text.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 448 + Unknown Stack Size
 <LI>Call Chain = main &rArr; LCD_DisplayNumber &rArr; LCD_DisplayChar &rArr; HAL_SPI_Init &rArr; HAL_SPI_MspInit &rArr; HAL_RCCEx_PeriphCLKConfig &rArr; RCCEx_PLL3_Config
 </UL>
@@ -2215,7 +2215,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_PeriodElapsedCallback
 </UL>
 
-<P><STRONG><a name="[159]"></a>scan_line</STRONG> (Thumb, 188 bytes, Stack size 24 bytes, scan_line.o(.text.scan_line))
+<P><STRONG><a name="[159]"></a>scan_line</STRONG> (Thumb, 342 bytes, Stack size 24 bytes, scan_line.o(.text.scan_line))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88 + Unknown Stack Size
 <LI>Call Chain = scan_line &rArr; line_findnext &rArr; get_best_edge
 </UL>

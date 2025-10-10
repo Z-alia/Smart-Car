@@ -10,28 +10,34 @@
 #include "scan_line.h"
 #include "Binarization.h"
 #include "Element_recognition.h"
-
+#include "lcd_spi_200.h"
 struct lineinfo_s lineinfo[120];
 #define LINE_WIDTH 188
 
 //中线断裂判断
-void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_ref,struct watch_o *watch, int16 thresholdx,int16 thresholdy)
+uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_ref,struct watch_o *watch, int16 thresholdx,int16 thresholdy)
 {
     //如果丢中线行数过多 上方若重新出现中点也不认为其具有意义 全部清除
     if(watch->Midline_Lost_Count>=thresholdy)
     {
     lineinfo->mid=0;
         //清到顶行时置零标志位 扫描下一张图
-        if(lineinfo->y==114)
+        if(lineinfo->y==110)
         {
             watch->Midline_Lost_Count=0;
-            return;
+			
+			watch->Left_Break_flag=0;
+			watch->Right_Break_flag=0;
+            return 0;
         }
-    return;
+    return 0;
     }
 	
+	//LCD_DisplayNumber( 0, 390, watch->CurrentMid, 5);
+	///LCD_DisplayNumber( 0, 410, watch->LastMid, 5);
+	
     //读取上一行的mid值 如果当前行中点不存在 则保留此值直到扫描到中点计算error
-	if(watch->Midline_Lost_Count==0)
+	if(watch->Midline_Lost_Count==0&&lineinfo_ref->mid!=0)
        watch->LastMid = lineinfo_ref->mid;
     //本行的mid值 实时刷新
     watch->CurrentMid = lineinfo->mid;
@@ -44,6 +50,9 @@ void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_re
         watch->Midline_Lost_Count = 0;
         // 断裂判断
             int16 error=watch->CurrentMid-watch->LastMid;
+		    error=abs(error)>=30?30:error;
+		    //watch->smd=(abs(error)>=abs(watch->smd))?error:watch->smd;
+		    //LCD_DisplayNumber( 0, 410, watch->smd, 5);
             //中线断裂 且远处中线残骸在右
             if(error>=thresholdx)
             /********************
@@ -55,6 +64,7 @@ void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_re
             {
                 watch->Left_Break_flag=0;
                 watch->Right_Break_flag=1;
+				return 1;
             }
             //中线断裂 且远处中线残骸在左
             else if(error<=-thresholdx)
@@ -67,12 +77,14 @@ void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_re
             {
                 watch->Left_Break_flag=1;
                 watch->Right_Break_flag=0;
+				return 2;
             }
             // 如果没有断裂，清除标志位
             else
             {
                 watch->Right_Break_flag = 0;
                 watch->Left_Break_flag = 0;
+				return 3;
             }
         
     }
@@ -82,7 +94,7 @@ void is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_re
         watch->Midline_Lost_Count++;
         watch->CurrentY=lineinfo->y;
     }
-    return;
+    return 0;
 }
 
 void scan_line()
@@ -90,19 +102,25 @@ void scan_line()
     //watch.base_line = 0;
     int y=0;
     memset(lineinfo, 0, 120 * sizeof(struct lineinfo_s));
-    line_single(&lineinfo[base_line], Grayscale[119-base_line]);   // 寻找基准行
+    line_single(&lineinfo[base_line], imo[119-base_line]);   // 寻找基准行
 
     for (y = base_line-1; y >= forward_near; y--) // 向下搜线到near行
     {
-        line_findnext(&lineinfo[y], Grayscale[119-y], &lineinfo[y + 1]);
+        line_findnext(&lineinfo[y], imo[119-y], &lineinfo[y + 1]);
     }
 
     for (y = base_line+1; y < forward_far; y++) // 向上搜线到far行
     {
         lineinfo[y].y = y;
-        line_findnext(&lineinfo[y], Grayscale[119-y], &lineinfo[y - 1]);
+        line_findnext(&lineinfo[y], imo[119-y], &lineinfo[y - 1]);
         watch.watch_line = y;
     }
+	for (y = 10; y < 111; y++)
+	{
+		uint8_t temp=is_midline_lost(&lineinfo[y], &lineinfo[y - 1], &watch, 3 , 2);
+		if (temp==1||temp==2)
+			return;
+	}
     //line_findnext(&lineinfo[base_line], Grayscale[119-base_line], &lineinfo[base_line - 1]);
 }
 
@@ -146,7 +164,7 @@ int line_findnext(struct lineinfo_s *lineinfo, uint8_t *inputimg, struct lineinf
     //得到中线位置
     get_mid_line(lineinfo);
 	//断裂检测
-	is_midline_lost(lineinfo, lineinfo_ref, &watch, 5 , 10);
+	//is_midline_lost(lineinfo, lineinfo_ref, &watch, 1 , 2);
     //Junc_detect(lineinfo, edge_store, inputimg); //apriltag检测
 
     return 0;
