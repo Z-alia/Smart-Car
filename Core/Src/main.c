@@ -20,6 +20,7 @@
 #include "main.h"
 #include "dcmi.h"
 #include "dma.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "gpio.h"
@@ -47,6 +48,7 @@ MotorSpeed motor_speed;
 void take_image(struct watch_o *watch,PIDController* pid);
 uint8_t flag=0;
 uint8_t pre_flag=0;
+float mpu=0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -116,6 +118,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM7_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
 	LCD_Init();
 	OV2640_Init();	
@@ -124,9 +127,13 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim6);
 	pid_init(&PID,0.9,0,0.2);//直线pid
-	pid_init(&PID_curve,2.5,0,0.2);//弯道pid
+	pid_init(&PID_curve,3,0,0.2);//弯道pid
 	motor_init();
 	Clear_Recognition_Flag(&watch);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
 	//调参阶段while
 	
 	while(1)

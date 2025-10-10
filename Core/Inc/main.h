@@ -37,6 +37,7 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 extern uint8_t pre_flag;
+	extern float mpu;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

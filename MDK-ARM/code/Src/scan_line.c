@@ -50,11 +50,11 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
         watch->Midline_Lost_Count = 0;
         // 断裂判断
             int16 error=watch->CurrentMid-watch->LastMid;
-		    error=abs(error)>=30?30:error;
+		    //error=abs(error)>=30?30:error;
 		    //watch->smd=(abs(error)>=abs(watch->smd))?error:watch->smd;
 		    //LCD_DisplayNumber( 0, 410, watch->smd, 5);
             //中线断裂 且远处中线残骸在右
-            if(error>=thresholdx)
+            if(error>=thresholdx&&error<=45)
             /********************
                      |
                      |
@@ -67,7 +67,7 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
 				return 1;
             }
             //中线断裂 且远处中线残骸在左
-            else if(error<=-thresholdx)
+            else if(error<=-thresholdx&&error>=(-45))
             /********************
                     |
                     |
@@ -80,7 +80,7 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
 				return 2;
             }
             // 如果没有断裂，清除标志位
-            else
+            else if(error>=-thresholdx&&error<=thresholdx)
             {
                 watch->Right_Break_flag = 0;
                 watch->Left_Break_flag = 0;
@@ -102,17 +102,17 @@ void scan_line()
     //watch.base_line = 0;
     int y=0;
     memset(lineinfo, 0, 120 * sizeof(struct lineinfo_s));
-    line_single(&lineinfo[base_line], imo[119-base_line]);   // 寻找基准行
+    line_single(&lineinfo[base_line], Grayscale[119-base_line]);   // 寻找基准行
 
     for (y = base_line-1; y >= forward_near; y--) // 向下搜线到near行
     {
-        line_findnext(&lineinfo[y], imo[119-y], &lineinfo[y + 1]);
+        line_findnext(&lineinfo[y], Grayscale[119-y], &lineinfo[y + 1]);
     }
 
     for (y = base_line+1; y < forward_far; y++) // 向上搜线到far行
     {
         lineinfo[y].y = y;
-        line_findnext(&lineinfo[y], imo[119-y], &lineinfo[y - 1]);
+        line_findnext(&lineinfo[y], Grayscale[119-y], &lineinfo[y - 1]);
         watch.watch_line = y;
     }
 	for (y = 10; y < 111; y++)

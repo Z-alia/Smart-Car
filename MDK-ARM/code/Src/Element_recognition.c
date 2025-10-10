@@ -23,6 +23,8 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
         if(line==60) //如果1~69行全部丢线则认定为弯道
         {
             watch->Curve_flag=1;
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
             watch->Straight_flag=0; //检测到弯道则直道标志位清零
         }
 		if(watch->Curve_flag==1)
@@ -55,6 +57,7 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
     line=0;
 
     //环岛识别代码
+	/*
     if(watch->Cross_flag == 0 && watch->Crossroads_flag_left == 0&&watch->Crossroads_flag_right == 0)
     {
         
@@ -64,12 +67,21 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
 		{
 			if(watch->Right_Break_flag==1)
 			{
-				watch->Crossroads_flag_left=1;	
+				watch->Crossroads_flag_left=1;
+					HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
 				pre_flag=0;
 			}
 		}
         
     }
+	*/
+	//入环后标志位
+	if((watch->Crossroads_flag_left|watch->Crossroads_flag_right)==1)
+		if((watch->Left_Break_flag|watch->Right_Break_flag)==1)
+		{
+			watch->Crossroads_flag_left=0;
+			watch->Crossroads_flag_right=0;
+		}
         
 }
 
@@ -87,6 +99,10 @@ void Cross_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
         if(line==80) //如果60~79行全部丢线则认定为十字路口
         {
             watch->Cross_flag=1;
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
             //watch->Straight_flag=0; //检测到弯道则直道标志位清零
         }
     }
@@ -109,6 +125,10 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
         {
             
             watch->Straight_flag=1; //直道标志位 置1，认为项目结束
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
 			Clear_Recognition_Flag(watch);
         }
     
