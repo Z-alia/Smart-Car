@@ -191,7 +191,7 @@ void PopulatePredictedLine(const CurveParams_t* curve, struct lineinfo_s* linein
         return;
     }
 
-    watch->PredictTopMidline = array_size - 1; // 预测中线最大行数
+    watch.PredictTopMidline = array_size - 1; // 预测中线最大行数
 
     float a = curve->a;
     float b = curve->b;
@@ -212,11 +212,11 @@ void PopulatePredictedLine(const CurveParams_t* curve, struct lineinfo_s* linein
         // 3. (可选但强烈推荐) 边界裁剪，防止预测值超出屏幕范围
         if (x_predict <= 0) {
             x_predict = 0;
-            watch->PredictTopMidline = y;
+            watch.PredictTopMidline = y;
             return; // 触边立即返回
         } else if (x_predict >= screen_width) {
             x_predict = screen_width - 1;
-            watch->PredictTopMidline = y;
+            watch.PredictTopMidline = y;
             return; // 触边立即返回
         }
 

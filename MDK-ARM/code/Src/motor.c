@@ -182,6 +182,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
 	
 	else
 	{
+    /*用原始中线计算误差
 	int16_t top=watch->LastLine;
 	int16_t middle=watch->LastLine/2;
 	int16_t bottom=0;
@@ -202,6 +203,30 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     }
 	sum+=(temp/middle)*weight_curve_down;
 	sum=sum*110/watch->LastLine;
+    PID->error = sum- (94.0+derta);
+	}
+    */
+    //用预测中线计算误差
+    int16_t top=watch->PredictTopMidline;
+	int16_t middle=watch->PredictTopMidline/2;
+	int16_t bottom=0;
+	    if(middle==0)
+    {
+        PID->error=0;
+        return;
+    }
+    for(int16_t i=bottom;i<middle;i++)
+    {
+       temp+=((uint16_t)lineinfo[i].mid);
+    }
+	sum+=(temp/middle)*weight_curve_up;
+	temp=0.0;
+	for(int16_t i=middle;i<=top;i++)
+    {
+       temp+=((uint16_t)lineinfo[i].mid);
+    }
+	sum+=(temp/middle)*weight_curve_down;
+	sum=sum*110/watch->PredictTopMidline;
     PID->error = sum- (94.0+derta);
 	}
 }
