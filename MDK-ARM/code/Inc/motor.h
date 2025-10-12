@@ -60,7 +60,6 @@ void motor_stop(void);
 void motor_follow_line_curve(PIDController* pid);
 
 void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta);
-
 extern Motor leftmotor;
 extern Motor rightmotor;
 extern volatile int32_t delta_v;

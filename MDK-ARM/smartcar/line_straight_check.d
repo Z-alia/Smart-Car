@@ -1,5 +1,5 @@
-smartcar/element_recognition.o: code\Src\Element_recognition.c \
-  code\Inc\Element_recognition.h ..\Core\Inc\main.h \
+smartcar/line_straight_check.o: code\Src\line_straight_check.c \
+  code\Inc\scan_line.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -29,5 +29,5 @@ smartcar/element_recognition.o: code\Src\Element_recognition.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  code\Inc\type_def.h code\Inc\scan_line.h code\Inc\Binarization.h \
-  code\Inc\line_straight_check.h
+  code\Inc\type_def.h code\Inc\lcd_spi_200.h \
+  code\Inc\morph_binary_bitpacked.h code\Inc\lcd_fonts.h

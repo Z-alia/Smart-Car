@@ -3,6 +3,8 @@
 #include "Element_recognition.h"
 #include "scan_line.h"
 #include "Binarization.h"
+#include "main.h"
+#include "line_straight_check.h"
 
 //小车状态变量
 struct watch_o watch;
@@ -15,7 +17,7 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
     //弯道识别代码
     if(watch->Curve_flag == 0 && watch->Cross_flag == 0 )
     {
-        for (line = 10; line < 60; line++)//10 60
+		for (line = 40; line <60; line++)
         {
             if(lineinfo[line].left_lost==0&&lineinfo[line].right_lost==0)
                 break; //有一行线不丢失则跳出
@@ -25,11 +27,11 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
             watch->Curve_flag=1;
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
-            watch->Straight_flag=0; //检测到弯道则直道标志位清零
+            watch->Straight_flag=0;
         }
 		if(watch->Curve_flag==1)
 		{
-			for(line=50;line<60;line++)
+			for(line=80;line<100;line++)
 			{
 				if(lineinfo[line].left_lost==1&&lineinfo[line].right_lost==0)
 				{
@@ -68,7 +70,8 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
 			if(watch->Right_Break_flag==1)
 			{
 				watch->Crossroads_flag_left=1;
-					HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
+				mpu=0;
+				HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
 				pre_flag=0;
 			}
 		}
@@ -79,8 +82,8 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
 	if((watch->Crossroads_flag_left|watch->Crossroads_flag_right)==1)
 		if((watch->Left_Break_flag|watch->Right_Break_flag)==1)
 		{
-			watch->Crossroads_flag_left=0;
-			watch->Crossroads_flag_right=0;
+			watch->Crossroads_flag_left=2;
+			watch->Crossroads_flag_right=2;
 		}
         
 }
@@ -114,11 +117,11 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
     uint8_t line = 0;
     //if(watch->Straight_flag == 0)
     //{
-        
+    //watch->Straight_flag=check_midline_straight(90,110,20);    
     
-        for (line = 30; line < 120; line++)
+        for (line = 60; line < 120; line++)
         {
-            if(lineinfo[line].left_lost==1&&lineinfo[line].right_lost==1)
+            if(lineinfo[line].left_lost==1||lineinfo[line].right_lost==1)
                 break; //有一行线丢失则跳出
         }
         if(line==120) //如果20~119行全部不丢线则认定为直线
@@ -131,7 +134,16 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
 			Clear_Recognition_Flag(watch);
         }
-    
+	
+    if(watch->Straight_flag==1)
+	{
+		//直道标志位 置1，认为项目结束
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
+		Clear_Recognition_Flag(watch);
+	}
     //}
 }
 

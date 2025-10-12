@@ -36,6 +36,8 @@
 #include "encoder.h"
 #include "ec11.h"
 #include "motor.h"
+#include "mpu6050.h"
+#include "line_straight_check.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -126,14 +128,15 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim6);
-	pid_init(&PID,0.9,0,0.2);//直线pid
-	pid_init(&PID_curve,3,0,0.2);//弯道pid
+	pid_init(&PID,1.7,0.0,0.5);//直线pid
+	pid_init(&PID_curve,3.5,0.0,1.5);//弯道pid
 	motor_init();
 	Clear_Recognition_Flag(&watch);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
+	mpu6050_init();
 	//调参阶段while
 	
 	while(1)
@@ -195,11 +198,18 @@ int main(void)
 	LCD_DisplayNumber( 250, 310, watch.Straight_flag, 5);
 	LCD_DisplayNumber( 250, 330, (int16_t)PID.error, 5);
 	LCD_DisplayNumber( 250, 350, watch.threshold, 5);
-
+	
 	LCD_DisplayNumber( 0, 430, watch.Left_Break_flag, 5);
 	LCD_DisplayNumber( 0, 450, watch.Right_Break_flag, 5);
-	LCD_DisplayNumber( 0, 470, watch.Midline_Lost_Count, 5);
-	LCD_DisplayNumber( 350, 330, watch.Crossroads_flag_left, 5);
+		
+	LCD_DisplayNumber( 250, 370, watch.Crossroads_flag_left, 5);
+	LCD_DisplayNumber( 250, 390, watch.Cross_flag, 5);
+		
+	LCD_DisplayNumber( 100, 400, leftmotor.speed, 5);	
+	LCD_DisplayNumber( 100, 420, rightmotor.speed, 5);	
+	LCD_DisplayNumber( 100, 440, PID_curve.error, 5);
+		
+	LCD_DisplayNumber( 250, 410, mpu/500, 5);
 
   }
   /* USER CODE END 3 */
@@ -283,29 +293,43 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         // 3. 调用电机PID控制函数
 		if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
 		straight_error_get(&PID,lineinfo,&watch,0);
-	else if(watch.Curve_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
+	    else if(watch.Curve_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
 		straight_error_get(&PID_curve,lineinfo,&watch,0);
 		else if(watch.Crossroads_flag_left==1)
 			straight_error_get(&PID_curve,lineinfo,&watch,10);
+		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)<=3)
+			straight_error_get(&PID_curve,lineinfo,&watch,15);
+		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)>3)
+		{
+			watch.Crossroads_flag_left=0;
+			watch.Crossroads_flag_right=0;
+			mpu=0;
+		}
 		
 		//4.赛道识别
 		Island_loop_and_curve_recognition(&watch,lineinfo);
-		//Cross_recognition(&watch,lineinfo);
+		
+		
+		Cross_recognition(&watch,lineinfo);
+		
+		
 		
     }
 if (htim->Instance == TIM7)
 {
 	if(watch.Straight_flag==1)
-	run_follow(&PID);//电机注释，调试图像
+		run_follow(&PID);//电机注释，调试图像
 	else if(watch.Curve_flag==1)
 		motor_follow_line_curve(&PID_curve);
 	else if(watch.Crossroads_flag_left==1)
 		motor_follow_line_curve(&PID_curve);
-		
-	//motor_run(&rightmotor,100);//电机测试
-	Straight_recognition(&watch,lineinfo);
-	//take_image(&watch,&PID_curve);
 	
+	Straight_recognition(&watch,lineinfo);	
+	//motor_run(&rightmotor,100);//电机测试
+	
+	//take_image(&watch,&PID_curve);
+	mpu6050_get_gyro();
+		mpu+=mpu6050_gyro_transition(mpu6050_gyro_z);
 }
 
 }

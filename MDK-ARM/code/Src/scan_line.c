@@ -17,19 +17,21 @@ struct lineinfo_s lineinfo[120];
 //中线断裂判断
 uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo_ref,struct watch_o *watch, int16 thresholdx,int16 thresholdy)
 {
-    //如果丢中线行数过多 上方若重新出现中点也不认为其具有意义 全部清除
-    if(watch->Midline_Lost_Count>=thresholdy)
-    {
-    lineinfo->mid=0;
-        //清到顶行时置零标志位 扫描下一张图
+	     //到顶行时置零标志位 扫描下一张图
         if(lineinfo->y==110)
         {
             watch->Midline_Lost_Count=0;
 			
 			watch->Left_Break_flag=0;
 			watch->Right_Break_flag=0;
+			watch->CurrentY=110;
             return 0;
         }
+    //如果丢中线行数过多 上方若重新出现中点也不认为其具有意义 全部清除
+    if(watch->Midline_Lost_Count>=thresholdy)
+    {
+    lineinfo->mid=0;
+
     return 0;
     }
 	
@@ -54,7 +56,7 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
 		    //watch->smd=(abs(error)>=abs(watch->smd))?error:watch->smd;
 		    //LCD_DisplayNumber( 0, 410, watch->smd, 5);
             //中线断裂 且远处中线残骸在右
-            if(error>=thresholdx&&error<=45)
+            if(error>=thresholdx&&error<=40)
             /********************
                      |
                      |
@@ -67,7 +69,7 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
 				return 1;
             }
             //中线断裂 且远处中线残骸在左
-            else if(error<=-thresholdx&&error>=(-45))
+            else if(error<=-thresholdx&&error>=(-40))
             /********************
                     |
                     |
@@ -77,6 +79,8 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
             {
                 watch->Left_Break_flag=1;
                 watch->Right_Break_flag=0;
+				watch->LastLine=lineinfo->y;
+				//LCD_DisplayNumber( 0, 470, lineinfo->y, 5);
 				return 2;
             }
             // 如果没有断裂，清除标志位
@@ -93,6 +97,7 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
     {
         watch->Midline_Lost_Count++;
         watch->CurrentY=lineinfo->y;
+		//LCD_DisplayNumber( 0, 470, watch->CurrentY, 5);
     }
     return 0;
 }
@@ -117,7 +122,7 @@ void scan_line()
     }
 	for (y = 10; y < 111; y++)
 	{
-		uint8_t temp=is_midline_lost(&lineinfo[y], &lineinfo[y - 1], &watch, 3 , 2);
+		uint8_t temp=is_midline_lost(&lineinfo[y], &lineinfo[y - 1], &watch, 7 , 3);
 		if (temp==1||temp==2)
 			return;
 	}

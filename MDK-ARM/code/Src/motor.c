@@ -5,13 +5,16 @@
 #include "Binarization.h"
 #include "Element_recognition.h"
 //本工程的PWM分辨率为1000
-#define tgtspd 200 //700改70
-#define tgtspd_curve 200
+#define tgtspd 230 //700改70
+#define tgtspd_curve 225
 #define TL_tgtspd 250
 #define TR_tgtspd 250
-#define weight_up 0.05//下部为0-30 中部为30-60 上部为60-120
-#define weight_md 0.55
-#define weight_dw 0.4
+#define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
+#define weight_md 0.45
+#define weight_dw 0.40
+#define weight_curve_up 0.75
+#define weight_curve_down 0.25
+
 PIDController PID;
 PIDController PID_curve;
 Motor leftmotor={0, 1, 0, 1};
@@ -27,8 +30,8 @@ void pid_init(PIDController* pid, float kp, float ki, float kd) {
     pid->integral = 0.0;
     pid->derivative = 0.0;
     pid->output = 0.0;
-    pid->integral_limit = 500.0;
-    pid->output_limit = 500.0;
+    pid->integral_limit = 300.0;
+    pid->output_limit = 300.0;
 }
 
 //pid计算 setpoint希望是0 feedback时摄像头输出的偏差值
@@ -105,8 +108,8 @@ void motor_run(Motor *motor_ptr, int32_t speed)
 
 void run_follow(PIDController* pid)
 {
-	motor_run(&leftmotor,tgtspd+pid_calculate(pid)/2);
-	motor_run(&rightmotor,tgtspd-pid_calculate(pid)/2);
+	motor_run(&leftmotor,tgtspd+pid_calculate(pid));
+	motor_run(&rightmotor,tgtspd-pid_calculate(pid));
 }
 
 //左转
@@ -142,8 +145,12 @@ void motor_stop(void)
 void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta)
 {
     float sum=0.0,temp=0.0; // 平均值，可后加加权
-	uint16_t length=0;
 	
+	
+	//直道
+	if(watch->Straight_flag==1)
+	{
+	uint16_t length=0;
     for(uint8_t i=1;i<30;i++)
     {
 		if(lineinfo[i].mid!=0)
@@ -155,17 +162,50 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
 	temp=0.0;
 	for(uint8_t i=30;i<60;i++)
     {
+	   if(lineinfo[i].mid!=0)
+	   length++;
        temp+=((uint16_t)lineinfo[i].mid);
     }
-	sum+=(temp/29)*weight_md;
+	sum+=(temp/length)*weight_md;
 	temp=0.0;
+	length=0;
 	for(uint8_t i=60;i<120;i++)
+    {
+	   if(lineinfo[i].mid!=0)
+	   length++;
+       temp+=((uint16_t)lineinfo[i].mid);
+    }
+	sum+=(temp/length)*weight_up;
+    PID->error = sum- (94.0+derta);
+    }
+	//弯道
+	
+	else
+	{
+	int16_t top=watch->LastLine;
+	int16_t middle=watch->LastLine/2;
+	int16_t bottom=0;
+	    if(middle==0)
+    {
+        PID->error=0;
+        return;
+    }
+    for(int16_t i=bottom;i<middle;i++)
     {
        temp+=((uint16_t)lineinfo[i].mid);
     }
-	sum+=(temp/59)*weight_up;
+	sum+=(temp/middle)*weight_curve_up;
+	temp=0.0;
+	for(int16_t i=middle;i<=top;i++)
+    {
+       temp+=((uint16_t)lineinfo[i].mid);
+    }
+	sum+=(temp/middle)*weight_curve_down;
+	
     PID->error = sum- (94.0+derta);
+	}
 }
+
 void motor_follow_line_curve(PIDController* pid)
 {
 	motor_stop();
