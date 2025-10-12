@@ -181,7 +181,9 @@ int main(void)
 			/* 扫描赛道边线 */
 			scan_line();
 			
+			/* 卡尔曼滤波*/
       stable_curve_params = ProcessLineWithKalman(lineinfo, watch.LastLine);
+			PopulatePredictedLine(&stable_curve_params, lineinfo, Display_Width, Display_Height);
 
 			/* 在图像上绘制出赛道边线 */
 			draw_edge();

@@ -201,7 +201,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
        temp+=((uint16_t)lineinfo[i].mid);
     }
 	sum+=(temp/middle)*weight_curve_down;
-	
+	sum=sum*110/watch->LastLine;
     PID->error = sum- (94.0+derta);
 	}
 }

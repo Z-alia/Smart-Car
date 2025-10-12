@@ -2,7 +2,8 @@
 #include <math.h>  // 用于 fabsf
 
 #include "Kalman.h"
-#include "scan_line.h"
+#include "Element_recognition.h"
+CurveParams_t stable_curve_params={0.0f,0.0f,0.0f };
 
 /**
  * @brief  对中线进行二次曲线拟合，并使用卡尔曼滤波器进行平滑。
@@ -10,7 +11,7 @@
  * @param  point_count   实际有效的中线点数量。
  * @return CurveParams_t 滤波后得到的稳定曲线参数 {a, b, c}。
  */
-CurveParams_t ProcessLineWithKalman(const lineinfo_s* lineinfo, int point_count)
+CurveParams_t ProcessLineWithKalman(struct lineinfo_s *lineinfo, int point_count)
 {
     // 使用静态变量存储卡尔曼滤波器的状态，使其在函数调用之间持久存在
     static KalmanState_CurveFit_t kf_state;
@@ -174,4 +175,53 @@ CurveParams_t ProcessLineWithKalman(const lineinfo_s* lineinfo, int point_count)
     estimated_params.c = kf_state.X[2];
 
     return estimated_params;
+}
+
+
+/**
+ * @brief  使用平滑的曲线参数，计算并填充lineinfo数组中的midpredict成员。
+ * @param  curve         指向包含稳定曲线参数 {a, b, c} 的结构体指针。
+ * @param  lineinfo      指向要填充的lineinfo数组的指针 (注意：不是const，因为我们要修改它)。
+ * @param  array_size    lineinfo数组的总大小 (例如 120)。
+ * @param  screen_width  屏幕的宽度 (例如 188)，用于边界检查。
+ */
+void PopulatePredictedLine(const CurveParams_t* curve, struct lineinfo_s* lineinfo, int screen_width, int array_size)
+{
+    if (curve == NULL || lineinfo == NULL) {
+        return;
+    }
+
+    watch->PredictTopMidline = array_size - 1; // 预测中线最大行数
+
+    float a = curve->a;
+    float b = curve->b;
+    float c = curve->c;
+
+    // 遍历整个lineinfo数组的每一行
+    for (int i = 0; i < array_size; ++i)
+    {
+        // lineinfo[i].y 存储了当前行的y坐标，我们用它来计算
+        int y = lineinfo[i].y; 
+
+        // 1. 根据公式计算x的精确浮点坐标
+        float x_float = a * y * y + b * y + c;
+
+        // 2. 四舍五入到最近的整数，这比直接强制类型转换更精确
+        int x_predict = (int)roundf(x_float);
+        
+        // 3. (可选但强烈推荐) 边界裁剪，防止预测值超出屏幕范围
+        if (x_predict <= 0) {
+            x_predict = 0;
+            watch->PredictTopMidline = y;
+            return; // 触边立即返回
+        } else if (x_predict >= screen_width) {
+            x_predict = screen_width - 1;
+            watch->PredictTopMidline = y;
+            return; // 触边立即返回
+        }
+
+
+        // 4. 将计算出的安全、准确的预测值存入结构体
+        lineinfo[i].midpredict = x_predict;
+    }
 }

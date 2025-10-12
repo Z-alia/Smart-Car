@@ -37,11 +37,13 @@ struct watch_o
     uint8_t Left_Break_flag;	//左断续线标志位
     uint8_t Right_Break_flag;	//右断续线标志位
 	
-    uint8_t CurrentY;           //当前的Y值
-	uint8_t LastY;              //之前的Y值 注意不一定是上一行的Y
+    int16_t CurrentY;           //当前的Y值
+	int16_t LastLine;           //如果断线（不论是否接回） 最后有效中点行数
 	int16_t CurrentMid;         //当前的的中点X值
 	int16_t LastMid;            //之前的中点X值
-	int16_t LastLine;           //如果断线 最后中点行数
+
+    int16_t PredictTopMidline;  // 预测中线最大行数
+
 	
 	int16_t smd;
     uint8_t Midline_Lost_Count; //中线丢失行数

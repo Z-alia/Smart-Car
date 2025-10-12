@@ -1,6 +1,6 @@
 #ifndef KALMAN_H_
 #define KALMAN_H_
-
+#include "scan_line.h"
 // 曲线参数结构体 (用于函数返回值)
 typedef struct
 {
@@ -24,7 +24,8 @@ typedef struct
     int is_initialized;
 } KalmanState_CurveFit_t;
 
-CurveParams_t ProcessLineWithKalman(const lineinfo_s* lineinfo, int point_count);
+CurveParams_t ProcessLineWithKalman(struct lineinfo_s *lineinfo, int point_count);
+void PopulatePredictedLine(const CurveParams_t* curve, struct lineinfo_s* lineinfo, int screen_width, int array_size);
 extern CurveParams_t stable_curve_params; // 用于存储滤波后的稳定曲线参数
 
 #endif /* KALMAN_H_ */

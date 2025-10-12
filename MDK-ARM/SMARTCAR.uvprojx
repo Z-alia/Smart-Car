@@ -682,9 +682,9 @@
               <FilePath>.\code\Src\line_straight_check.c</FilePath>
             </File>
             <File>
-              <FileName>line_straight_check.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\line_straight_check.h</FilePath>
+              <FileName>Kalman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\Kalman.c</FilePath>
             </File>
           </Files>
         </Group>
