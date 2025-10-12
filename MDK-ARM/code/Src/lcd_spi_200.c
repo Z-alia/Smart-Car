@@ -557,6 +557,10 @@ void show_ov2640_image_int8(uint16_t x, uint16_t y, const uint8_t *image, uint16
 						{
 								data_buffer[i] = (RGB888_to_RGB565(LCD_BLUE));
 						}
+						else if(temp == 4)
+						{
+								data_buffer[i] = (RGB888_to_RGB565(LCD_MAGENTA));
+						}
 						else
 						{
 								data_buffer[i] = (RGB888_to_RGB565(LCD_WHITE));

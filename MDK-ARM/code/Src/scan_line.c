@@ -31,14 +31,11 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
     if(watch->Midline_Lost_Count>=thresholdy)
     {
     lineinfo->mid=0;
-
+ 
     return 0;
     }
 	
-	//LCD_DisplayNumber( 0, 390, watch->CurrentMid, 5);
-	///LCD_DisplayNumber( 0, 410, watch->LastMid, 5);
-	
-    //读取上一行的mid值 如果当前行中点不存在 则保留此值直到扫描到中点计算error
+    //读取有效的 上一行的mid值 如果当前行中点不存在（断线） 则保留此值直到扫描到中点计算error
 	if(watch->Midline_Lost_Count==0&&lineinfo_ref->mid!=0)
        watch->LastMid = lineinfo_ref->mid;
     //本行的mid值 实时刷新
@@ -92,7 +89,7 @@ uint8_t is_midline_lost(struct lineinfo_s *lineinfo, struct lineinfo_s *lineinfo
             }
         
     }
-    //若中线断裂丢失 记录行数
+    //若中线断裂丢失 记录断线行数
     else if(watch->CurrentMid==0)
     {
         watch->Midline_Lost_Count++;

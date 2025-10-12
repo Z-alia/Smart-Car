@@ -38,6 +38,7 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "line_straight_check.h"
+#include "Kalman.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -180,6 +181,8 @@ int main(void)
 			/* 扫描赛道边线 */
 			scan_line();
 			
+      stable_curve_params = ProcessLineWithKalman(lineinfo, watch.LastLine);
+
 			/* 在图像上绘制出赛道边线 */
 			draw_edge();
 			
