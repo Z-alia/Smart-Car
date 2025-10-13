@@ -130,7 +130,7 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim6);
 	pid_init(&PID,1.7,0.0,0.5);//直线pid
-	pid_init(&PID_curve,3.5,0.0,1.5);//弯道pid
+	pid_init(&PID_curve,4.0,0.0,1.5);//弯道pid
 	motor_init();
 	Clear_Recognition_Flag(&watch);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
@@ -201,7 +201,7 @@ int main(void)
 	LCD_DisplayNumber( 250, 270, watch.Curve_left_flag, 5);
 	LCD_DisplayNumber( 250, 290, watch.Curve_right_flag, 5);
 	LCD_DisplayNumber( 250, 310, watch.Straight_flag, 5);
-	LCD_DisplayNumber( 250, 330, (int16_t)PID.error, 5);
+	//LCD_DisplayNumber( 250, 330, (int16_t)PID.error, 5);
 	LCD_DisplayNumber( 250, 350, watch.threshold, 5);
 	
 	LCD_DisplayNumber( 0, 430, watch.Left_Break_flag, 5);
@@ -212,7 +212,13 @@ int main(void)
 		
 	LCD_DisplayNumber( 100, 400, leftmotor.speed, 5);	
 	LCD_DisplayNumber( 100, 420, rightmotor.speed, 5);	
-	LCD_DisplayNumber( 100, 440, PID_curve.error, 5);
+	LCD_DisplayNumber( 100, 440, (int16_t)PID_curve.error, 5);
+	LCD_DisplayNumber( 100, 460, (int16_t)PID.error, 5);
+		
+	LCD_DisplayNumber( 175, 420, watch.PredictTopMidline, 5);	
+	LCD_DisplayNumber( 175, 440, watch.LastLine, 5);	
+
+	
 		
 	LCD_DisplayNumber( 250, 410, mpu/500, 5);
 

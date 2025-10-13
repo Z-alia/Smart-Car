@@ -5,15 +5,15 @@
 #include "Binarization.h"
 #include "Element_recognition.h"
 //本工程的PWM分辨率为1000
-#define tgtspd 230 //700改70
-#define tgtspd_curve 225
+#define tgtspd 200 //700改70
+#define tgtspd_curve 200
 #define TL_tgtspd 250
 #define TR_tgtspd 250
 #define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
 #define weight_md 0.45
 #define weight_dw 0.40
-#define weight_curve_up 0.75
-#define weight_curve_down 0.25
+#define weight_curve_up 0.8
+#define weight_curve_down 0.2
 
 PIDController PID;
 PIDController PID_curve;
@@ -208,7 +208,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     */
     //用预测中线计算误差
     int16_t top=watch->PredictTopMidline;
-	int16_t middle=watch->PredictTopMidline/2;
+	int16_t middle=watch->PredictTopMidline/3;
 	int16_t bottom=0;
 	    if(middle==0)
     {
@@ -226,7 +226,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
        temp+=((uint16_t)lineinfo[i].mid);
     }
 	sum+=(temp/middle)*weight_curve_down;
-	sum=sum*110/watch->PredictTopMidline;
+	sum=sum*(110/watch->PredictTopMidline);
     PID->error = sum- (94.0+derta);
 	}
 }
