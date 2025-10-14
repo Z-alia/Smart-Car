@@ -213,8 +213,12 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     int16_t top=watch->PredictTopMidline;
 	int16_t middle=2*(top/3);
 	int16_t bottom=0;
+<<<<<<< HEAD
 	
 	    if(middle==0)
+=======
+	    if(top==0||middle==0)
+>>>>>>> 3ff28b3f6337cf79ce7bf09c861742f857863aa4
     {
         PID->error=0;
         return;
@@ -230,8 +234,13 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     {
        temp+=((float)lineinfo[i].midpredict);
     }
+<<<<<<< HEAD
 	sum+=(temp/(top-middle))*weight_curve_up;
 	sum=sum*(110.0/(float)top);
+=======
+	sum+=(temp/middle)*weight_curve_down;
+	sum=sum*110/(float)top;
+>>>>>>> 3ff28b3f6337cf79ce7bf09c861742f857863aa4
     PID->error = sum- (94.0+derta);
 	
 	}

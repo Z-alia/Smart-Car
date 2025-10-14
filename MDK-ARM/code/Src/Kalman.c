@@ -31,6 +31,7 @@ CurveParams_t ProcessLineWithKalman(struct lineinfo_s *lineinfo, int point_count
         
         // --- [关键调参区] ---
         // 过程噪声 Q: 模型预测的不确定性。值越小，越相信上一时刻的预测，曲线越平滑但响应越慢。
+        // 一般有c>b>a
         float q_val_a = 0.01f; // a参数(曲率)变化噪声
         float q_val_b = 0.1f;  // b参数(角度)变化噪声
         float q_val_c = 10.0f;    // c参数(偏移)变化噪声
