@@ -131,7 +131,7 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
             if(lineinfo[line].left_lost==1||lineinfo[line].right_lost==1)
                 break; //有一行线丢失则跳出
         }
-        if(line==120||(stable_curve_params.a<=0.003f&&stable_curve_params.a>=-0.003f)) //如果20~119行全部不丢线则认定为直线
+        if(line==120||(stable_curve_params.a<=0.002f&&stable_curve_params.a>=-0.002f)) //如果20~119行全部不丢线则认定为直线
         {
             
             watch->Straight_flag=1; //直道标志位 置1，认为项目结束

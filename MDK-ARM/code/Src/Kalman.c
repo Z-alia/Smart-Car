@@ -44,7 +44,7 @@ CurveParams_t ProcessLineWithKalman(struct lineinfo_s *lineinfo, int point_count
         kf_state.Q[2][0] = 0; kf_state.Q[2][1] = 0; kf_state.Q[2][2] = q_val_c;
 
         // 测量噪声 R: 最小二乘法拟合结果的不确定性。值越小，越相信当前的拟合结果，曲线响应快但噪声大。
-        float r_val = 0.3f;
+        float r_val = 0.1f;
         kf_state.R[0][0] = r_val; kf_state.R[0][1] = 0; kf_state.R[0][2] = 0;
         kf_state.R[1][0] = 0; kf_state.R[1][1] = r_val; kf_state.R[1][2] = 0;
         kf_state.R[2][0] = 0; kf_state.R[2][1] = 0; kf_state.R[2][2] = r_val;

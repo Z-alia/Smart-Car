@@ -51,7 +51,7 @@ MotorSpeed motor_speed;
 void take_image(struct watch_o *watch,PIDController* pid);
 uint8_t flag=0,oldflag[5]={0};
 uint8_t pre_flag=0;
-float mpu=0,p=3,i=0.0,d=0.0;
+float mpu=0.0f,p=3.0f,i=0.0f,d=0.0f;
 uint32_t smd=0;
 /* USER CODE END PD */
 
@@ -413,7 +413,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
 	{
-		if(smd1-smd>=650)
+		if(smd1-smd>=600)
 		{
 			//4是时间最远的一次操作
 			//1正转0反
@@ -423,7 +423,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		}
 	}
 	else
-		if(smd1-smd>=650)
+		if(smd1-smd>=600)
 		{
 			smd=HAL_GetTick();
 			p-=0.1f;
@@ -436,7 +436,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
 	{
-		if(smd1-smd>=675)
+		if(smd1-smd>=600)
 		{
 			smd=HAL_GetTick();
 			i+=0.1f;
@@ -444,7 +444,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		}
 	}
 	else
-		if(smd1-smd>=675)
+		if(smd1-smd>=600)
 		{
 			smd=HAL_GetTick();
 			i-=0.1f;
@@ -456,7 +456,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	{
 	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
 	{
-		if(smd1-smd>=675)
+		if(smd1-smd>=600)
 		{
 			smd=HAL_GetTick();
 			d+=0.1f;
@@ -464,7 +464,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		}
 	}
 	else
-		if(smd1-smd>=675)
+		if(smd1-smd>=600)
 		{
 			smd=HAL_GetTick();
 			d-=0.1f;
