@@ -686,6 +686,11 @@
               <FileType>1</FileType>
               <FilePath>.\code\Src\Kalman.c</FilePath>
             </File>
+            <File>
+              <FileName>ec11.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\code\Src\ec11.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

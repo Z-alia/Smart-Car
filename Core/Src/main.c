@@ -49,9 +49,10 @@ MotorSpeed motor_speed;
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 void take_image(struct watch_o *watch,PIDController* pid);
-uint8_t flag=0;
+uint8_t flag=0,oldflag[5]={0};
 uint8_t pre_flag=0;
-float mpu=0;
+float mpu=0,p=3,i=0.0,d=0.0;
+uint32_t smd=0;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -129,8 +130,8 @@ int main(void)
 	HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
 	HAL_TIM_Base_Start_IT(&htim6);
-	pid_init(&PID,1.7,0.0,0.5);//直线pid
-	pid_init(&PID_curve,4.0,0.0,1.5);//弯道pid
+	pid_init(&PID,1.5,0.0,0);//直线pid
+	pid_init(&PID_curve,p,i,d);//弯道pid
 	motor_init();
 	Clear_Recognition_Flag(&watch);
 	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
@@ -142,8 +143,19 @@ int main(void)
 	
 	while(1)
 	{
+		LCD_DisplayDecimals( 175, 300, p, 5,1);
+		LCD_DisplayDecimals( 175, 320, i, 5,1);
+		LCD_DisplayDecimals( 175, 340, d, 5,1);
+		
+		LCD_DisplayNumber( 0, 20, oldflag[4], 5);
+		LCD_DisplayNumber( 0, 40, oldflag[3], 5);
+		LCD_DisplayNumber( 0, 60, oldflag[2], 5);
+		LCD_DisplayNumber( 0, 80, oldflag[1], 5);
+		
+		
 		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4)==GPIO_PIN_RESET)
 			break;
+		
 	}
 	HAL_TIM_Base_Start_IT(&htim7);
 	//HAL_Delay(5000);
@@ -192,7 +204,12 @@ int main(void)
 			//显示原图像
 			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 			//显示二值化扫线图;
-			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
+			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);		
+            //图像到误差转换
+            if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
+		    straight_error_get(&PID,lineinfo,&watch,0);
+	        else if(watch.Curve_flag==1/*&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0*/)
+		    straight_error_get(&PID_curve,lineinfo,&watch,0);			
 		}
     /* USER CODE END WHILE */
 
@@ -217,11 +234,17 @@ int main(void)
 		
 	LCD_DisplayNumber( 175, 420, watch.PredictTopMidline, 5);	
 	LCD_DisplayNumber( 175, 440, watch.LastLine, 5);	
-
+    LCD_DisplayNumber( 175, 460, lineinfo[watch.PredictTopMidline-10].midpredict, 5);
+	LCD_DisplayDecimals( 175, 480, p, 5,1);
 	
+	
+	LCD_DisplayDecimals( 250, 410, stable_curve_params.a, 5,3);
 		
-	LCD_DisplayNumber( 250, 410, mpu/500, 5);
-
+	//LCD_DisplayNumber( 250, 410, mpu/500, 5);
+	
+	
+	//straight_error_get(&PID_curve,lineinfo,&watch,0);
+	//motor_follow_line_curve(&PID_curve);
   }
   /* USER CODE END 3 */
 }
@@ -302,32 +325,35 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         // 2. 计算速度 修正溢出 更新上一次的计数值
         //Encoder_Correct(&motor_speed);
         // 3. 调用电机PID控制函数
-		if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
-		straight_error_get(&PID,lineinfo,&watch,0);
-	    else if(watch.Curve_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
-		straight_error_get(&PID_curve,lineinfo,&watch,0);
-		else if(watch.Crossroads_flag_left==1)
-			straight_error_get(&PID_curve,lineinfo,&watch,10);
-		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)<=3)
-			straight_error_get(&PID_curve,lineinfo,&watch,15);
-		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)>3)
-		{
-			watch.Crossroads_flag_left=0;
-			watch.Crossroads_flag_right=0;
-			mpu=0;
-		}
+		
+//		if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
+//		straight_error_get(&PID,lineinfo,&watch,0);
+//	    else if(watch.Curve_flag==1/*&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0*/)
+//		straight_error_get(&PID_curve,lineinfo,&watch,0);
+//		else if(watch.Crossroads_flag_left==1)
+//			straight_error_get(&PID_curve,lineinfo,&watch,10);
+//		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)<=3)
+//			straight_error_get(&PID_curve,lineinfo,&watch,15);
+//		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)>3)
+//		{
+//			watch.Crossroads_flag_left=0;
+//			watch.Crossroads_flag_right=0;
+//			mpu=0;
+//		}
+		
 		
 		//4.赛道识别
 		Island_loop_and_curve_recognition(&watch,lineinfo);
 		
 		
-		Cross_recognition(&watch,lineinfo);
+		//Cross_recognition(&watch,lineinfo);
 		
 		
 		
     }
 if (htim->Instance == TIM7)
 {
+	
 	if(watch.Straight_flag==1)
 		run_follow(&PID);//电机注释，调试图像
 	else if(watch.Curve_flag==1)
@@ -357,7 +383,97 @@ void take_image(struct watch_o *watch,PIDController* pid)
 	 
 	}
 }
-
+void ssxxzzyyybaba_cw()
+{
+//4 3 2 1 0
+			oldflag[4]=oldflag[3];
+			oldflag[3]=oldflag[2];
+			oldflag[2]=oldflag[1];
+			oldflag[1]=1;
+			if(oldflag[4]==0&&oldflag[3]==1&&oldflag[2]==0&&oldflag[1]==1)
+			{
+				flag=(flag+1)%3;
+				memset(oldflag,0,sizeof(oldflag));
+			}
+}
+void ssxxzzyyybaba_ccw()
+{
+//4 3 2 1 0
+			oldflag[4]=oldflag[3];
+			oldflag[3]=oldflag[2];
+			oldflag[2]=oldflag[1];
+			oldflag[1]=0;
+}
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	uint32_t smd1=HAL_GetTick();
+	switch(flag)
+	{
+		case 0:
+	{
+	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
+	{
+		if(smd1-smd>=650)
+		{
+			//4是时间最远的一次操作
+			//1正转0反
+			smd=HAL_GetTick();
+			p+=0.1f;
+			ssxxzzyyybaba_cw();
+		}
+	}
+	else
+		if(smd1-smd>=650)
+		{
+			smd=HAL_GetTick();
+			p-=0.1f;
+			ssxxzzyyybaba_ccw();
+		}
+		break;
+	}
+		
+		case 1:
+	{
+	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
+	{
+		if(smd1-smd>=675)
+		{
+			smd=HAL_GetTick();
+			i+=0.1f;
+			ssxxzzyyybaba_cw();
+		}
+	}
+	else
+		if(smd1-smd>=675)
+		{
+			smd=HAL_GetTick();
+			i-=0.1f;
+			ssxxzzyyybaba_ccw();
+		}
+		break;
+	}
+	case 2:
+	{
+	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
+	{
+		if(smd1-smd>=675)
+		{
+			smd=HAL_GetTick();
+			d+=0.1f;
+			ssxxzzyyybaba_cw();
+		}
+	}
+	else
+		if(smd1-smd>=675)
+		{
+			smd=HAL_GetTick();
+			d-=0.1f;
+			ssxxzzyyybaba_ccw();
+		}
+		break;
+	}
+	}
+}
 /* USER CODE END 4 */
 
 /**

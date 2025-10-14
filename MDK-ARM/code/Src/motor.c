@@ -6,14 +6,14 @@
 #include "Element_recognition.h"
 //本工程的PWM分辨率为1000
 #define tgtspd 200 //700改70
-#define tgtspd_curve 200
+#define tgtspd_curve 170
 #define TL_tgtspd 250
 #define TR_tgtspd 250
 #define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
 #define weight_md 0.45
 #define weight_dw 0.40
-#define weight_curve_up 0.8
-#define weight_curve_down 0.2
+#define weight_curve_up 1.0
+#define weight_curve_down 0.0
 
 PIDController PID;
 PIDController PID_curve;
@@ -150,7 +150,8 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
 	//直道
 	if(watch->Straight_flag==1)
 	{
-	uint16_t length=0;
+		uint16_t length=0;
+	
     for(uint8_t i=1;i<30;i++)
     {
 		if(lineinfo[i].mid!=0)
@@ -177,6 +178,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     }
 	sum+=(temp/length)*weight_up;
     PID->error = sum- (94.0+derta);
+	
     }
 	//弯道
 	
@@ -206,28 +208,32 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     PID->error = sum- (94.0+derta);
 	}
     */
+	
     //用预测中线计算误差
     int16_t top=watch->PredictTopMidline;
-	int16_t middle=watch->PredictTopMidline/3;
+	int16_t middle=2*(top/3);
 	int16_t bottom=0;
+	
 	    if(middle==0)
     {
         PID->error=0;
         return;
     }
+
     for(int16_t i=bottom;i<middle;i++)
     {
-       temp+=((uint16_t)lineinfo[i].mid);
+       temp+=((float)lineinfo[i].midpredict);
     }
-	sum+=(temp/middle)*weight_curve_up;
+	sum+=(temp/middle)*weight_curve_down;
 	temp=0.0;
 	for(int16_t i=middle;i<=top;i++)
     {
-       temp+=((uint16_t)lineinfo[i].mid);
+       temp+=((float)lineinfo[i].midpredict);
     }
-	sum+=(temp/middle)*weight_curve_down;
-	sum=sum*(110/watch->PredictTopMidline);
+	sum+=(temp/(top-middle))*weight_curve_up;
+	sum=sum*(110.0/(float)top);
     PID->error = sum- (94.0+derta);
+	
 	}
 }
 

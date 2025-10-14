@@ -39,7 +39,7 @@ CurveParams_t ProcessLineWithKalman(struct lineinfo_s *lineinfo, int point_count
         kf_state.Q[2][0] = 0; kf_state.Q[2][1] = 0; kf_state.Q[2][2] = q_val_c;
 
         // 测量噪声 R: 最小二乘法拟合结果的不确定性。值越小，越相信当前的拟合结果，曲线响应快但噪声大。
-        float r_val = 0.05f;
+        float r_val = 0.3f;
         kf_state.R[0][0] = r_val; kf_state.R[0][1] = 0; kf_state.R[0][2] = 0;
         kf_state.R[1][0] = 0; kf_state.R[1][1] = r_val; kf_state.R[1][2] = 0;
         kf_state.R[2][0] = 0; kf_state.R[2][1] = 0; kf_state.R[2][2] = r_val;
@@ -212,11 +212,11 @@ void PopulatePredictedLine(const CurveParams_t* curve, struct lineinfo_s* linein
         // 3. (可选但强烈推荐) 边界裁剪，防止预测值超出屏幕范围
         if (x_predict <= 0) {
             x_predict = 0;
-            watch.PredictTopMidline = y;
+            watch.PredictTopMidline = y-1;
             return; // 触边立即返回
         } else if (x_predict >= screen_width) {
             x_predict = screen_width - 1;
-            watch.PredictTopMidline = y;
+            watch.PredictTopMidline = y-1;
             return; // 触边立即返回
         }
 

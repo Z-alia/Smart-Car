@@ -45,6 +45,7 @@
 "smartcar\soft_iic.o"
 "smartcar\line_straight_check.o"
 "smartcar\kalman.o"
+"smartcar\ec11.o"
 --strict --scatter "smartcar\smartcar.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

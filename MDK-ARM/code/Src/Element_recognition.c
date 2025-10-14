@@ -5,6 +5,7 @@
 #include "Binarization.h"
 #include "main.h"
 #include "line_straight_check.h"
+#include "Kalman.h"
 
 //小车状态变量
 struct watch_o watch;
@@ -17,6 +18,7 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
     //弯道识别代码
     if(watch->Curve_flag == 0 && watch->Cross_flag == 0 )
     {
+		/*
 		for (line = 40; line <60; line++)
         {
             if(lineinfo[line].left_lost==0&&lineinfo[line].right_lost==0)
@@ -54,7 +56,12 @@ void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s l
 			}
 			
 			
-		}		
+		}
+*/
+if(watch->Straight_flag==0)
+	watch->Curve_flag=1;
+else
+	watch->Curve_flag=0;
     }
     line=0;
 
@@ -124,7 +131,7 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
             if(lineinfo[line].left_lost==1||lineinfo[line].right_lost==1)
                 break; //有一行线丢失则跳出
         }
-        if(line==120) //如果20~119行全部不丢线则认定为直线
+        if(line==120||(stable_curve_params.a<=0.003f&&stable_curve_params.a>=-0.003f)) //如果20~119行全部不丢线则认定为直线
         {
             
             watch->Straight_flag=1; //直道标志位 置1，认为项目结束
@@ -134,6 +141,9 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
 			Clear_Recognition_Flag(watch);
         }
+		else
+			watch->Straight_flag=0;
+		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
 	
     if(watch->Straight_flag==1)
 	{

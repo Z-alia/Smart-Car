@@ -15,6 +15,7 @@
 
 version: "2.1"
 options:
-    smartcar:
+    SMARTCAR:
         files: {}
-        virtualPathFiles: {}
+        virtualPathFiles:
+            <virtual_root>/Application/User/Core/i2c.c: ""
