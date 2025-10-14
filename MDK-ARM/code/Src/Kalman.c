@@ -5,6 +5,10 @@
 #include "Element_recognition.h"
 CurveParams_t stable_curve_params={0.0f,0.0f,0.0f };
 
+
+//后续添加根据a选取参数
+
+
 /**
  * @brief  对中线进行二次曲线拟合，并使用卡尔曼滤波器进行平滑。
  * @param  lineinfo      指向存储中线点的数组的指针。
