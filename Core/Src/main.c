@@ -51,7 +51,7 @@ MotorSpeed motor_speed;
 void take_image(struct watch_o *watch,PIDController* pid);
 uint8_t flag=0,oldflag[5]={0};
 uint8_t pre_flag=0;
-float mpu=0.0f,p=3.0f,i=0.0f,d=0.0f;
+float mpu=0.0f,p=2.0f,i=0.0f,d=0.0f;
 uint32_t smd=0;
 /* USER CODE END PD */
 
@@ -207,9 +207,13 @@ int main(void)
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);		
             //图像到误差转换
             if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
-		    straight_error_get(&PID,lineinfo,&watch,0);
+		    {straight_error_get(&PID,lineinfo,&watch,0);
+			PID_curve.output=PID.output;
+			}
 	        else if(watch.Curve_flag==1/*&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0*/)
-		    straight_error_get(&PID_curve,lineinfo,&watch,0);			
+		    {straight_error_get(&PID_curve,lineinfo,&watch,0);
+             PID.output=PID_curve.output;	
+			}				
 		}
     /* USER CODE END WHILE */
 

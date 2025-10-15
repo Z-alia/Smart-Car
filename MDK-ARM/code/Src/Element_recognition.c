@@ -133,13 +133,16 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
         }
         if(line==120||(stable_curve_params.a<=0.002f&&stable_curve_params.a>=-0.002f)) //如果20~119行全部不丢线则认定为直线
         {
-            
+            int8_t temp=lineinfo[watch->PredictTopMidline].mid-94;
+			if(temp>=-15&&temp<=15)
+			{
             watch->Straight_flag=1; //直道标志位 置1，认为项目结束
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_SET);
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
 			Clear_Recognition_Flag(watch);
+			}
         }
 		else
 			watch->Straight_flag=0;
