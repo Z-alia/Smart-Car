@@ -51,7 +51,7 @@ MotorSpeed motor_speed;
 void take_image(struct watch_o *watch,PIDController* pid);
 uint8_t flag=0,oldflag[5]={0};
 uint8_t pre_flag=0;
-float mpu=0.0f,p=2.0f,i=0.0f,d=0.0f;
+float mpu=0.0f,p=2.5f,i=0.0f,d=0.0f;
 uint32_t smd=0;
 /* USER CODE END PD */
 
@@ -179,16 +179,16 @@ int main(void)
 			{
 				watch.threshold=180;
 			}
-			else if(watch.threshold<150)//将80改为130
+			else if(watch.threshold<160)//将80改为130
 			{
-				watch.threshold=150;
+				watch.threshold=160;
 			}
 			
 			/* 二值化 */
 			Binarization();
 			
       //洗图、提取边缘
-      morph_clean_u8_binary_adapter(Grayscale[0], Display_Width, Display_Height, imo[0]);
+      //morph_clean_u8_binary_adapter(Grayscale[0], Display_Width, Display_Height, imo[0]);
 
 			/* 扫描赛道边线 */
 			scan_line();
@@ -198,7 +198,7 @@ int main(void)
 			PopulatePredictedLine(&stable_curve_params, lineinfo, Display_Width, Display_Height);
 
 			/* 在图像上绘制出赛道边线 */
-			draw_edge();
+			//draw_edge();
 			
 			/* 显示摄像头图像 */
 			//显示原图像

@@ -119,9 +119,9 @@ void scan_line()
         line_findnext(&lineinfo[y], Grayscale[119-y], &lineinfo[y - 1]);
         watch.watch_line = y;
     }
-	for (y = 10; y < 111; y++)
+	for (y = 10; y < 115; y++)
 	{
-		uint8_t temp=is_midline_lost(&lineinfo[y], &lineinfo[y - 1], &watch, 7 , 3);
+		uint8_t temp=is_midline_lost(&lineinfo[y], &lineinfo[y - 1], &watch, 7 , 5);
 		if (temp==1||temp==2)
 			return;
 	}
