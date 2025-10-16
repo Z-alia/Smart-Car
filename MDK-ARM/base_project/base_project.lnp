@@ -4,7 +4,6 @@
 "base_project\gpio.o"
 "base_project\dcmi.o"
 "base_project\dma.o"
-"base_project\memorymap.o"
 "base_project\spi.o"
 "base_project\stm32h7xx_it.o"
 "base_project\stm32h7xx_hal_msp.o"

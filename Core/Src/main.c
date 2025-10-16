@@ -193,13 +193,13 @@ int main(void)
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
 			/* 二值化阈值限幅 */
-			if(watch.threshold>180)
+			if(watch.threshold>255)
 			{
-				watch.threshold=180;
+				watch.threshold=255;
 			}
-			else if(watch.threshold<160)
+			else if(watch.threshold<0)
 			{
-				watch.threshold=160;
+				watch.threshold=0;
 			}
 			
 			/* 二值化 */
@@ -216,7 +216,7 @@ int main(void)
 			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 			//显示二值化扫线图
 			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
-      image_process();
+			image_process();
 		}
     /* USER CODE END WHILE */
 
