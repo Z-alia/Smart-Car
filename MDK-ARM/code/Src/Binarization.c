@@ -93,6 +93,21 @@ int img_otsu(uint16_t *img, uint8_t img_v, uint8_t img_h, uint8_t step)
 void Binarization()
 {
     int row=0,colum;
+	    for(row=0;row<120;row++)
+    {
+        for(colum=0;colum<Display_Width;colum++)
+        {
+            if(Grayscale[row][colum]==0)
+			{
+                imo[row][colum]=0;
+			}
+            else
+			{
+                imo[row][colum]=255;
+			}
+        }
+
+    }
     for(row=0;row<120;row++)
     {
         for(colum=0;colum<Display_Width;colum++)

@@ -175,20 +175,20 @@ int main(void)
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
 			/* 二值化阈值限幅 */
-			if(watch.threshold>180)
+			if(watch.threshold>255)
 			{
-				watch.threshold=180;
+				watch.threshold=255;
 			}
-			else if(watch.threshold<150)//将80改为130
+			else if(watch.threshold<0)//将80改为130
 			{
-				watch.threshold=150;
+				watch.threshold=0;
 			}
 			
 			/* 二值化 */
 			Binarization();
 			
       //洗图、提取边缘
-      morph_clean_u8_binary_adapter(Grayscale[0], Display_Width, Display_Height, imo[0]);
+      //morph_clean_u8_binary_adapter(Grayscale[0], Display_Width, Display_Height, imo[0]);
 
 			/* 扫描赛道边线 */
 			scan_line();

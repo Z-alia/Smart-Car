@@ -232,8 +232,9 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
 	sum+=(temp/(top-middle))*weight_curve_up;
 	sum=sum*(110.0/(float)top);
     PID->error = sum- (94.0+derta);
+}
 	*/
-	}
+	
 }
 
 void motor_follow_line_curve(PIDController* pid)

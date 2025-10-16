@@ -3,29 +3,29 @@
 
 #include "main.h"
 
-#define OV2640_DEVICE_ADDRESS     0x60    // OV2640åœ°å€
-#define OV5640_DEVICE_ADDRESS     0X78		// OV5640åœ°å€
+#define OV2640_DEVICE_ADDRESS     0x60    // OV2640µØÖ·
+#define OV5640_DEVICE_ADDRESS     0X78		// OV5640µØÖ·
 
-/*----------------------------------------- IIIC å¼•è„šé…ç½®å® -----------------------------------------------*/
+/*----------------------------------------- IIIC Òı½ÅÅäÖÃºê -----------------------------------------------*/
 
-#define SCCB_SCL_CLK_ENABLE       __HAL_RCC_GPIOB_CLK_ENABLE()		// SCL å¼•è„šæ—¶é’Ÿ
-#define SCCB_SCL_PORT   		   SCCB_SCL_GPIO_Port               // SCL å¼•è„šç«¯å£
-#define SCCB_SCL_PIN     		   SCCB_SCL_Pin 					// SCL å¼•è„š
+#define SCCB_SCL_CLK_ENABLE       __HAL_RCC_GPIOB_CLK_ENABLE()		// SCL Òı½ÅÊ±ÖÓ
+#define SCCB_SCL_PORT   		   SCCB_SCL_GPIO_Port               // SCL Òı½Å¶Ë¿Ú
+#define SCCB_SCL_PIN     		   SCCB_SCL_Pin 					// SCL Òı½Å
         
-#define SCCB_SDA_CLK_ENABLE       __HAL_RCC_GPIOB_CLK_ENABLE() 	// SDA å¼•è„šæ—¶é’Ÿ
-#define SCCB_SDA_PORT   			 SCCB_SDA_GPIO_Port                   	// SDA å¼•è„šç«¯å£
-#define SCCB_SDA_PIN    			 SCCB_SDA_Pin              	// SDA å¼•è„š
+#define SCCB_SDA_CLK_ENABLE       __HAL_RCC_GPIOB_CLK_ENABLE() 	// SDA Òı½ÅÊ±ÖÓ
+#define SCCB_SDA_PORT   			 SCCB_SDA_GPIO_Port                   	// SDA Òı½Å¶Ë¿Ú
+#define SCCB_SDA_PIN    			 SCCB_SDA_Pin              	// SDA Òı½Å
 
-/*------------------------------------------ IICç›¸å…³å®šä¹‰ -------------------------------------------------*/
+/*------------------------------------------ IICÏà¹Ø¶¨Òå -------------------------------------------------*/
 
-#define ACK_OK  	1  			// å“åº”æ­£å¸¸
-#define ACK_ERR 	0				// å“åº”é”™è¯¯
+#define ACK_OK  	1  			// ÏìÓ¦Õı³£
+#define ACK_ERR 	0				// ÏìÓ¦´íÎó
 
-// SCCBé€šä¿¡å»¶æ—¶ï¼ŒSCCB_Delay()å‡½æ•°ä½¿ç”¨ï¼Œ
-//	é€šä¿¡é€Ÿåº¦åœ¨300KHzå·¦å³
+// SCCBÍ¨ĞÅÑÓÊ±£¬SCCB_Delay()º¯ÊıÊ¹ÓÃ£¬
+//	Í¨ĞÅËÙ¶ÈÔÚ300KHz×óÓÒ
 #define SCCB_DelayVaule  8  	
 
-/*-------------------------------------------- IOå£æ“ä½œ ---------------------------------------------------*/   
+/*-------------------------------------------- IO¿Ú²Ù×÷ ---------------------------------------------------*/   
 
 #define SCCB_SCL(a)	if (a)	\
 										HAL_GPIO_WritePin(SCCB_SCL_PORT, SCCB_SCL_PIN, GPIO_PIN_SET); \
@@ -37,23 +37,23 @@
 									else		\
 										HAL_GPIO_WritePin(SCCB_SDA_PORT, SCCB_SDA_PIN, GPIO_PIN_RESET)		
 
-/*--------------------------------------------- å‡½æ•°å£°æ˜ --------------------------------------------------*/  		
+/*--------------------------------------------- º¯ÊıÉùÃ÷ --------------------------------------------------*/  		
 					
-void 		SCCB_GPIO_Config (void);				// IICå¼•è„šåˆå§‹åŒ–
-void 		SCCB_Delay(uint32_t a);					// IICå»¶æ—¶å‡½æ•°						
-void 		SCCB_Start(void);							// å¯åŠ¨IICé€šä¿¡
-void 		SCCB_Stop(void);							// IICåœæ­¢ä¿¡å·
-void 		SCCB_ACK(void);							//	å‘é€å“åº”ä¿¡å·
-void 		SCCB_NoACK(void);							// å‘é€éåº”ç­”ä¿¡å·
-uint8_t 	SCCB_WaitACK(void);						//	ç­‰å¾…åº”ç­”ä¿¡å·
-uint8_t	SCCB_WriteByte(uint8_t IIC_Data); 	// å†™å­—èŠ‚å‡½æ•°
-uint8_t 	SCCB_ReadByte(uint8_t ACK_Mode);		// è¯»å­—èŠ‚å‡½æ•°
+void 		SCCB_GPIO_Config (void);				// IICÒı½Å³õÊ¼»¯
+void 		SCCB_Delay(uint32_t a);					// IICÑÓÊ±º¯Êı						
+void 		SCCB_Start(void);							// Æô¶¯IICÍ¨ĞÅ
+void 		SCCB_Stop(void);							// IICÍ£Ö¹ĞÅºÅ
+void 		SCCB_ACK(void);							//	·¢ËÍÏìÓ¦ĞÅºÅ
+void 		SCCB_NoACK(void);							// ·¢ËÍ·ÇÓ¦´ğĞÅºÅ
+uint8_t 	SCCB_WaitACK(void);						//	µÈ´ıÓ¦´ğĞÅºÅ
+uint8_t	SCCB_WriteByte(uint8_t IIC_Data); 	// Ğ´×Ö½Úº¯Êı
+uint8_t 	SCCB_ReadByte(uint8_t ACK_Mode);		// ¶Á×Ö½Úº¯Êı
 		
-uint8_t  SCCB_WriteReg (uint8_t addr,uint8_t value);     	// å¯¹æŒ‡å®šçš„å¯„å­˜å™¨(8ä½åœ°å€)å†™ä¸€å­—èŠ‚æ•°æ®ï¼ŒOV2640ç”¨åˆ°
-uint8_t  SCCB_ReadReg (uint8_t addr);                    	// å¯¹æŒ‡å®šçš„å¯„å­˜å™¨(8ä½åœ°å€)è¯»ä¸€å­—èŠ‚æ•°æ®ï¼ŒOV2640ç”¨åˆ°
+uint8_t  SCCB_WriteReg (uint8_t addr,uint8_t value);     	// ¶ÔÖ¸¶¨µÄ¼Ä´æÆ÷(8Î»µØÖ·)Ğ´Ò»×Ö½ÚÊı¾İ£¬OV2640ÓÃµ½
+uint8_t  SCCB_ReadReg (uint8_t addr);                    	// ¶ÔÖ¸¶¨µÄ¼Ä´æÆ÷(8Î»µØÖ·)¶ÁÒ»×Ö½ÚÊı¾İ£¬OV2640ÓÃµ½
 									
-uint8_t 	SCCB_WriteReg_16Bit(uint16_t addr,uint8_t value);	// å¯¹æŒ‡å®šçš„å¯„å­˜å™¨(16ä½åœ°å€)å†™ä¸€å­—èŠ‚æ•°æ®ï¼ŒOV5640ç”¨åˆ°									
-uint8_t 	SCCB_ReadReg_16Bit (uint16_t addr);						// å¯¹æŒ‡å®šçš„å¯„å­˜å™¨(16ä½åœ°å€)è¯»ä¸€å­—èŠ‚æ•°æ®ï¼ŒOV5640ç”¨åˆ°
-uint8_t 	SCCB_WriteBuffer_16Bit(uint16_t addr,uint8_t *pData, uint32_t size);	// å¯¹æŒ‡å®šçš„å¯„å­˜å™¨(16ä½åœ°å€)æ‰¹é‡å†™æ•°æ®ï¼ŒOV5640 å†™å…¥è‡ªåŠ¨å¯¹ç„¦å›ºä»¶æ—¶ç”¨åˆ°		
+uint8_t 	SCCB_WriteReg_16Bit(uint16_t addr,uint8_t value);	// ¶ÔÖ¸¶¨µÄ¼Ä´æÆ÷(16Î»µØÖ·)Ğ´Ò»×Ö½ÚÊı¾İ£¬OV5640ÓÃµ½									
+uint8_t 	SCCB_ReadReg_16Bit (uint16_t addr);						// ¶ÔÖ¸¶¨µÄ¼Ä´æÆ÷(16Î»µØÖ·)¶ÁÒ»×Ö½ÚÊı¾İ£¬OV5640ÓÃµ½
+uint8_t 	SCCB_WriteBuffer_16Bit(uint16_t addr,uint8_t *pData, uint32_t size);	// ¶ÔÖ¸¶¨µÄ¼Ä´æÆ÷(16Î»µØÖ·)ÅúÁ¿Ğ´Êı¾İ£¬OV5640 Ğ´Èë×Ô¶¯¶Ô½¹¹Ì¼şÊ±ÓÃµ½		
 									
 #endif //__CAMERA_SCCB_H
