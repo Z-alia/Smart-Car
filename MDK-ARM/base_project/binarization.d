@@ -30,4 +30,4 @@ base_project/binarization.o: ..\camera_process\Binarization.c \
   ..\Base\type_def.h ..\camera_process\Element_recognition.h \
   ..\HardWare\OV2640\dcmi_ov2640.h ..\HardWare\OV2640\sccb.h \
   ..\Core\Inc\dcmi.h ..\HardWare\LCD\lcd_spi_200.h \
-  ..\HardWare\LCD\lcd_fonts.h ..\camera_process\scan_line.h
+  ..\HardWare\LCD\lcd_fonts.h

@@ -28,7 +28,6 @@
 /* USER CODE BEGIN Includes */
 #include "lcd_spi_200.h"
 #include "dcmi_ov2640.h"
-#include "scan_line.h"
 #include "Binarization.h"
 #include "Element_recognition.h"
 #include "image.h"

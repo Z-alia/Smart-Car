@@ -7,7 +7,6 @@
 #include "Binarization.h"
 #include "Element_recognition.h"
 #include "dcmi_ov2640.h"
-#include "scan_line.h"
 
 uint8 Grayscale[120][188];	//灰度图
 uint8 imo[120][188]; 		//处理后的图像

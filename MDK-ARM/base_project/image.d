@@ -27,4 +27,5 @@ base_project/image.o: ..\camera_process\image.c ..\camera_process\image.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
-  ..\HardWare\LCD\lcd_spi_200.h ..\HardWare\LCD\lcd_fonts.h
+  ..\HardWare\LCD\lcd_spi_200.h ..\HardWare\LCD\lcd_fonts.h \
+  ..\camera_process\morph_binary_bitpacked.h

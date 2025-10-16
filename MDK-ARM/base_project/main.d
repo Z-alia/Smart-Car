@@ -29,6 +29,6 @@ base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Core\Inc\dcmi.h ..\Core\Inc\dma.h ..\Core\Inc\memorymap.h \
   ..\Core\Inc\spi.h ..\Core\Inc\gpio.h ..\HardWare\LCD\lcd_spi_200.h \
   ..\HardWare\LCD\lcd_fonts.h ..\HardWare\OV2640\dcmi_ov2640.h \
-  ..\HardWare\OV2640\sccb.h ..\camera_process\scan_line.h \
-  ..\Base\type_def.h ..\camera_process\Binarization.h \
-  ..\camera_process\Element_recognition.h ..\camera_process\image.h
+  ..\HardWare\OV2640\sccb.h ..\camera_process\Binarization.h \
+  ..\Base\type_def.h ..\camera_process\Element_recognition.h \
+  ..\camera_process\image.h

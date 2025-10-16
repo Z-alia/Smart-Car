@@ -520,19 +520,14 @@
               <FilePath>..\camera_process\Element_recognition.h</FilePath>
             </File>
             <File>
-              <FileName>scan_line.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\camera_process\scan_line.c</FilePath>
-            </File>
-            <File>
-              <FileName>scan_line.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\camera_process\scan_line.h</FilePath>
-            </File>
-            <File>
               <FileName>image.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\camera_process\image.c</FilePath>
+            </File>
+            <File>
+              <FileName>morph_binary_bitpacked.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\camera_process\morph_binary_bitpacked.c</FilePath>
             </File>
           </Files>
         </Group>
