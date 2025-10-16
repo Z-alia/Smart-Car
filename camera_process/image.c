@@ -5,6 +5,7 @@
 #include "image.h"
 #include "Binarization.h"
 #include "lcd_spi_200.h"
+#include "morph_binary_bitpacked.h"
 /*
 函数名称：int my_abs(int value)
 功能说明：求绝对值
@@ -231,6 +232,7 @@ void search_l_r(uint16 break_flag, uint8(*image)[image_w], uint16 *l_stastic, ui
 			}
 
 		}
+		if(r_data_statics >= 2 && l_data_statics >= 3)//防止数组越界
 		if ((points_r[r_data_statics][0]== points_r[r_data_statics-1][0]&& points_r[r_data_statics][0] == points_r[r_data_statics - 2][0]
 			&& points_r[r_data_statics][1] == points_r[r_data_statics - 1][1] && points_r[r_data_statics][1] == points_r[r_data_statics - 2][1])
 			||(points_l[l_data_statics-1][0] == points_l[l_data_statics - 2][0] && points_l[l_data_statics-1][0] == points_l[l_data_statics - 3][0]
@@ -240,7 +242,7 @@ void search_l_r(uint16 break_flag, uint8(*image)[image_w], uint16 *l_stastic, ui
 			break;
 		}
 		if (my_abs(points_r[r_data_statics][0] - points_l[l_data_statics - 1][0]) < 2
-			&& my_abs(points_r[r_data_statics][1] - points_l[l_data_statics - 1][1] < 2)
+			&& my_abs(points_r[r_data_statics][1] - points_l[l_data_statics - 1][1]) < 2
 			)
 		{
 			//printf("\n左右相遇退出\n");	
@@ -382,44 +384,6 @@ void get_right(uint16 total_R)
 	}
 }
 
-//定义膨胀和腐蚀的阈值区间
-#define threshold_max	255*5//此参数可根据自己的需求调节
-#define threshold_min	255*2//此参数可根据自己的需求调节
-void image_filter(uint8(*bin_image)[image_w])//形态学滤波，简单来说就是膨胀和腐蚀的思想
-{
-	uint16 i, j;
-	uint32 num = 0;
-
-
-	for (i = 1; i < image_h - 1; i++)
-	{
-		for (j = 1; j < (image_w - 1); j++)
-		{
-			//统计八个方向的像素值
-			num =
-				bin_image[i - 1][j - 1] + bin_image[i - 1][j] + bin_image[i - 1][j + 1]
-				+ bin_image[i][j - 1] + bin_image[i][j + 1]
-				+ bin_image[i + 1][j - 1] + bin_image[i + 1][j] + bin_image[i + 1][j + 1];
-
-
-			if (num >= threshold_max && bin_image[i][j] == 0)
-			{
-
-				bin_image[i][j] = 255;//白  可以搞成宏定义，方便更改
-
-			}
-			if (num <= threshold_min && bin_image[i][j] == 255)
-			{
-
-				bin_image[i][j] = 0;//黑
-
-			}
-
-		}
-	}
-
-}
-
 /*
 函数名称：void image_draw_rectan(uint8(*image)[image_w])
 功能说明：给图像画一个黑框
@@ -471,9 +435,9 @@ void draw_edge()
     }
 	for(row=0;row<120;row++)
     {
-		imo[119-row][l_border[row]]=1;
-		imo[119-row][r_border[row]]=2;
-		imo[119-row][center_line[row]]=3;
+		imo[row][l_border[row]]=1;
+		imo[row][r_border[row]]=2;
+		imo[row][center_line[row]]=3;
 	}
 }
 
@@ -493,7 +457,7 @@ float Slope_Calculate(uint8 begin, uint8 end, uint8 *border)
 	float xsum = 0, ysum = 0, xysum = 0, x2sum = 0;
 	int16 i = 0;
 	float result = 0;
-	static float resultlast;
+	static float resultlast=0.0f;
 
 	for (i = begin; i < end; i++)
 	{
@@ -548,8 +512,8 @@ void calculate_s_i(uint8 start, uint8 end, uint8 *border, float *slope_rate, flo
 	//计算各个平均数
 	if (num)
 	{
-		x_average = (float)(xsum / num);
-		y_average = (float)(ysum / num);
+		x_average = (float)xsum / (float)num;
+		y_average = (float)ysum / (float)num;
 
 	}
 
@@ -583,7 +547,7 @@ void cross_fill(uint8(*image)[image_w], uint8 *l_border, uint8 *r_border, uint16
 	uint8 start, end;
 	float slope_l_rate = 0, intercept_l = 0;
 	//出十字
-	for (i = 1; i < total_num_l; i++)
+	for (i = 1; i + 7 < total_num_l; i++)
 	{
 		if (dir_l[i - 1] == 4 && dir_l[i] == 4 && dir_l[i + 3] == 6 && dir_l[i + 5] == 6 && dir_l[i + 7] == 6)
 		{
@@ -594,7 +558,7 @@ void cross_fill(uint8(*image)[image_w], uint8 *l_border, uint8 *r_border, uint16
 			break;
 		}
 	}
-	for (i = 1; i < total_num_r; i++)
+	for (i = 1; i + 7 < total_num_r; i++)
 	{
 		if (dir_r[i - 1] == 4 && dir_r[i] == 4 && dir_r[i + 3] == 6 && dir_r[i + 5] == 6 && dir_r[i + 7] == 6)
 		{
@@ -609,7 +573,7 @@ void cross_fill(uint8(*image)[image_w], uint8 *l_border, uint8 *r_border, uint16
 	{
 		//计算斜率
 		start = break_num_l - 15;
-		start = limit_a_b(start, 0, image_h);
+		start = limit_a_b(start, 0, image_h-1);
 		end = break_num_l - 5;
 		calculate_s_i(start, end, l_border, &slope_l_rate, &intercept_l);
 		//printf("slope_l_rate:%d\nintercept_l:%d\n", slope_l_rate, intercept_l);
@@ -621,7 +585,7 @@ void cross_fill(uint8(*image)[image_w], uint8 *l_border, uint8 *r_border, uint16
 
 		//计算斜率
 		start = break_num_r - 15;//起点
-		start = limit_a_b(start, 0, image_h);//限幅
+		start = limit_a_b(start, 0, image_h-1);//限幅
 		end = break_num_r - 5;//终点
 		calculate_s_i(start, end, r_border, &slope_l_rate, &intercept_l);
 		//printf("slope_l_rate:%d\nintercept_l:%d\n", slope_l_rate, intercept_l);
@@ -649,10 +613,11 @@ example： image_process();
 void image_process(void)
 {
 uint16 i;
-uint8 hightest = 0;//定义一个最高行，tip：这里的最高指的是y值的最小
-/*提取赛道边界*/
-image_filter(Grayscale);//滤波
-image_draw_rectan(Grayscale);//预处理
+uint8 Hightest = 0;//定义一个最高行，tip：这里的最高指的是y值的最小
+
+//滤波（形态学处理）
+morph_clean_u8_binary_adapter(Grayscale[0], image_w, image_h, imo[0]);
+image_draw_rectan(imo);//填黑框
 //清零
 data_stastics_l = 0;
 data_stastics_r = 0;
@@ -668,7 +633,7 @@ if (get_start_point(image_h - 2))//找到起点了，再执行八领域，没找
     cross_fill(Grayscale, l_border, r_border, data_stastics_l, data_stastics_r, dir_l, dir_r, points_l, points_r);//十字补线
 }
     //求中线
-	for (i = hightest; i < image_h-1; i++)
+	for (i = Hightest; i < image_h-1; i++)
 	{
 		center_line[i] = (l_border[i] + r_border[i]) >> 1;//求中线
 	}
