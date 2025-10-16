@@ -51,7 +51,7 @@ MotorSpeed motor_speed;
 void take_image(struct watch_o *watch,PIDController* pid);
 uint8_t flag=0,oldflag[5]={0};
 uint8_t pre_flag=0;
-float mpu=0,p=3,i=0.0,d=0.0;
+float mpu=0,p=4.0,i=0.0,d=0.0;
 uint32_t smd=0;
 /* USER CODE END PD */
 
@@ -141,6 +141,12 @@ int main(void)
 	mpu6050_init();
 	//调参阶段while
 	
+	/*计时器组件0
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+	DWT->CYCCNT=0;
+	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+	*/
+	
 	while(1)
 	{
 		LCD_DisplayDecimals( 175, 300, p, 5,1);
@@ -164,8 +170,15 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  /*计时器组件	1
+	uint32_t start,end,a;
+	a=0;
+	*/
   while (1)
   {
+	  /*计时器组件2
+	  start=DWT->CYCCNT;
+	  */
 	  //pid_calculate(&PID);
 	  	if (DCMI_FrameState == 1)	// 采集到了一帧图像
 		{
@@ -175,13 +188,13 @@ int main(void)
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
 			/* 二值化阈值限幅 */
-			if(watch.threshold>255)
+			if(watch.threshold>=115)
 			{
-				watch.threshold=255;
+				watch.threshold=115;
 			}
-			else if(watch.threshold<0)//将80改为130
+			else if(watch.threshold<=70)//将80改为130
 			{
-				watch.threshold=0;
+				watch.threshold=70;
 			}
 			
 			/* 二值化 */
@@ -194,8 +207,8 @@ int main(void)
 			scan_line();
 			
 			/* 卡尔曼滤波*/
-      stable_curve_params = ProcessLineWithKalman(lineinfo, watch.LastLine);
-			PopulatePredictedLine(&stable_curve_params, lineinfo, Display_Width, Display_Height);
+			//stable_curve_params = ProcessLineWithKalman(lineinfo, watch.LastLine);
+			//PopulatePredictedLine(&stable_curve_params, lineinfo, Display_Width, Display_Height);
 
 			/* 在图像上绘制出赛道边线 */
 			draw_edge();
@@ -245,6 +258,16 @@ int main(void)
 	
 	//straight_error_get(&PID_curve,lineinfo,&watch,0);
 	//motor_follow_line_curve(&PID_curve);
+	
+	/*
+	计时器组件3
+	if(a==10)
+	{end=DWT->CYCCNT;
+	end-=start;
+	a=0;	
+	LCD_DisplayNumber( 250, 460, end, 5);
+	}
+	*/
   }
   /* USER CODE END 3 */
 }

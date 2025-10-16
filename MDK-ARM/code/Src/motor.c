@@ -5,15 +5,15 @@
 #include "Binarization.h"
 #include "Element_recognition.h"
 //本工程的PWM分辨率为1000
-#define tgtspd 200 //700改70
-#define tgtspd_curve 170
+#define tgtspd 250 //700改70
+#define tgtspd_curve 200
 #define TL_tgtspd 250
 #define TR_tgtspd 250
 #define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
 #define weight_md 0.45
 #define weight_dw 0.40
-#define weight_curve_up 1.0
-#define weight_curve_down 0.0
+#define weight_curve_up 0.50
+#define weight_curve_down 0.50
 
 PIDController PID;
 PIDController PID_curve;
@@ -39,12 +39,21 @@ float pid_calculate(PIDController* pid) {
     // 计算误差
     //pid->error = setpoint - feedback;
     
-    // 计算积分项
-    pid->integral += pid->error;
-    pid->integral = (pid->integral > pid->integral_limit) ? pid->integral_limit : ((pid->integral < -pid->integral_limit) ? -pid->integral_limit : pid->integral);
     // 计算微分项
     pid->derivative = pid->error - pid->last_error;
     
+    //error平滑
+    if(pid->derivative>5.0)
+    	pid->error=pid->last_error+5.0;
+    else if(pid->derivative<-5.0)
+    	pid->error=pid->last_error-5.0;
+
+    // 计算积分项
+    pid->integral += pid->error;
+    pid->integral = (pid->integral > pid->integral_limit) ? pid->integral_limit : ((pid->integral < -pid->integral_limit) ? -pid->integral_limit : pid->integral);
+
+
+
     // 计算输出
     float output = pid->kp * pid->error + 
                   pid->ki * pid->integral + 
@@ -156,7 +165,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     {
 		if(lineinfo[i].mid!=0)
 			length++;
-       temp+=((uint16_t)lineinfo[i].mid);
+       temp+=((float)lineinfo[i].mid);
     }
 	sum+=(temp/length)*weight_dw;
 	length=0;
@@ -165,7 +174,7 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     {
 	   if(lineinfo[i].mid!=0)
 	   length++;
-       temp+=((uint16_t)lineinfo[i].mid);
+       temp+=((float)lineinfo[i].mid);
     }
 	sum+=(temp/length)*weight_md;
 	temp=0.0;
@@ -174,9 +183,9 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     {
 	   if(lineinfo[i].mid!=0)
 	   length++;
-       temp+=((uint16_t)lineinfo[i].mid);
+       temp+=((float)lineinfo[i].mid);
     }
-	sum+=(temp/length)*weight_up;
+	sum+=(temp/(float)length)*weight_up;
     PID->error = sum- (94.0+derta);
 	
     }
@@ -184,9 +193,10 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
 	
 	else
 	{
+	
     //用原始中线计算误差
-	int16_t top=watch->LastLine;
-	int16_t middle=2*(top/3);//这里是上三分之一 喜欢多少自己改
+	int16_t top=watch->LastLine-5;
+	int16_t middle=3*top/4;
 	int16_t bottom=0;
 	    if(top==0||middle==0)
     {
@@ -197,21 +207,21 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
     {
        temp+=((float)lineinfo[i].mid);
     }
-	sum+=(temp/middle)*weight_curve_up;
+	sum+=((temp/middle)-93.5f)*weight_curve_down;
 	temp=0.0;
 	for(int16_t i=middle;i<=top;i++)
     {
        temp+=((float)lineinfo[i].mid);
     }
-	sum+=(temp/middle)*weight_curve_down;
+	sum+=(temp/(top-middle)-93.5f)*weight_curve_up;
 	sum=sum*110.0f/(float)top;
-    PID->error = sum- (94.0+derta);
+    PID->error = sum- derta;
 	}
     
 	/*
     //用预测中线计算误差
     int16_t top=watch->PredictTopMidline;
-	int16_t middle=2*(top/3);
+	int16_t middle=3*(top/4);
 	int16_t bottom=0;
 	    if(top==0||middle==0)
     {
@@ -232,9 +242,8 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
 	sum+=(temp/(top-middle))*weight_curve_up;
 	sum=sum*(110.0/(float)top);
     PID->error = sum- (94.0+derta);
-}
+	}
 	*/
-	
 }
 
 void motor_follow_line_curve(PIDController* pid)

@@ -6,6 +6,7 @@
 #include "main.h"
 #include "line_straight_check.h"
 #include "Kalman.h"
+#include "motor.h"
 
 //小车状态变量
 struct watch_o watch;
@@ -128,10 +129,17 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[])
     
         for (line = 60; line < 120; line++)
         {
-            if(lineinfo[line].left_lost==1||lineinfo[line].right_lost==1)
+			float a=PID.error;
+			float b=PID_curve.error;
+			a=(a>0?a:-a)-12.0;
+			b=(b>0?b:-b)-12.0;
+			
+            if(lineinfo[line].left_lost==1||lineinfo[line].right_lost==1||a>=0||b>=0)
+			{   PID.error=0;
                 break; //有一行线丢失则跳出
+				}
         }
-        if(line==120||(stable_curve_params.a<=0.003f&&stable_curve_params.a>=-0.003f)) //如果20~119行全部不丢线则认定为直线
+        if(line==120) //如果20~119行全部不丢线则认定为直线
         {
             
             watch->Straight_flag=1; //直道标志位 置1，认为项目结束
