@@ -471,8 +471,8 @@ void draw_edge()
     }
 	for(row=0;row<120;row++)
     {
-		imo[119-row][points_l[row][0]]=1;
-		imo[119-row][points_r[row][1]]=2;
+		imo[119-row][l_border[row]]=1;
+		imo[119-row][r_border[row]]=2;
 		imo[119-row][center_line[row]]=3;
 	}
 }
