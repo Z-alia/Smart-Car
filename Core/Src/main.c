@@ -20,43 +20,101 @@
 #include "main.h"
 #include "dcmi.h"
 #include "dma.h"
-#include "i2c.h"
+#include "memorymap.h"
 #include "spi.h"
-#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "lcd_spi_200.h"
 #include "dcmi_ov2640.h"
-#include "Binarization.h"
-#include "morph_binary_bitpacked.h"
-#include "element_recognition.h"
 #include "scan_line.h"
-#include "encoder.h"
-#include "ec11.h"
-#include "motor.h"
-#include "mpu6050.h"
-#include "line_straight_check.h"
-#include "Kalman.h"
+#include "Binarization.h"
+#include "Element_recognition.h"
+#include "image.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-MotorSpeed motor_speed;
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-void take_image(struct watch_o *watch,PIDController* pid);
-uint8_t flag=0,oldflag[5]={0};
-uint8_t pre_flag=0;
-float mpu=0.0f,p=2.5f,i=0.0f,d=0.0f;
-uint32_t smd=0;
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -68,11 +126,12 @@ uint32_t smd=0;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void MPU_Config(void);
 /* USER CODE END 0 */
 
 /**
@@ -83,7 +142,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	MPU_Config();
   /* USER CODE END 1 */
 
   /* Enable the CPU Cache */
@@ -100,8 +159,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  LCD_SetAsciiFont(&ASCII_Font20);      // 设置字体
-  LCD_ShowNumMode(Fill_Space);           // 设置多余位补0（可选，Fill_Space 为补空格）
 
   /* USER CODE END Init */
 
@@ -117,56 +174,17 @@ int main(void)
   MX_DMA_Init();
   MX_SPI4_Init();
   MX_DCMI_Init();
-  MX_TIM6_Init();
-  MX_TIM1_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
-  MX_TIM7_Init();
-  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-	LCD_Init();
-	OV2640_Init();	
-	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	
-	HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
-	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
-	HAL_TIM_Base_Start_IT(&htim6);
-	pid_init(&PID,1.5,0.0,0);//直线pid
-	pid_init(&PID_curve,p,i,d);//弯道pid
-	motor_init();
-	Clear_Recognition_Flag(&watch);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_2,GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_3,GPIO_PIN_RESET);
-	mpu6050_init();
-	//调参阶段while
+	OV2640_Init();	//配置OV2640
+	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
+	LCD_Init();//显示屏初始化
 	
-	while(1)
-	{
-		LCD_DisplayDecimals( 175, 300, p, 5,1);
-		LCD_DisplayDecimals( 175, 320, i, 5,1);
-		LCD_DisplayDecimals( 175, 340, d, 5,1);
-		
-		LCD_DisplayNumber( 0, 20, oldflag[4], 5);
-		LCD_DisplayNumber( 0, 40, oldflag[3], 5);
-		LCD_DisplayNumber( 0, 60, oldflag[2], 5);
-		LCD_DisplayNumber( 0, 80, oldflag[1], 5);
-		
-		
-		if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4)==GPIO_PIN_RESET)
-			break;
-		
-	}
-	HAL_TIM_Base_Start_IT(&htim7);
-	//HAL_Delay(5000);
-	HAL_TIM_Base_Start_IT(&htim7);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  //pid_calculate(&PID);
 	  	if (DCMI_FrameState == 1)	// 采集到了一帧图像
 		{
 			DCMI_FrameState = 0;		// 清零标志位
@@ -179,7 +197,7 @@ int main(void)
 			{
 				watch.threshold=180;
 			}
-			else if(watch.threshold<160)//将80改为130
+			else if(watch.threshold<160)
 			{
 				watch.threshold=160;
 			}
@@ -187,68 +205,22 @@ int main(void)
 			/* 二值化 */
 			Binarization();
 			
-      //洗图、提取边缘
-      //morph_clean_u8_binary_adapter(Grayscale[0], Display_Width, Display_Height, imo[0]);
-
 			/* 扫描赛道边线 */
-			scan_line();
+			//scan_line();
 			
-			/* 卡尔曼滤波*/
-      stable_curve_params = ProcessLineWithKalman(lineinfo, watch.LastLine);
-			PopulatePredictedLine(&stable_curve_params, lineinfo, Display_Width, Display_Height);
-
 			/* 在图像上绘制出赛道边线 */
 			//draw_edge();
 			
 			/* 显示摄像头图像 */
 			//显示原图像
 			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
-			//显示二值化扫线图;
-			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);		
-            //图像到误差转换
-            if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
-		    {straight_error_get(&PID,lineinfo,&watch,0);
-			PID_curve.output=PID.output;
-			}
-	        else if(watch.Curve_flag==1/*&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0*/)
-		    {straight_error_get(&PID_curve,lineinfo,&watch,0);
-             PID.output=PID_curve.output;	
-			}				
+			//显示二值化扫线图
+			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
+      image_process();
 		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    LCD_DisplayNumber( 250, 250, watch.Curve_flag, 5);
-	LCD_DisplayNumber( 250, 270, watch.Curve_left_flag, 5);
-	LCD_DisplayNumber( 250, 290, watch.Curve_right_flag, 5);
-	LCD_DisplayNumber( 250, 310, watch.Straight_flag, 5);
-	//LCD_DisplayNumber( 250, 330, (int16_t)PID.error, 5);
-	LCD_DisplayNumber( 250, 350, watch.threshold, 5);
-	
-	LCD_DisplayNumber( 0, 430, watch.Left_Break_flag, 5);
-	LCD_DisplayNumber( 0, 450, watch.Right_Break_flag, 5);
-		
-	LCD_DisplayNumber( 250, 370, watch.Crossroads_flag_left, 5);
-	LCD_DisplayNumber( 250, 390, watch.Cross_flag, 5);
-		
-	LCD_DisplayNumber( 100, 400, leftmotor.speed, 5);	
-	LCD_DisplayNumber( 100, 420, rightmotor.speed, 5);	
-	LCD_DisplayNumber( 100, 440, (int16_t)PID_curve.error, 5);
-	LCD_DisplayNumber( 100, 460, (int16_t)PID.error, 5);
-		
-	LCD_DisplayNumber( 175, 420, watch.PredictTopMidline, 5);	
-	LCD_DisplayNumber( 175, 440, watch.LastLine, 5);	
-    LCD_DisplayNumber( 175, 460, lineinfo[watch.PredictTopMidline-10].midpredict, 5);
-	LCD_DisplayDecimals( 175, 480, p, 5,1);
-	
-	
-	LCD_DisplayDecimals( 250, 410, stable_curve_params.a, 5,3);
-		
-	//LCD_DisplayNumber( 250, 410, mpu/500, 5);
-	
-	
-	//straight_error_get(&PID_curve,lineinfo,&watch,0);
-	//motor_follow_line_curve(&PID_curve);
   }
   /* USER CODE END 3 */
 }
@@ -317,166 +289,29 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+//	配置MPU
+//
+void MPU_Config(void)
 {
- if (htim->Instance == TIM6)
-    {
-        //每 10ms 执行
+	MPU_Region_InitTypeDef MPU_InitStruct;
 
-        // 1. 读取编码器当前计数值
-        //motor_speed.encoder_count_left = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);
-        //motor_speed.encoder_count_right = (int16_t)__HAL_TIM_GET_COUNTER(&htim3);
-        // 2. 计算速度 修正溢出 更新上一次的计数值
-        //Encoder_Correct(&motor_speed);
-        // 3. 调用电机PID控制函数
-		
-//		if(watch.Straight_flag==1&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0)
-//		straight_error_get(&PID,lineinfo,&watch,0);
-//	    else if(watch.Curve_flag==1/*&&watch.Crossroads_flag_left==0&&watch.Crossroads_flag_right==0*/)
-//		straight_error_get(&PID_curve,lineinfo,&watch,0);
-//		else if(watch.Crossroads_flag_left==1)
-//			straight_error_get(&PID_curve,lineinfo,&watch,10);
-//		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)<=3)
-//			straight_error_get(&PID_curve,lineinfo,&watch,15);
-//		else if(watch.Crossroads_flag_left==2&&(mpu/500.0)>3)
-//		{
-//			watch.Crossroads_flag_left=0;
-//			watch.Crossroads_flag_right=0;
-//			mpu=0;
-//		}
-		
-		
-		//4.赛道识别
-		Island_loop_and_curve_recognition(&watch,lineinfo);
-		
-		
-		//Cross_recognition(&watch,lineinfo);
-		
-		
-		
-    }
-if (htim->Instance == TIM7)
-{
-	
-	if(watch.Straight_flag==1)
-		run_follow(&PID);//电机注释，调试图像
-	else if(watch.Curve_flag==1)
-		motor_follow_line_curve(&PID_curve);
-	else if(watch.Crossroads_flag_left==1)
-		motor_follow_line_curve(&PID_curve);
-	
-	Straight_recognition(&watch,lineinfo);	
-	//motor_run(&rightmotor,100);//电机测试
-	
-	//take_image(&watch,&PID_curve);
-	mpu6050_get_gyro();
-		mpu+=mpu6050_gyro_transition(mpu6050_gyro_z);
-}
+	HAL_MPU_Disable();		// 先禁止MPU
 
-}
+	MPU_InitStruct.Enable 				= MPU_REGION_ENABLE;
+	MPU_InitStruct.BaseAddress 		= 0x24000000;
+	MPU_InitStruct.Size 					= MPU_REGION_SIZE_512KB;
+	MPU_InitStruct.AccessPermission 	= MPU_REGION_FULL_ACCESS;
+	MPU_InitStruct.IsBufferable 		= MPU_ACCESS_BUFFERABLE;
+	MPU_InitStruct.IsCacheable 		= MPU_ACCESS_CACHEABLE;
+	MPU_InitStruct.IsShareable 		= MPU_ACCESS_SHAREABLE;
+	MPU_InitStruct.Number 				= MPU_REGION_NUMBER0;
+	MPU_InitStruct.TypeExtField 		= MPU_TEX_LEVEL0;
+	MPU_InitStruct.SubRegionDisable 	= 0x00;
+	MPU_InitStruct.DisableExec 		= MPU_INSTRUCTION_ACCESS_ENABLE;
 
-void take_image(struct watch_o *watch,PIDController* pid)
-{
-	if(watch->Curve_flag==1&&pid->error>=15)
-	{
-		
-		if(watch->Curve_left_flag==1)
-			motor_turnright();
-		else if(watch->Curve_right_flag==1)
-			motor_turnleft();
-	 
-	}
-}
-void ssxxzzyyybaba_cw()
-{
-//4 3 2 1 0
-			oldflag[4]=oldflag[3];
-			oldflag[3]=oldflag[2];
-			oldflag[2]=oldflag[1];
-			oldflag[1]=1;
-			if(oldflag[4]==0&&oldflag[3]==1&&oldflag[2]==0&&oldflag[1]==1)
-			{
-				flag=(flag+1)%3;
-				memset(oldflag,0,sizeof(oldflag));
-			}
-}
-void ssxxzzyyybaba_ccw()
-{
-//4 3 2 1 0
-			oldflag[4]=oldflag[3];
-			oldflag[3]=oldflag[2];
-			oldflag[2]=oldflag[1];
-			oldflag[1]=0;
-}
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	uint32_t smd1=HAL_GetTick();
-	switch(flag)
-	{
-		case 0:
-	{
-	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
-	{
-		if(smd1-smd>=600)
-		{
-			//4是时间最远的一次操作
-			//1正转0反
-			smd=HAL_GetTick();
-			p+=0.1f;
-			ssxxzzyyybaba_cw();
-		}
-	}
-	else
-		if(smd1-smd>=600)
-		{
-			smd=HAL_GetTick();
-			p-=0.1f;
-			ssxxzzyyybaba_ccw();
-		}
-		break;
-	}
-		
-		case 1:
-	{
-	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
-	{
-		if(smd1-smd>=600)
-		{
-			smd=HAL_GetTick();
-			i+=0.1f;
-			ssxxzzyyybaba_cw();
-		}
-	}
-	else
-		if(smd1-smd>=600)
-		{
-			smd=HAL_GetTick();
-			i-=0.1f;
-			ssxxzzyyybaba_ccw();
-		}
-		break;
-	}
-	case 2:
-	{
-	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0)==1)
-	{
-		if(smd1-smd>=600)
-		{
-			smd=HAL_GetTick();
-			d+=0.1f;
-			ssxxzzyyybaba_cw();
-		}
-	}
-	else
-		if(smd1-smd>=600)
-		{
-			smd=HAL_GetTick();
-			d-=0.1f;
-			ssxxzzyyybaba_ccw();
-		}
-		break;
-	}
-	}
+	HAL_MPU_ConfigRegion(&MPU_InitStruct);	
+
+	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);	// 使能MPU
 }
 /* USER CODE END 4 */
 

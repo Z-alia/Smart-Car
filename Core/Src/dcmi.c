@@ -55,7 +55,8 @@ void MX_DCMI_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN DCMI_Init 2 */
-
+	HAL_NVIC_SetPriority(DCMI_IRQn, 0 ,5);    // 设置中断优先级
+	HAL_NVIC_EnableIRQ(DCMI_IRQn); 		      // 开启DCMI中断
   /* USER CODE END DCMI_Init 2 */
 
 }
