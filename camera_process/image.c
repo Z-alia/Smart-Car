@@ -59,7 +59,7 @@ uint8 start_point_l[2] = { 0 };//左边起点的x，y值
 uint8 start_point_r[2] = { 0 };//右边起点的x，y值
 uint8 get_start_point(uint8 start_row)
 {
-	uint8 i = 0,l_found = 0,r_found = 0;
+	uint16 i = 0,l_found = 0,r_found = 0;
 	//清零
 	start_point_l[0] = 0;//x
 	start_point_l[1] = 0;//y
@@ -232,7 +232,6 @@ void search_l_r(uint16 break_flag, uint8(*image)[image_w], uint16 *l_stastic, ui
 			}
 
 		}
-		if(r_data_statics >= 2 && l_data_statics >= 3)//防止数组越界
 		if ((points_r[r_data_statics][0]== points_r[r_data_statics-1][0]&& points_r[r_data_statics][0] == points_r[r_data_statics - 2][0]
 			&& points_r[r_data_statics][1] == points_r[r_data_statics - 1][1] && points_r[r_data_statics][1] == points_r[r_data_statics - 2][1])
 			||(points_l[l_data_statics-1][0] == points_l[l_data_statics - 2][0] && points_l[l_data_statics-1][0] == points_l[l_data_statics - 3][0]
@@ -541,7 +540,7 @@ void calculate_s_i(uint8 start, uint8 end, uint8 *border, float *slope_rate, flo
 void cross_fill(uint8(*image)[image_w], uint8 *l_border, uint8 *r_border, uint16 total_num_l, uint16 total_num_r,
 										 uint16 *dir_l, uint16 *dir_r, uint16(*points_l)[2], uint16(*points_r)[2])
 {
-	uint8 i;
+	uint16 i;
 	uint8 break_num_l = 0;
 	uint8 break_num_r = 0;
 	uint8 start, end;
