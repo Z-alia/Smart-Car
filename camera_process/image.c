@@ -210,27 +210,27 @@ void search_l_r(uint16 break_flag, uint8(*image)[image_w], uint16 *l_stastic, ui
 			if (image[search_filds_l[i][1]][search_filds_l[i][0]] == 0
 				&& image[search_filds_l[(i + 1) & 7][1]][search_filds_l[(i + 1) & 7][0]] == 255)
 			{
-				temp_l[index_l][0] = search_filds_l[(i)][0];
-				temp_l[index_l][1] = search_filds_l[(i)][1];
+				temp_l[index_l][0] = search_filds_l[(i + 1) & 7][0];
+				temp_l[index_l][1] = search_filds_l[(i + 1) & 7][1];
 				index_l++;
 				dir_l[l_data_statics - 1] = (i);//记录生长方向
 			}
+		}
 
-			if (index_l)
+		// 决策逻辑移到循环外部
+		if (index_l)
+		{
+			//更新坐标点
+			center_point_l[0] = temp_l[0][0];//x
+			center_point_l[1] = temp_l[0][1];//y
+			for (j = 0; j < index_l; j++)
 			{
-				//更新坐标点
-				center_point_l[0] = temp_l[0][0];//x
-				center_point_l[1] = temp_l[0][1];//y
-				for (j = 0; j < index_l; j++)
+				if (center_point_l[1] > temp_l[j][1])
 				{
-					if (center_point_l[1] > temp_l[j][1])
-					{
-						center_point_l[0] = temp_l[j][0];//x
-						center_point_l[1] = temp_l[j][1];//y
-					}
+					center_point_l[0] = temp_l[j][0];//x
+					center_point_l[1] = temp_l[j][1];//y
 				}
 			}
-
 		}
 		if ((points_r[r_data_statics][0]== points_r[r_data_statics-1][0]&& points_r[r_data_statics][0] == points_r[r_data_statics - 2][0]
 			&& points_r[r_data_statics][1] == points_r[r_data_statics - 1][1] && points_r[r_data_statics][1] == points_r[r_data_statics - 2][1])
@@ -277,27 +277,27 @@ void search_l_r(uint16 break_flag, uint8(*image)[image_w], uint16 *l_stastic, ui
 			if (image[search_filds_r[i][1]][search_filds_r[i][0]] == 0
 				&& image[search_filds_r[(i + 1) & 7][1]][search_filds_r[(i + 1) & 7][0]] == 255)
 			{
-				temp_r[index_r][0] = search_filds_r[(i)][0];
-				temp_r[index_r][1] = search_filds_r[(i)][1];
+				temp_r[index_r][0] = search_filds_r[(i + 1) & 7][0];
+				temp_r[index_r][1] = search_filds_r[(i + 1) & 7][1];
 				index_r++;//索引加一
 				dir_r[r_data_statics - 1] = (i);//记录生长方向
 				//printf("dir[%d]:%d\n", r_data_statics - 1, dir_r[r_data_statics - 1]);
 			}
-			if (index_r)
+		}
+
+		// 决策逻辑移到循环外部
+		if (index_r)
+		{
+			//更新坐标点
+			center_point_r[0] = temp_r[0][0];//x
+			center_point_r[1] = temp_r[0][1];//y
+			for (j = 0; j < index_r; j++)
 			{
-
-				//更新坐标点
-				center_point_r[0] = temp_r[0][0];//x
-				center_point_r[1] = temp_r[0][1];//y
-				for (j = 0; j < index_r; j++)
+				if (center_point_r[1] > temp_r[j][1])
 				{
-					if (center_point_r[1] > temp_r[j][1])
-					{
-						center_point_r[0] = temp_r[j][0];//x
-						center_point_r[1] = temp_r[j][1];//y
-					}
+					center_point_r[0] = temp_r[j][0];//x
+					center_point_r[1] = temp_r[j][1];//y
 				}
-
 			}
 		}
 
@@ -325,28 +325,25 @@ uint8 r_border[image_h];//右线数组
 uint8 center_line[image_h];//中线数组
 void get_left(uint16 total_L)
 {
-	uint8 i = 0;
-	uint16 j = 0;
-	uint8 h = 0;
-	//初始化
-	for (i = 0;i<image_h;i++)
+	uint16 j;
+	//初始化左边界为最小值
+	for (j = 0; j < image_h; j++)
 	{
-		l_border[i] = border_min;
+		l_border[j] = border_min;
 	}
-	h = image_h - 2;
-	//左边
+
+	// 遍历所有找到的点，更新l_border数组
 	for (j = 0; j < total_L; j++)
 	{
-		//printf("%d\n", j);
-		if (points_l[j][1] == h)
+		uint16 row = points_l[j][1];
+		uint16 col = points_l[j][0];
+		if (row < image_h) // 确保行号在范围内
 		{
-			l_border[h] = points_l[j][0]+1;
-		}
-		else continue; //每行只取一个点，没到下一行就不记录
-		h--;
-		if (h == 0) 
-		{
-			break;//到最后一行退出
+			// 如果当前行的边界还是初始值，或者找到了一个更左边的点
+			if (l_border[row] == border_min || col < l_border[row])
+			{
+				l_border[row] = col;
+			}
 		}
 	}
 }
@@ -362,24 +359,26 @@ example：get_right(data_stastics_r);
  */
 void get_right(uint16 total_R)
 {
-	uint8 i = 0;
-	uint16 j = 0;
-	uint8 h = 0;
-	for (i = 0; i < image_h; i++)
+	uint16 j;
+	//初始化右边界为最大值
+	for (j = 0; j < image_h; j++)
 	{
-		r_border[i] = border_max;//右边线初始化放到最右边，左边线放到最左边，这样八邻域闭合区域外的中线就会在中间，不会干扰得到的数据
+		r_border[j] = border_max;
 	}
-	h = image_h - 2;
-	//右边
+
+	// 遍历所有找到的点，更新r_border数组
 	for (j = 0; j < total_R; j++)
 	{
-		if (points_r[j][1] == h)
+		uint16 row = points_r[j][1];
+		uint16 col = points_r[j][0];
+		if (row < image_h) // 确保行号在范围内
 		{
-			r_border[h] = points_r[j][0] - 1;
+			// 如果当前行的边界还是初始值，或者找到了一个更右边的点
+			if (r_border[row] == border_max || col > r_border[row])
+			{
+				r_border[row] = col;
+			}
 		}
-		else continue;//每行只取一个点，没到下一行就不记录
-		h--;
-		if (h == 0)break;//到最后一行退出
 	}
 }
 
