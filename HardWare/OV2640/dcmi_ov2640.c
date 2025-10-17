@@ -30,7 +30,15 @@ extern DMA_HandleTypeDef hdma_dcmi;
 volatile uint8_t DCMI_FrameState = 0;  // DCMI状态标志，当数据帧传输完成时，会被 HAL_DCMI_FrameEventCallback() 中断回调函数置 1     
 volatile uint8_t OV2640_FPS ;          // 帧率
 
+// 两套行指针表，分别指向双缓冲的两块帧内存
+static uint16_t* mt9v03x_image_bufA[120] = {0};
+static uint16_t* mt9v03x_image_bufB[120] = {0};
+
+// 当前对外暴露的行指针表（保持原名以兼容上层）
 uint16_t* mt9v03x_image[120]={0};//摄像头图像数组
+
+// 就绪缓冲索引：0=>A, 1=>B
+static volatile uint8_t cam_ready_idx = 0;
 
 /***************************************************************************************************************************************
 *	函 数 名: OV2640_Delay
@@ -63,10 +71,14 @@ int8_t OV2640_Init(void)
 	OV2640_Reset();	                     // 执行软件复位
 	Device_ID = OV2640_ReadID();		      // 读取器件ID
 	
-	for(uint8_t i=0;i<120;i++)
-	{
-		mt9v03x_image[i]=(uint16_t*)Camera_Buffer+188*i;
-	}
+   // 初始化两套行指针表
+   for(uint8_t i=0;i<120;i++)
+   {
+      mt9v03x_image_bufA[i] = (uint16_t*)(Camera_Buffer)      + (uint32_t)Display_Width * i;
+      mt9v03x_image_bufB[i] = (uint16_t*)(Camera_Buffer_2)    + (uint32_t)Display_Width * i;
+   }
+   // 缺省指向 A 缓冲
+   for(uint8_t i=0;i<120;i++) mt9v03x_image[i] = mt9v03x_image_bufA[i];
 	
 	if( (Device_ID == 0x2640) || (Device_ID == 0x2642) )		// 进行匹配，实际的器件ID可能是 0x2640 或者 0x2642
 	{
@@ -111,10 +123,26 @@ int8_t OV2640_Init(void)
 *****************************************************************************************************************************************/
 void OV2640_DMA_Transmit_Continuous(uint32_t DMA_Buffer,uint32_t DMA_BufferSize)
 {
-	hdma_dcmi.Init.Mode  = DMA_CIRCULAR;  // 循环模式					
-	HAL_DMA_Init(&hdma_dcmi);    // 配置DMA
-  // 使能DCMI采集数据,连续采集模式
-   HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)DMA_Buffer,DMA_BufferSize);
+   // 循环模式 + 双缓冲
+   hdma_dcmi.Init.Mode  = DMA_CIRCULAR;                    
+   HAL_DMA_Init(&hdma_dcmi);    // 配置DMA
+
+   // 先配置 DMA 双缓冲的两个内存地址（Mem0/Mem1）
+   // Mem0 = Camera_Buffer, Mem1 = Camera_Buffer_2
+   if (HAL_DMAEx_MultiBufferStart(&hdma_dcmi,
+                           (uint32_t)&DCMI->DR,
+                           (uint32_t)Camera_Buffer,
+                           (uint32_t)Camera_Buffer_2,
+                           DMA_BufferSize) != HAL_OK)
+   {
+      Error_Handler();
+   }
+
+   // 启动 DCMI 采集（仅开采集，不再让 HAL_DCMI_Start_DMA 重新配置 DMA）
+   if (HAL_DCMI_Start(&hdcmi, DCMI_MODE_CONTINUOUS) != HAL_OK)
+   {
+      Error_Handler();
+   }
 }
 
 /***************************************************************************************************************************************
@@ -671,6 +699,27 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 		DCMI_Frame_Count = 0;            // 计数清0
 	}
 	DCMI_Frame_Count ++;    // 没进入一次中断（每次传输完一帧数据），计数值+1
+
+   // 通过当前目标寄存器（CT 位）判断刚完成的是哪一块缓冲：
+   // CT=0 表示当前目标是 Mem0（正在写 A），刚完成的是 B；CT=1 则相反。
+   uint32_t ct = (hdcmi->DMA_Handle->Instance->CR & DMA_SxCR_CT) ? 1U : 0U;
+   uint32_t done_buf_addr = (ct == 0U) ? (uint32_t)Camera_Buffer_2 : (uint32_t)Camera_Buffer;
+
+   // D-Cache 一致性维护：对“刚完成”的缓冲做 Invalidate（地址/长度都需32字节对齐）
+   // H7 的 cache line 为 32B，当前帧大小为 188*120*2 = 45120B，已是 32B 的倍数
+   SCB_InvalidateDCache_by_Addr((void*)done_buf_addr, CAMERA_FRAME_BYTES);
+
+   // 切换上层可见的行指针表
+   if (done_buf_addr == (uint32_t)Camera_Buffer)
+   {
+      for(uint8_t i=0;i<120;i++) mt9v03x_image[i] = mt9v03x_image_bufA[i];
+      cam_ready_idx = 0;
+   }
+   else
+   {
+      for(uint8_t i=0;i<120;i++) mt9v03x_image[i] = mt9v03x_image_bufB[i];
+      cam_ready_idx = 1;
+   }
 
    DCMI_FrameState = 1;  // 传输完成标志位置1
 }

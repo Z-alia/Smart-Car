@@ -43,12 +43,20 @@ extern uint16_t* mt9v03x_image[120];	// 图像数据存储数组
 #define	Display_Width			188
 #define	Display_Height			120
 
-#define Camera_Buffer	0x24000000    // 摄像头图像缓冲区
+// 摄像头图像缓冲区：启用双缓冲时，Mem0/Mem1 仅作为两个物理地址，不涉及缓冲间拷贝
+#define Camera_Buffer             0x24000000U
+
+// 一帧字节数与字数（DMA 配置为32bit宽，HAL 传入的是 word 计数）
+#define CAMERA_FRAME_BYTES        (Display_Width * Display_Height * 2U)
+#define CAMERA_FRAME_WORDS        (CAMERA_FRAME_BYTES / 4U)
+
+// 双缓冲第二块地址（对齐到32字节；当前帧大小 45120B 恰好是32的倍数）
+#define Camera_Buffer_2           (Camera_Buffer + CAMERA_FRAME_BYTES)
 
 // 1.RGB565模式下，需要 图像分辨率*2 的大小
 // 2.JPG模式下，需要的缓冲区大小并不是固定的，例如 640*480分辨率，JPG图像大概要占30K，
 //   缓冲区预留2倍左右大小即可，用户可根据实际情况去设置,
-#define 	OV2640_BufferSize     Display_Width * Display_Height*2 /4   // DMA传输数据大小（32位宽）
+#define 	OV2640_BufferSize     CAMERA_FRAME_WORDS   // DMA传输数据大小（32位宽）
 //#define 	OV2640_BufferSize     	100*1024/4   // DMA传输数据大小（32位宽）
 
 #define  OV2640_SEL_Registers       0xFF	// 寄存器组选择寄存器
