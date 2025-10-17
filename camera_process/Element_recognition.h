@@ -1,29 +1,64 @@
-#ifndef CODE_CAMERA_PROCESS_ELEMENT_RECOGNITION_H_
-#define CODE_CAMERA_PROCESS_ELEMENT_RECOGNITION_H_
+#ifndef ELEMENT_RECOGNITION_H_
+#define ELEMENT_RECOGNITION_H_
 #include "main.h"
 #include "type_def.h"
+#include "scan_line.h"
 
-//×æ´«ÉãÏñÍ·´¦Àí´úÂëµÄ½á¹¹Ìå£¬ÀïÃæÖ÷ÒªÊÇÉãÏñÍ·Ê¶±ğµÄÈüµÀĞÅÏ¢£¬ºóĞø¿ÉÒÔÔÚ´ËÌí¼Ó×Ô¼ºµÄ´úÂë
+
+//ç¥–ä¼ æ‘„åƒå¤´å¤„ç†ä»£ç çš„ç»“æ„ä½“ï¼Œé‡Œé¢ä¸»è¦æ˜¯æ‘„åƒå¤´è¯†åˆ«çš„èµ›é“ä¿¡æ¯ï¼Œåç»­å¯ä»¥åœ¨æ­¤æ·»åŠ è‡ªå·±çš„ä»£ç 
 struct watch_o
 {
-	/* ´ó½ò·¨Ê¹ÓÃ */
-    uint8 threshold;  	//Í¼Ïñ¶şÖµ»¯ãĞÖµ
+	/* å¤§æ´¥æ³•ä½¿ç”¨ */
+    uint8 threshold;  	//å›¾åƒäºŒå€¼åŒ–é˜ˆå€¼
 
-	/* ÉãÏñÍ·ÊÓÒ° */
+	/* æ‘„åƒå¤´è§†é‡ */
     int watch_line;
-    int watch_lost;//ÉãÏñÍ·ËùÄÜ¿´µ½ÈüµÀµÄ×îÔ¶¶Ë
+    int watch_lost;//æ‘„åƒå¤´æ‰€èƒ½çœ‹åˆ°èµ›é“çš„æœ€è¿œç«¯
 
-    /* Í³¼Æ¶ªÏßÏà¹Ø±äÁ¿ */
-    int cross;  			//Í³¼Æ¶ªÏßËã·¨ÖĞ£¬×ó±ßÏßÓëÓÒ±ßÏß¶¼¶ªÏßµÄĞĞÊı
-    int left_lost; 			//Í³¼Æ¶ªÏßËã·¨ÖĞ£¬×ó±ßÏß¶ªÏßµÄĞĞÊı
-    int right_lost;			//Í³¼Æ¶ªÏßËã·¨ÖĞ£¬ÓÒ±ßÏß¶ªÏßµÄĞĞÊı
-    int left_near_lost;		//Í³¼Æ¶ªÏßËã·¨ÖĞ,×ó±ßÏß¿ªÊ¼¶ªÏßµÄĞĞÊı
-    int right_near_lost;	//Í³¼Æ¶ªÏßËã·¨ÖĞ,ÓÒ±ßÏß¿ªÊ¼¶ªÏßµÄĞĞÊı
+    /* ç»Ÿè®¡ä¸¢çº¿ç›¸å…³å˜é‡ */
+    int cross;  			//ç»Ÿè®¡ä¸¢çº¿ç®—æ³•ä¸­ï¼Œå·¦è¾¹çº¿ä¸å³è¾¹çº¿éƒ½ä¸¢çº¿çš„è¡Œæ•°
+    int left_lost; 			//ç»Ÿè®¡ä¸¢çº¿ç®—æ³•ä¸­ï¼Œå·¦è¾¹çº¿ä¸¢çº¿çš„è¡Œæ•°
+    int right_lost;			//ç»Ÿè®¡ä¸¢çº¿ç®—æ³•ä¸­ï¼Œå³è¾¹çº¿ä¸¢çº¿çš„è¡Œæ•°
+    int left_near_lost;		//ç»Ÿè®¡ä¸¢çº¿ç®—æ³•ä¸­,å·¦è¾¹çº¿å¼€å§‹ä¸¢çº¿çš„è¡Œæ•°
+    int right_near_lost;	//ç»Ÿè®¡ä¸¢çº¿ç®—æ³•ä¸­,å³è¾¹çº¿å¼€å§‹ä¸¢çº¿çš„è¡Œæ•°
 
-	/* °ßÂíÏßÏà¹Ø */
+	/* æ–‘é©¬çº¿ç›¸å…³ */
     int ZebraInLine;
+
+    /* èµ›é“ç±»å‹æ ‡å¿—ä½ */
+    uint8_t Straight_flag;	//ç›´é“æ ‡å¿—ä½
+    uint8_t Curve_right_flag;	//å³å¼¯é“æ ‡å¿—ä½
+    uint8_t Curve_left_flag;	//å·¦å¼¯é“æ ‡å¿—ä½
+    uint8_t Curve_flag;		//å¼¯é“æ ‡å¿—ä½
+    uint8_t Cross_flag;		//åå­—è·¯å£æ ‡å¿—ä½
+
+    uint8_t Crossroads_flag_left;	//å·¦ç¯å²›æ ‡å¿—ä½
+	uint8_t Crossroads_flag_right;//å³ç¯å²›æ ‡å¿—ä½
+    uint8_t Left_Break_flag;	//å·¦æ–­ç»­çº¿æ ‡å¿—ä½
+    uint8_t Right_Break_flag;	//å³æ–­ç»­çº¿æ ‡å¿—ä½
+	
+    int16_t CurrentY;           //å½“å‰çš„Yå€¼
+	int16_t LastLine;           //å¦‚æœæ–­çº¿ï¼ˆä¸è®ºæ˜¯å¦æ¥å›ï¼‰ æœ€åæœ‰æ•ˆä¸­ç‚¹è¡Œæ•°
+	int16_t CurrentMid;         //å½“å‰çš„çš„ä¸­ç‚¹Xå€¼
+	int16_t LastMid;            //ä¹‹å‰çš„ä¸­ç‚¹Xå€¼
+
+    int16_t PredictTopMidline;  // é¢„æµ‹ä¸­çº¿æœ€å¤§è¡Œæ•°
+
+	
+	int16_t smd;
+    uint8_t Midline_Lost_Count; //ä¸­çº¿ä¸¢å¤±è¡Œæ•°
 };
 
 extern struct watch_o watch;
+
+void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
+void Clear_Recognition_Flag(struct watch_o *watch);
+void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
+void Cross_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
+/*
+void Island_loop_and_curve_recognition(struct watch_o *watch);
+void Cross_recognition(struct watch_o *watch);
+void Straight_recognition(struct watch_o *watch);
+void Clear_Recognition_Flag(struct watch_o *watch);*/
 
 #endif /* CODE_CAMERA_PROCESS_ELEMENT_RECOGNITION_H_ */
