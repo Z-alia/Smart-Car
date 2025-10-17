@@ -3,19 +3,9 @@
 #include "tim.h"
 #include "Binarization.h"
 #include "Element_recognition.h"
-//本工程的PWM分辨率为1000
-#define tgtspd 300 //700改70
-#define tgtspd_curve 175
-#define TL_tgtspd 250
-#define TR_tgtspd 250
-#define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
-#define weight_md 0.45
-#define weight_dw 0.40
-#define weight_curve_up 1.00
-#define weight_curve_down 0.00
 
-PIDController PID;
-PIDController PID_curve;
+PIDController PID_image;
+PIDController PID_speed;
 Motor leftmotor={0, 1, 0, 1};
 Motor rightmotor={0, 0, 0, 0};
 
@@ -42,10 +32,10 @@ float pid_calculate(PIDController* pid) {
     pid->derivative = pid->error - pid->last_error;
     
     //error平滑
-    if(pid->derivative>5.0)
-    	pid->error=pid->last_error+5.0;
-    else if(pid->derivative<-5.0)
-    	pid->error=pid->last_error-5.0;
+//    if(pid->derivative>5.0)
+//    	pid->error=pid->last_error+5.0;
+//    else if(pid->derivative<-5.0)
+//    	pid->error=pid->last_error-5.0;
 
     // 计算积分项
     pid->integral += pid->error;
@@ -63,7 +53,38 @@ float pid_calculate(PIDController* pid) {
     
     return pid->output;
 }
+//内环pid计算
+float pid_speed_calculate(PIDController* pid,Motor *motor)
+{
+	// 计算误差
+    pid->error = motor->target_speed - motor->speed;
+    
+    // 计算微分项
+    pid->derivative = pid->error - pid->last_error;
+    
+    //error平滑
+//    if(pid->derivative>5.0)
+//    	pid->error=pid->last_error+5.0;
+//    else if(pid->derivative<-5.0)
+//    	pid->error=pid->last_error-5.0;
 
+    // 计算积分项
+    pid->integral += pid->error;
+    pid->integral = (pid->integral > pid->integral_limit) ? pid->integral_limit : ((pid->integral < -pid->integral_limit) ? -pid->integral_limit : pid->integral);
+
+
+
+    // 计算输出
+    float output = pid->kp * pid->error + 
+                  pid->ki * pid->integral + 
+                  pid->kd * pid->derivative;
+    pid->output = (output > pid->output_limit) ? pid->output_limit : ((output < -pid->output_limit) ? -pid->output_limit : output);
+    // 保存上次误差
+    pid->last_error = pid->error;
+    
+    return pid->output;
+}
+	
 // 初始化电机驱动
 void motor_init(void)
 {
@@ -113,11 +134,18 @@ void motor_run(Motor *motor_ptr, int32_t speed)
         }
     }
 }
-
-void run_follow(PIDController* pid)
+//循迹
+void run_follow(PIDController* pid,Motor *motor_left,Motor *motor_right)
 {
-	motor_run(&leftmotor,tgtspd+pid_calculate(pid));
-	motor_run(&rightmotor,tgtspd-pid_calculate(pid));
+	motor_run(&leftmotor,tgtspd+pid_speed_calculate(pid,motor_left));
+	motor_run(&rightmotor,tgtspd+pid_speed_calculate(pid,motor_right));
+}
+
+void motor_follow_line_curve(PIDController* pid,Motor *motor_left,Motor *motor_right)
+{
+	motor_run(&leftmotor,tgtspd_curve+pid_speed_calculate(pid,motor_left));
+	motor_run(&rightmotor,tgtspd_curve+pid_speed_calculate(pid,motor_right));
+	
 }
 
 //左转
@@ -244,9 +272,4 @@ void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct w
 	*/
 }
 
-void motor_follow_line_curve(PIDController* pid)
-{
-	motor_stop();
-	motor_run(&leftmotor,tgtspd_curve+pid_calculate(pid));
-	motor_run(&rightmotor,tgtspd_curve-pid_calculate(pid));
-}
+

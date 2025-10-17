@@ -1,8 +1,19 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
 #include "stdint.h"
-#include "scan_line.h"
 #include "Element_recognition.h"
+
+//本工程的PWM分辨率为1000
+#define tgtspd 300 //700改70
+#define tgtspd_curve 175
+#define TL_tgtspd 250
+#define TR_tgtspd 250
+#define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
+#define weight_md 0.45
+#define weight_dw 0.40
+#define weight_curve_up 1.00
+#define weight_curve_down 0.00
+
 // PID控制结构体
 typedef struct {
     volatile float kp;           // 比例系数
@@ -15,10 +26,11 @@ typedef struct {
     volatile float output;       // 输出值
     float integral_limit;        // 积分限幅，初始化控制器时赋值
     float output_limit;          // 输出限幅
+	
 } PIDController;
 
-extern PIDController PID;
-extern PIDController PID_curve;
+extern PIDController PID_image;
+extern PIDController PID_speed;
 
 // 单电机控制结构体
 typedef struct {
@@ -32,7 +44,8 @@ typedef struct {
 void pid_init(PIDController* pid, float kp, float ki, float kd);
 
 //pid计算
-float pid_calculate(PIDController* pid);
+float pid_calculate(PIDController* pid);//外环计算
+float pid_speed_calculate(PIDController* pid,Motor *motor);//内环计算
 
 // 初始化电机驱动
 void motor_init(void);
@@ -41,7 +54,8 @@ void motor_init(void);
 void motor_run(Motor *motor_ptr, int32_t speed);
 
 //pid循迹
-void run_follow(PIDController* pid);
+void run_follow(PIDController* pid,Motor *motor_left,Motor *motor_right);
+void motor_follow_line_curve(PIDController* pid,Motor *motor_left,Motor *motor_right);
 
 //左转
 void motor_turnleft(void);
@@ -57,7 +71,6 @@ void motor_stop(void);
 
 //循迹
 //void motor_follow_line_straight(PIDController* pid);
-void motor_follow_line_curve(PIDController* pid);
 
 void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta);
 extern Motor leftmotor;

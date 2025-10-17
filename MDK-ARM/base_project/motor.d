@@ -1,4 +1,5 @@
-base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
+base_project/motor.o: ..\HardWare\MOTOR\motor.c ..\HardWare\MOTOR\motor.h \
+  ..\camera_process\Element_recognition.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -28,10 +29,4 @@ base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  ..\Core\Inc\dcmi.h ..\Core\Inc\dma.h ..\Core\Inc\i2c.h \
-  ..\Core\Inc\spi.h ..\Core\Inc\tim.h ..\Core\Inc\gpio.h \
-  ..\HardWare\LCD\lcd_spi_200.h ..\HardWare\LCD\lcd_fonts.h \
-  ..\HardWare\OV2640\dcmi_ov2640.h ..\HardWare\OV2640\sccb.h \
-  ..\camera_process\Binarization.h ..\Base\type_def.h \
-  ..\camera_process\Element_recognition.h ..\camera_process\image.h \
-  ..\HardWare\MOTOR\motor.h
+  ..\Base\type_def.h ..\Core\Inc\tim.h ..\camera_process\Binarization.h

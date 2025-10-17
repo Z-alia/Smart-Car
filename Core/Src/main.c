@@ -32,6 +32,7 @@
 #include "Binarization.h"
 #include "Element_recognition.h"
 #include "image.h"
+#include "motor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -109,7 +110,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+float p_st=0.0f,i_st=0.0f,d_st=0.0f;//直道pid
+float p_cr=0.0f,i_cr=0.0f,d_cr=0.0f;//弯道pid
+float p_sp=0.0f,i_sp=0.0f,d_sp=0.0f;//内环pid
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -184,7 +187,9 @@ int main(void)
 	OV2640_Init();	//配置OV2640
 	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
 	LCD_Init();//显示屏初始化
-	
+	pid_init(&PID_image,p_st,i_st,d_st);//外环pid初始化（默认直线）
+	pid_init(&PID_speed,p_sp,i_sp,d_sp);//内环pid初始化
+	motor_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -290,6 +295,39 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+ if (htim->Instance == TIM6)
+    {
+        //每 10ms 执行
+		if(watch.Straight_flag==1)
+		{
+			leftmotor.target_speed=tgtspd+pid_calculate(&PID_image);
+			rightmotor.target_speed=tgtspd-pid_calculate(&PID_image);
+		}
+		else if(watch.Curve_flag==1)
+		{
+			leftmotor.target_speed=tgtspd_curve+pid_calculate(&PID_image);
+			rightmotor.target_speed=tgtspd_curve-pid_calculate(&PID_image);
+		}
+
+        
+		
+    }
+if (htim->Instance == TIM7)
+	{
+		//每 2ms 执行
+		if(watch.Straight_flag==1)
+		{
+			run_follow(&PID_speed,&leftmotor,&rightmotor);//与内环耦合的循迹
+		}
+		else if(watch.Curve_flag==1)
+		{
+			motor_follow_line_curve(&PID_speed,&leftmotor,&rightmotor);//与内环耦合的循迹
+		}
+	}
+}
+
 //	配置MPU
 //
 void MPU_Config(void)
