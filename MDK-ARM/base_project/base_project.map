@@ -6366,42 +6366,42 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       878          4          0          0      45120       3644   binarization.o
-       460          0          0          0        200       9788   dcmi.o
-      1008          0        352          0        488      11792   dcmi_ov2640.o
-        52          0          0          0          0       5476   dma.o
-         0          0          0          0         36        712   element_recognition.o
-       446          0          0          0          0       6254   gpio.o
-       254          0          0          0         84       8166   i2c.o
-      5930          8          0          0       4694      26052   image.o
-         0          0       4560         12          0       1078   lcd_fonts.o
-      4092          0          8          0         24      40292   lcd_spi_200.o
-       678          0          0          0          0       5611   main.o
-      3096          0          0          0       8640      28425   morph_binary_bitpacked.o
-     16762          0          0          0          0      21691   sccb.o
-       246          0          0          0        136       8364   spi.o
+       878          4          0          0      45120       3636   binarization.o
+       460          0          0          0        200       9780   dcmi.o
+      1008          0        352          0        488      11784   dcmi_ov2640.o
+        52          0          0          0          0       5468   dma.o
+         0          0          0          0         36        704   element_recognition.o
+       446          0          0          0          0       6246   gpio.o
+       254          0          0          0         84       8158   i2c.o
+      5930          8          0          0       4694      26044   image.o
+         0          0       4560         12          0       1070   lcd_fonts.o
+      4092          0          8          0         24      40284   lcd_spi_200.o
+       678          0          0          0          0       5603   main.o
+      3096          0          0          0       8640      28417   morph_binary_bitpacked.o
+     16762          0          0          0          0      21683   sccb.o
+       246          0          0          0        136       8356   spi.o
         64         26        664          0       1536        832   startup_stm32h750xx.o
-       292          0          0          8          4      15083   stm32h7xx_hal.o
-       354          0          0          0          0      12499   stm32h7xx_hal_cortex.o
-       912          0          0          0          0       9442   stm32h7xx_hal_dcmi.o
-      6406         12          0          0          0      18462   stm32h7xx_hal_dma.o
-      1878          0          0          0          0       8735   stm32h7xx_hal_dma_ex.o
-       464          0          0          0          0       6992   stm32h7xx_hal_gpio.o
-       176          0          0          0          0      65454   stm32h7xx_hal_i2c.o
-       146          0          0          0          0       7558   stm32h7xx_hal_i2c_ex.o
-        32          0          0          0          0       2205   stm32h7xx_hal_msp.o
-        76          0          0          0          0      10784   stm32h7xx_hal_pwr_ex.o
-      2268         24          0          0          0      12016   stm32h7xx_hal_rcc.o
-      3408        110          0          0          0      20355   stm32h7xx_hal_rcc_ex.o
-      1316          0          0          0          0      23610   stm32h7xx_hal_spi.o
-      2800         14          0          0          0      67183   stm32h7xx_hal_tim.o
-       364          0          0          0          0      25989   stm32h7xx_hal_tim_ex.o
-        98          0          0          0          0       6892   stm32h7xx_it.o
-       204          0         16          8          0       5850   system_stm32h7xx.o
-      1102          0          0          0        380      14617   tim.o
+       292          0          0          8          4      15075   stm32h7xx_hal.o
+       354          0          0          0          0      12491   stm32h7xx_hal_cortex.o
+       912          0          0          0          0       9434   stm32h7xx_hal_dcmi.o
+      6406         12          0          0          0      18454   stm32h7xx_hal_dma.o
+      1878          0          0          0          0       8727   stm32h7xx_hal_dma_ex.o
+       464          0          0          0          0       6984   stm32h7xx_hal_gpio.o
+       176          0          0          0          0      65446   stm32h7xx_hal_i2c.o
+       146          0          0          0          0       7550   stm32h7xx_hal_i2c_ex.o
+        32          0          0          0          0       2197   stm32h7xx_hal_msp.o
+        76          0          0          0          0      10776   stm32h7xx_hal_pwr_ex.o
+      2268         24          0          0          0      12008   stm32h7xx_hal_rcc.o
+      3408        110          0          0          0      20347   stm32h7xx_hal_rcc_ex.o
+      1316          0          0          0          0      23602   stm32h7xx_hal_spi.o
+      2800         14          0          0          0      67175   stm32h7xx_hal_tim.o
+       364          0          0          0          0      25981   stm32h7xx_hal_tim_ex.o
+        98          0          0          0          0       6884   stm32h7xx_it.o
+       204          0         16          8          0       5842   system_stm32h7xx.o
+      1102          0          0          0        380      14609   tim.o
 
     ----------------------------------------------------------------------
-     56704        202       5632         28      61348     511903   Object Totals
+     56704        202       5632         28      61348     511647   Object Totals
          0          0         32          0          0          0   (incl. Generated)
        442          4          0          0          6          0   (incl. Padding)
 
@@ -6496,8 +6496,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     62892        438       6168         28      61444     513235   Grand Totals
-     62892        438       6168         28      61444     513235   ELF Image Totals
+     62892        438       6168         28      61444     512979   Grand Totals
+     62892        438       6168         28      61444     512979   ELF Image Totals
      62892        438       6168         28          0          0   ROM Totals
 
 ==============================================================================

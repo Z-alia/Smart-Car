@@ -1,7 +1,6 @@
 #include "motor.h"
 #include "main.h"
 #include "tim.h"
-#include "scan_line.h"
 #include "Binarization.h"
 #include "Element_recognition.h"
 //本工程的PWM分辨率为1000

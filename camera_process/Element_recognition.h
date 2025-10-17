@@ -2,7 +2,7 @@
 #define ELEMENT_RECOGNITION_H_
 #include "main.h"
 #include "type_def.h"
-#include "scan_line.h"
+
 
 
 //祖传摄像头处理代码的结构体，里面主要是摄像头识别的赛道信息，后续可以在此添加自己的代码
