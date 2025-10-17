@@ -27,6 +27,8 @@ base_project/binarization.o: ..\camera_process\Binarization.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Base\type_def.h ..\camera_process\Element_recognition.h \
   ..\HardWare\OV2640\dcmi_ov2640.h ..\HardWare\OV2640\sccb.h \
   ..\Core\Inc\dcmi.h ..\HardWare\LCD\lcd_spi_200.h \

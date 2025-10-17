@@ -26,9 +26,11 @@ base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
-  ..\Core\Inc\dcmi.h ..\Core\Inc\dma.h ..\Core\Inc\memorymap.h \
-  ..\Core\Inc\spi.h ..\Core\Inc\gpio.h ..\HardWare\LCD\lcd_spi_200.h \
-  ..\HardWare\LCD\lcd_fonts.h ..\HardWare\OV2640\dcmi_ov2640.h \
-  ..\HardWare\OV2640\sccb.h ..\camera_process\Binarization.h \
-  ..\Base\type_def.h ..\camera_process\Element_recognition.h \
-  ..\camera_process\image.h
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
+  ..\Core\Inc\dcmi.h ..\Core\Inc\dma.h ..\Core\Inc\i2c.h \
+  ..\Core\Inc\spi.h ..\Core\Inc\tim.h ..\Core\Inc\gpio.h \
+  ..\HardWare\LCD\lcd_spi_200.h ..\HardWare\LCD\lcd_fonts.h \
+  ..\HardWare\OV2640\dcmi_ov2640.h ..\HardWare\OV2640\sccb.h \
+  ..\camera_process\Binarization.h ..\Base\type_def.h \
+  ..\camera_process\Element_recognition.h ..\camera_process\image.h
