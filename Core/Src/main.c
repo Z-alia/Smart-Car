@@ -221,7 +221,9 @@ int main(void)
 			//显示原图像
 			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 			//显示二值化扫线图
-			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
+			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
+      LCD_DisplayNumber(250, 250, OV2640_FPS, 3); // 显示当前帧率
+      
 			image_process();
 		}
     /* USER CODE END WHILE */
