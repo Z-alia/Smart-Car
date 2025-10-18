@@ -199,13 +199,13 @@ int main(void)
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
 			/* 二值化阈值限幅 */
-			if(watch.threshold>255)
+			if(watch.threshold>160)
 			{
-				watch.threshold=255;
+				watch.threshold=160;
 			}
-			else if(watch.threshold<0)
+			else if(watch.threshold<90)
 			{
-				watch.threshold=0;
+				watch.threshold=90;
 			}
 			
 			/* 二值化 */

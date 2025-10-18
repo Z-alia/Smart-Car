@@ -3,7 +3,7 @@
 <title>Static Call Graph - [base_project\base_project.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image base_project\base_project.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Sat Oct 18 16:04:18 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6240002: Last Updated: Sat Oct 18 16:50:15 2025
 <BR><P>
 <H3>Maximum Stack Usage =        452 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -2079,7 +2079,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[147]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;morph_clean_u8_binary_adapter
 </UL>
 
-<P><STRONG><a name="[146]"></a>image_process</STRONG> (Thumb, 2184 bytes, Stack size 56 bytes, image.o(.text.image_process))
+<P><STRONG><a name="[146]"></a>image_process</STRONG> (Thumb, 2224 bytes, Stack size 56 bytes, image.o(.text.image_process))
 <BR><BR>[Stack]<UL><LI>Max Depth = 428 + Unknown Stack Size
 <LI>Call Chain = image_process &rArr; show_ov2640_image_int8 &rArr; HAL_SPI_Init &rArr; HAL_SPI_MspInit &rArr; HAL_RCCEx_PeriphCLKConfig &rArr; RCCEx_PLL3_Config
 </UL>
@@ -2102,13 +2102,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[bc]"></a>main</STRONG> (Thumb, 444 bytes, Stack size 24 bytes, main.o(.text.main))
+<P><STRONG><a name="[bc]"></a>main</STRONG> (Thumb, 460 bytes, Stack size 24 bytes, main.o(.text.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 452 + Unknown Stack Size
 <LI>Call Chain = main &rArr; image_process &rArr; show_ov2640_image_int8 &rArr; HAL_SPI_Init &rArr; HAL_SPI_MspInit &rArr; HAL_RCCEx_PeriphCLKConfig &rArr; RCCEx_PLL3_Config
 </UL>
-<BR>[Calls]<UL><LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;image_process
+<BR>[Calls]<UL><LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;img_otsu
+<LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;image_process
 <LI><a href="#[150]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Binarization
-<LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;img_otsu
 <LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LCD_Init
 <LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV2640_DMA_Transmit_Continuous
 <LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OV2640_Init

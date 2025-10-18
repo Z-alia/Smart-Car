@@ -72,7 +72,7 @@ uint8 get_start_point(uint8 start_row)
 	{
 		start_point_l[0] = i;//x
 		start_point_l[1] = start_row;//y
-		if (Grayscale[start_row][i] == 255 && Grayscale[start_row][i - 1] == 0)
+		if (imo[start_row][i] == 255 && imo[start_row][i - 1] == 0)
 		{
 			//printf("找到左边起点image[%d][%d]\n", start_row,i);
 			l_found = 1;
@@ -84,7 +84,7 @@ uint8 get_start_point(uint8 start_row)
 	{
 		start_point_r[0] = i;//x
 		start_point_r[1] = start_row;//y
-		if (Grayscale[start_row][i] == 255 && Grayscale[start_row][i + 1] == 0)
+		if (imo[start_row][i] == 255 && imo[start_row][i + 1] == 0)
 		{
 			//printf("找到右边起点image[%d][%d]\n",start_row, i);
 			r_found = 1;
@@ -415,22 +415,7 @@ void image_draw_rectan(uint8(*image)[image_w])
 //绘制边界线
 void draw_edge()
 {
-	int row=0,colum;
-    for(row=0;row<120;row++)
-    {
-        for(colum=0;colum<image_w;colum++)
-        {
-            if(Grayscale[row][colum]==0)
-			{
-                imo[row][colum]=0;
-			}
-            else
-			{
-                imo[row][colum]=255;
-			}
-        }
-
-    }
+	int row=0;
 	for(row=0;row<120;row++)
     {
 		imo[row][l_border[row]]=1;
@@ -619,7 +604,7 @@ image_draw_rectan(imo);//填黑框
 //清零
 data_stastics_l = 0;
 data_stastics_r = 0;
-if (get_start_point(image_h - 2))//找到起点了，再执行八领域，没找到就一直找
+if (get_start_point(image_h - 3)||get_start_point(image_h - 5)||get_start_point(image_h - 7))//找到起点了，再执行八领域，没找到就一直找
 {
 	//printf("正在开始八领域\n");
 	search_l_r((uint16)USE_num, imo, &data_stastics_l, &data_stastics_r, start_point_l[0], start_point_l[1], start_point_r[0], start_point_r[1], &hightest);
@@ -628,7 +613,7 @@ if (get_start_point(image_h - 2))//找到起点了，再执行八领域，没找
 	get_left(data_stastics_l);
 	get_right(data_stastics_r);
 	//处理函数放这里 不要放到if外面
-    cross_fill(Grayscale, l_border, r_border, data_stastics_l, data_stastics_r, dir_l, dir_r, points_l, points_r);//十字补线
+    cross_fill(imo, l_border, r_border, data_stastics_l, data_stastics_r, dir_l, dir_r, points_l, points_r);//十字补线
 }
     //求中线
 	for (i = Hightest; i < image_h-1; i++)
