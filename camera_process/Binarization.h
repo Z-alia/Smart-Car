@@ -16,7 +16,6 @@ extern uint8 imo[120][188]; 		//处理后的图像
 
 void Global_Binarization();
 void Adaptive_Binarization(int S, int T);
-void img_otsu_exposure_adjust();
-
+void Sauvola_Binarization(int S, float k, float R);
 
 #endif /* CODE_CAMERA_PROCESS_BINARIZATION_H_ */

@@ -222,3 +222,118 @@ void Adaptive_Binarization(int S, int T)
     }
 }
 
+// Sauvola 自适应阈值二值化 (内存优化版)
+// S: 窗口大小, k: 可调参数(e.g., 0.2), R: 标准差动态范围(e.g., 128)
+void Sauvola_Binarization(int S, float k, float R)
+{
+    int row, col;
+    int s2 = S / 2;
+
+    // 列积分缓冲区 (sum 和 sum of squares)
+    static unsigned long long col_sum[188];
+    static unsigned long long col_sqsum[188];
+
+    // 滑动窗口的像素总和与平方和
+    unsigned long long window_sum = 0;
+    unsigned long long window_sqsum = 0;
+
+    // --- 初始化阶段 ---
+    // 1. 计算前 S/2+1 行的列积分和列平方积分
+    for (col = 0; col < 188; col++)
+    {
+        col_sum[col] = 0;
+        col_sqsum[col] = 0;
+        for (row = 0; row <= s2; row++)
+        {
+            unsigned int pixel_val = mt9v03x_image[row][col];
+            col_sum[col] += pixel_val;
+            col_sqsum[col] += pixel_val * pixel_val;
+        }
+    }
+    // 2. 计算第一行第一个窗口的 sum 和 sqsum
+    for (col = 0; col <= s2; col++)
+    {
+        window_sum += col_sum[col];
+        window_sqsum += col_sqsum[col];
+    }
+
+    // --- 主循环 ---
+    for (row = 0; row < 120; row++)
+    {
+        // 确定当前行上下边界，用于更新列积分
+        int top_row = row - s2 - 1; // 离开窗口的行
+        int bottom_row = row + s2;  // 进入窗口的行
+
+        // 从第二行开始，用滑动的方式更新列积分缓冲区
+        if (row > 0)
+        {
+            for (col = 0; col < 188; col++)
+            {
+                // 减去离开窗口的行
+                if (top_row >= 0)
+                {
+                    unsigned int pixel_val = mt9v03x_image[top_row][col];
+                    col_sum[col] -= pixel_val;
+                    col_sqsum[col] -= pixel_val * pixel_val;
+                }
+                // 加上进入窗口的行
+                if (bottom_row < 120)
+                {
+                    unsigned int pixel_val = mt9v03x_image[bottom_row][col];
+                    col_sum[col] += pixel_val;
+                    col_sqsum[col] += pixel_val * pixel_val;
+                }
+            }
+        }
+
+        // 重置当前行第一个窗口的 sum 和 sqsum
+        window_sum = 0;
+        window_sqsum = 0;
+        for (col = 0; col <= s2; col++)
+        {
+            window_sum += col_sum[col];
+            window_sqsum += col_sqsum[col];
+        }
+
+        for (col = 0; col < 188; col++)
+        {
+            // 使用滑动窗口更新 sum 和 sqsum
+            if (col > 0)
+            {
+                int left_col = col - s2 - 1;
+                int right_col = col + s2;
+                if (left_col >= 0)
+                {
+                    window_sum -= col_sum[left_col];
+                    window_sqsum -= col_sqsum[left_col];
+                }
+                if (right_col < 188)
+                {
+                    window_sum += col_sum[right_col];
+                    window_sqsum += col_sqsum[right_col];
+                }
+            }
+
+            // 计算窗口内的像素数量
+            int x1 = (row - s2 > 0) ? row - s2 : 0;
+            int x2 = (row + s2 < 119) ? row + s2 : 119;
+            int y1 = (col - s2 > 0) ? col - s2 : 0;
+            int y2 = (col + s2 < 187) ? col + s2 : 187;
+            int count = (x2 - x1 + 1) * (y2 - y1 + 1);
+
+            // 计算均值和标准差
+            float mean = (float)window_sum / count;
+            float std_dev = sqrtf((float)window_sqsum / count - mean * mean);
+
+            // 计算 Sauvola 阈值
+            float threshold = mean * (1.0f + k * (std_dev / R - 1.0f));
+
+            // 判断当前像素是黑是白
+            if (mt9v03x_image[row][col] < threshold)
+                Grayscale[row][col] = 0;
+            else
+                Grayscale[row][col] = 255;
+        }
+    }
+}
+

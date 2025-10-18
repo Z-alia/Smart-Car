@@ -198,7 +198,10 @@ int main(void)
 			// 大津法全局二值化
 			//Global_Binarization();
 			// 自适应阈值二值化
-			Adaptive_Binarization(65, 5); 
+			//Adaptive_Binarization(65, 5); 
+      // Sauvola自适应二值化
+      Sauvola_Binarization(15, 0.02f, 128.0f);
+
 			/* 扫描赛道边线 */
 			//scan_line();
 			
