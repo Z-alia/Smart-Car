@@ -1875,7 +1875,7 @@
       <Doc>
         <Name>..\camera_process\Binarization.c</Name>
         <ColumnNumber>1</ColumnNumber>
-        <TopLine>206</TopLine>
+        <TopLine>286</TopLine>
         <CurrentLine>113</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
@@ -1892,16 +1892,16 @@
       </Doc>
       <Doc>
         <Name>..\camera_process\image.c</Name>
-        <ColumnNumber>31</ColumnNumber>
+        <ColumnNumber>3</ColumnNumber>
         <TopLine>587</TopLine>
-        <CurrentLine>626</CurrentLine>
+        <CurrentLine>620</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>../Core/Src/main.c</Name>
-        <ColumnNumber>34</ColumnNumber>
+        <ColumnNumber>6</ColumnNumber>
         <TopLine>188</TopLine>
         <CurrentLine>203</CurrentLine>
         <Folding>1</Folding>
@@ -1928,9 +1928,9 @@
       </Doc>
       <Doc>
         <Name>..\camera_process\Binarization.h</Name>
-        <ColumnNumber>0</ColumnNumber>
+        <ColumnNumber>5</ColumnNumber>
         <TopLine>1</TopLine>
-        <CurrentLine>16</CurrentLine>
+        <CurrentLine>19</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>

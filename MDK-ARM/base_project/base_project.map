@@ -6351,7 +6351,8 @@ Memory Map of the image
     0x0800d538   0x0800d538   0x0000048e   Code   RO          451    .text.erode3x3_bitpacked  morph_binary_bitpacked.o
     0x0800d9c6   0x0800d9c6   0x00000002   PAD
     0x0800d9c8   0x0800d9c8   0x000008b0   Code   RO          424    .text.image_process  image.o
-    0x0800e278   0x0800e278   0x000001f0   Code   RO           11    .text.main          main.o
+    0x0800e278   0x0800e278   0x000001ec   Code   RO           11    .text.main          main.o
+    0x0800e464   0x0800e464   0x00000004   PAD
     0x0800e468   0x0800e468   0x000002fc   Code   RO          465    .text.morph_clean_u8_binary_adapter  morph_binary_bitpacked.o
     0x0800e764   0x0800e764   0x00000004   PAD
     0x0800e768   0x0800e768   0x00000782   Code   RO          408    .text.search_l_r    image.o
@@ -6455,7 +6456,7 @@ Image component sizes
       5970          8          0          0       4694      25970   image.o
          0          0       4560         12          0       1078   lcd_fonts.o
       5480         12          8          0       2072      40292   lcd_spi_200.o
-       730          8          0          0          0       5580   main.o
+       726          4          0          0          0       5580   main.o
       3096          0          0          0       8640      28425   morph_binary_bitpacked.o
      16762          0          0          0          0      21691   sccb.o
        246          0          0          0        136       8364   spi.o
@@ -6482,7 +6483,7 @@ Image component sizes
     ----------------------------------------------------------------------
      57264        222       5632         28      67332     522629   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-       434          8          0          0         10          0   (incl. Padding)
+       438         12          0          0         10          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
