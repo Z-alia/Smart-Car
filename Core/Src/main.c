@@ -195,22 +195,10 @@ int main(void)
 		{
 			DCMI_FrameState = 0;		// 清零标志位
 			
-			/* 大津法计算二值化阈值 */
-			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
-			
-			/* 二值化阈值限幅 */
-			if(watch.threshold>180)
-			{
-				watch.threshold=180;
-			}
-			else if(watch.threshold<160)
-			{
-				watch.threshold=160;
-			}
-			
-			/* 二值化 */
-			Binarization();
-			
+			// 大津法全局二值化
+			//Global_Binarization();
+			// 自适应阈值二值化
+			Adaptive_Binarization(65, 5); 
 			/* 扫描赛道边线 */
 			//scan_line();
 			

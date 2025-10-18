@@ -91,9 +91,25 @@ int img_otsu(uint16_t *img, uint8_t img_v, uint8_t img_h, uint8_t step)
     return (temp_best_th + temp_best_th2) * _Thresh_Mult;
 }
 
-//图形二值化
-void Binarization()
+
+
+
+
+//图形二值化(全局阈值)
+void Global_Binarization()
 {
+			// 大津法计算二值化阈值 
+			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
+			
+			// 二值化阈值限幅 
+			if(watch.threshold>180)
+			{
+				watch.threshold=180;
+			}
+			else if(watch.threshold<160)
+			{
+				watch.threshold=160;
+			}
     int row=0,colum;
     for(row=0;row<120;row++)
     {
@@ -107,6 +123,101 @@ void Binarization()
 			{
                 Grayscale[row][colum]=255;
 			}
+        }
+    }
+}
+
+// 自适应阈值二值化 (内存优化版)
+// S: 窗口大小, T: 阈值百分比
+void Adaptive_Binarization(int S, int T)
+{
+    int row, col;
+    int s2 = S / 2;
+
+    // 列积分缓冲区，用于存储S窗口大小的列像素值之和
+    // 只需要一个188宽的一维数组，极大减少内存占用
+    static unsigned int col_integral[188];
+    
+    // 滑动窗口的像素总和
+    unsigned long long window_sum = 0;
+
+    // 针对第一行特殊处理，初始化列积分缓冲区和第一个窗口的sum
+    // 1. 计算前S/2+1行的列积分
+    for (col = 0; col < 188; col++)
+    {
+        col_integral[col] = 0;
+        for (row = 0; row <= s2; row++)
+        {
+            col_integral[col] += mt9v03x_image[row][col];
+        }
+    }
+    // 2. 计算第一行第一个窗口的sum
+    for (col = 0; col <= s2; col++)
+    {
+        window_sum += col_integral[col];
+    }
+
+    // 遍历所有像素
+    for (row = 0; row < 120; row++)
+    {
+        // 确定当前行上下边界，用于更新列积分
+        int top_row = row - s2 - 1; // 离开窗口的行
+        int bottom_row = row + s2;  // 进入窗口的行
+
+        // 从第二行开始，用滑动的方式更新列积分缓冲区
+        if (row > 0)
+        {
+            for (col = 0; col < 188; col++)
+            {
+                // 减去离开窗口的行
+                if (top_row >= 0)
+                {
+                    col_integral[col] -= mt9v03x_image[top_row][col];
+                }
+                // 加上进入窗口的行
+                if (bottom_row < 120)
+                {
+                    col_integral[col] += mt9v03x_image[bottom_row][col];
+                }
+            }
+        }
+        
+        // 重置第一个窗口的sum
+        window_sum = 0;
+        for (col = 0; col <= s2; col++)
+        {
+            window_sum += col_integral[col];
+        }
+
+        for (col = 0; col < 188; col++)
+        {
+            // 使用滑动窗口更新sum
+            if (col > 0)
+            {
+                int left_col = col - s2 - 1;
+                int right_col = col + s2;
+                if (left_col >= 0)
+                {
+                    window_sum -= col_integral[left_col];
+                }
+                if (right_col < 188)
+                {
+                    window_sum += col_integral[right_col];
+                }
+            }
+
+            // 计算窗口内的像素数量
+            int x1 = (row - s2 > 0) ? row - s2 : 0;
+            int x2 = (row + s2 < 119) ? row + s2 : 119;
+            int y1 = (col - s2 > 0) ? col - s2 : 0;
+            int y2 = (col + s2 < 187) ? col + s2 : 187;
+            int count = (x2 - x1 + 1) * (y2 - y1 + 1);
+
+            // 判断当前像素是黑是白
+            if ((unsigned long long)mt9v03x_image[row][col] * count < window_sum * (100 - T) / 100)
+                Grayscale[row][col] = 0;
+            else
+                Grayscale[row][col] = 255;
         }
     }
 }
