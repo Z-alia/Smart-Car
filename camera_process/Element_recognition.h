@@ -55,6 +55,8 @@ void Straight_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
 void Clear_Recognition_Flag(struct watch_o *watch);
 void Island_loop_and_curve_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
 void Cross_recognition(struct watch_o *watch,struct lineinfo_s lineinfo[]);
+//图像预处理
+void lose_location_test(uint8_t type, uint8_t startline, uint8_t endline);
 /*
 void Island_loop_and_curve_recognition(struct watch_o *watch);
 void Cross_recognition(struct watch_o *watch);

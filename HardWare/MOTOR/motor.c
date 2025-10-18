@@ -10,10 +10,12 @@ Motor leftmotor={0, 1, 0, 1};
 Motor rightmotor={0, 0, 0, 0};
 
 //pid控制器初始化
-void pid_init(PIDController* pid, float kp, float ki, float kd) {
+void pid_init(PIDController* pid, float kp, float ki, float kd, float kff) {
     pid->kp = kp;
     pid->ki = ki;
     pid->kd = kd;
+	pid->kff = kff;
+	pid->ahead=0;
     pid->error = 0.0;
     pid->last_error = 0.0;
     pid->integral = 0.0;
@@ -84,6 +86,11 @@ float pid_speed_calculate(PIDController* pid,Motor *motor)
     
     return pid->output;
 }
+//前馈函数
+float PID_pre_calculate(PIDController *pid)
+{
+	return pid->kff*pid->ahead;
+}
 	
 // 初始化电机驱动
 void motor_init(void)
@@ -135,18 +142,23 @@ void motor_run(Motor *motor_ptr, int32_t speed)
     }
 }
 //循迹
-void run_follow(PIDController* pid,Motor *motor_left,Motor *motor_right)
+void run_follow(PIDController* pid,Motor *motor_left,Motor *motor_right)//串级循迹
 {
 	motor_run(&leftmotor,tgtspd+pid_speed_calculate(pid,motor_left));
 	motor_run(&rightmotor,tgtspd+pid_speed_calculate(pid,motor_right));
 }
 
-void motor_follow_line_curve(PIDController* pid,Motor *motor_left,Motor *motor_right)
+void run_follow_v0(PIDController* pid)//开环循迹
 {
-	motor_run(&leftmotor,tgtspd_curve+pid_speed_calculate(pid,motor_left));
-	motor_run(&rightmotor,tgtspd_curve+pid_speed_calculate(pid,motor_right));
-	
+	motor_run(&leftmotor,tgtspd + pid_calculate(pid) - (PID_pre_calculate(pid)/2));
+	motor_run(&rightmotor,tgtspd + pid_calculate(pid) + (PID_pre_calculate(pid)/2));
 }
+//void motor_follow_line_curve(PIDController* pid,Motor *motor_left,Motor *motor_right)
+//{
+//	motor_run(&leftmotor,tgtspd_curve+pid_speed_calculate(pid,motor_left));
+//	motor_run(&rightmotor,tgtspd_curve+pid_speed_calculate(pid,motor_right));
+//	
+//}
 
 //左转
 void motor_turnleft(void)

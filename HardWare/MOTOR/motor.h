@@ -19,6 +19,8 @@ typedef struct {
     volatile float kp;           // 比例系数
     volatile float ki;           // 积分系数
     volatile float kd;           // 微分系数
+	volatile float kff;			 // 前馈系数
+	volatile float ahead;		 // 前馈曲率
     volatile float error;        // 当前误差
     volatile float last_error;   // 上次误差
     volatile float integral;     // 积分项
@@ -41,11 +43,14 @@ typedef struct {
 } Motor;
 
 // PID控制器初始化
-void pid_init(PIDController* pid, float kp, float ki, float kd);
+void pid_init(PIDController* pid, float kp, float ki, float kd, float kff);
 
 //pid计算
 float pid_calculate(PIDController* pid);//外环计算
 float pid_speed_calculate(PIDController* pid,Motor *motor);//内环计算
+
+//pid前馈
+float PID_pre_calculate(PIDController *pid);
 
 // 初始化电机驱动
 void motor_init(void);
@@ -55,7 +60,7 @@ void motor_run(Motor *motor_ptr, int32_t speed);
 
 //pid循迹
 void run_follow(PIDController* pid,Motor *motor_left,Motor *motor_right);
-void motor_follow_line_curve(PIDController* pid,Motor *motor_left,Motor *motor_right);
+void run_follow_v0(PIDController* pid);//开环循迹
 
 //左转
 void motor_turnleft(void);

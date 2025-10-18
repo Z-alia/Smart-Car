@@ -87,3 +87,8 @@ void Patch_line(struct watch_o *watch,struct lineinfo_s lineinfo[])
 	}
 		
 }
+//环岛检测状态机
+
+//图像预处理
+
+
