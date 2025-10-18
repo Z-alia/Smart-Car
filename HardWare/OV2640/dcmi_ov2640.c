@@ -707,7 +707,8 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 
    // 通过当前目标寄存器（CT 位）判断刚完成的是哪一块缓冲：
    // CT=0 表示当前目标是 Mem0（正在写 A），刚完成的是 B；CT=1 则相反。
-   uint32_t ct = (hdcmi->DMA_Handle->Instance->CR & DMA_SxCR_CT) ? 1U : 0U;
+   // HAL 在 H7 上将 DMA_HandleTypeDef.Instance 定义为 void*，需要转换为 DMA_Stream_TypeDef 才能访问寄存器
+   uint32_t ct = ((((DMA_Stream_TypeDef *)(hdcmi->DMA_Handle->Instance))->CR & DMA_SxCR_CT) ? 1U : 0U);
    uint32_t done_buf_addr = (ct == 0U) ? (uint32_t)Camera_Buffer_2 : (uint32_t)Camera_Buffer;
 
    // D-Cache 一致性维护：对“刚完成”的缓冲做 Invalidate（地址/长度都需32字节对齐）
