@@ -1,8 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file            : main.c
-  * @brief           : Main program body
+  * @file           : main.c
+  * @brief          : Main program body
   ******************************************************************************
   * @attention
   *
@@ -19,17 +19,91 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "dcmi.h"
+#include "dma.h"
+#include "memorymap.h"
 #include "spi.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "lcd_spi_200.h"
+#include "dcmi_ov2640.h"
+#include "scan_line.h"
+#include "Binarization.h"
+#include "Element_recognition.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
+//=======================CubeMX官方注释不要删！！！！！！！=======================================
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -50,14 +124,13 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MPU_Config(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void MPU_Config(void);
 /* USER CODE END 0 */
 
 /**
@@ -68,11 +141,16 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+	MPU_Config();
   /* USER CODE END 1 */
 
-  /* MPU Configuration--------------------------------------------------------*/
-  MPU_Config();
+  /* Enable the CPU Cache */
+
+  /* Enable I-Cache---------------------------------------------------------*/
+  SCB_EnableICache();
+
+  /* Enable D-Cache---------------------------------------------------------*/
+  SCB_EnableDCache();
 
   /* MCU Configuration--------------------------------------------------------*/
 
@@ -92,16 +170,52 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DCMI_Init();
+  MX_DMA_Init();
   MX_SPI4_Init();
+  MX_DCMI_Init();
   /* USER CODE BEGIN 2 */
-
+	OV2640_Init();	//配置OV2640
+	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
+	LCD_Init();//显示屏初始化
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  	if (DCMI_FrameState == 1)	// 采集到了一帧图像
+		{
+			DCMI_FrameState = 0;		// 清零标志位
+			
+			/* 大津法计算二值化阈值 */
+			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
+			
+			/* 二值化阈值限幅 */
+			if(watch.threshold>120)
+			{
+				watch.threshold=120;
+			}
+			else if(watch.threshold<80)
+			{
+				watch.threshold=80;
+			}
+			
+			/* 二值化 */
+			Binarization();
+			
+			/* 扫描赛道边线 */
+			scan_line();
+			
+			/* 在图像上绘制出赛道边线 */
+			draw_edge();
+			
+			/* 显示摄像头图像 */
+			//显示原图像
+			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
+			//显示二值化扫线图
+			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -124,6 +238,11 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+  while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
+
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
@@ -168,37 +287,31 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
-
- /* MPU Configuration */
-
+//	配置MPU
+//
 void MPU_Config(void)
 {
-  MPU_Region_InitTypeDef MPU_InitStruct = {0};
+	MPU_Region_InitTypeDef MPU_InitStruct;
 
-  /* Disables the MPU */
-  HAL_MPU_Disable();
+	HAL_MPU_Disable();		// 先禁止MPU
 
-  /** Initializes and configures the Region and the memory to be protected
-  */
-  MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-  MPU_InitStruct.Number = MPU_REGION_NUMBER0;
-  MPU_InitStruct.BaseAddress = 0x0;
-  MPU_InitStruct.Size = MPU_REGION_SIZE_4GB;
-  MPU_InitStruct.SubRegionDisable = 0x87;
-  MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-  MPU_InitStruct.AccessPermission = MPU_REGION_NO_ACCESS;
-  MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
-  MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-  MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-  MPU_InitStruct.IsBufferable = MPU_ACCESS_NOT_BUFFERABLE;
+	MPU_InitStruct.Enable 				= MPU_REGION_ENABLE;
+	MPU_InitStruct.BaseAddress 		= 0x24000000;
+	MPU_InitStruct.Size 					= MPU_REGION_SIZE_512KB;
+	MPU_InitStruct.AccessPermission 	= MPU_REGION_FULL_ACCESS;
+	MPU_InitStruct.IsBufferable 		= MPU_ACCESS_BUFFERABLE;
+	MPU_InitStruct.IsCacheable 		= MPU_ACCESS_CACHEABLE;
+	MPU_InitStruct.IsShareable 		= MPU_ACCESS_SHAREABLE;
+	MPU_InitStruct.Number 				= MPU_REGION_NUMBER0;
+	MPU_InitStruct.TypeExtField 		= MPU_TEX_LEVEL0;
+	MPU_InitStruct.SubRegionDisable 	= 0x00;
+	MPU_InitStruct.DisableExec 		= MPU_INSTRUCTION_ACCESS_ENABLE;
 
-  HAL_MPU_ConfigRegion(&MPU_InitStruct);
-  /* Enables the MPU */
-  HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+	HAL_MPU_ConfigRegion(&MPU_InitStruct);	
 
+	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);	// 使能MPU
 }
+/* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.
@@ -214,7 +327,8 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-#ifdef USE_FULL_ASSERT
+
+#ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
