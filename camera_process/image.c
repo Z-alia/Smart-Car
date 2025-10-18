@@ -623,7 +623,7 @@ if (get_start_point(image_h - 3)||get_start_point(image_h - 5)||get_start_point(
     //显示边线
 	draw_edge();
     //显示图像
-	show_ov2640_image_int8(0, 0, imo[0], image_w, image_h, image_w, image_h);			
+	show_ov2640_image_int8(0, 120, imo[0], image_w, image_h, image_w, image_h);			
 
 
 

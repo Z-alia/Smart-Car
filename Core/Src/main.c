@@ -199,13 +199,13 @@ int main(void)
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
 			/* 二值化阈值限幅 */
-			if(watch.threshold>160)
+			if(watch.threshold>180)
+			{
+				watch.threshold=180;
+			}
+			else if(watch.threshold<160)
 			{
 				watch.threshold=160;
-			}
-			else if(watch.threshold<90)
-			{
-				watch.threshold=90;
 			}
 			
 			/* 二值化 */
@@ -219,7 +219,7 @@ int main(void)
 			
 			/* 显示摄像头图像 */
 			//显示原图像
-			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
+			show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 			//显示二值化扫线图
 			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
       LCD_DisplayNumber(250, 250, OV2640_FPS, 3); // 显示当前帧率
