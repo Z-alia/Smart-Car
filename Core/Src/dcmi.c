@@ -55,8 +55,7 @@ void MX_DCMI_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN DCMI_Init 2 */
-	HAL_NVIC_SetPriority(DCMI_IRQn, 0 ,5);    // �����ж����ȼ�
-	HAL_NVIC_EnableIRQ(DCMI_IRQn); 		      // ����DCMI�ж�
+  // NVIC 优先级与使能已在 HAL_DCMI_MspInit 中统一配置，此处不再重复设置，避免优先级冲突
   /* USER CODE END DCMI_Init 2 */
 
 }

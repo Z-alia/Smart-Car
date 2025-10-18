@@ -45,6 +45,8 @@
 float p_st=0.0f,i_st=0.0f,d_st=0.0f;//直道pid
 float p_cr=0.0f,i_cr=0.0f,d_cr=0.0f;//弯道pid
 float p_sp=0.0f,i_sp=0.0f,d_sp=0.0f;//内环pid
+
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/

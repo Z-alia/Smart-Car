@@ -53,6 +53,14 @@ extern uint16_t* mt9v03x_image[120];	// 图像数据存储数组
 // 双缓冲第二块地址（对齐到32字节；当前帧大小 45120B 恰好是32的倍数）
 #define Camera_Buffer_2           (Camera_Buffer + CAMERA_FRAME_BYTES)
 
+// 编译期对 Cache/对齐的约束进行校验，避免运行期一致性问题
+#if ((Camera_Buffer % 32U) != 0U)
+#error "Camera_Buffer 必须按 32 字节对齐（H7 D-Cache line=32B）"
+#endif
+#if ((CAMERA_FRAME_BYTES % 32U) != 0U)
+#error "CAMERA_FRAME_BYTES 必须是 32 的整数倍，便于 Cache 维护"
+#endif
+
 // 1.RGB565模式下，需要 图像分辨率*2 的大小
 // 2.JPG模式下，需要的缓冲区大小并不是固定的，例如 640*480分辨率，JPG图像大概要占30K，
 //   缓冲区预留2倍左右大小即可，用户可根据实际情况去设置,

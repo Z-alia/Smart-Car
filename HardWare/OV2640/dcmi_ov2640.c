@@ -129,7 +129,7 @@ void OV2640_DMA_Transmit_Continuous(uint32_t DMA_Buffer,uint32_t DMA_BufferSize)
 
    // 先配置 DMA 双缓冲的两个内存地址（Mem0/Mem1）
    // Mem0 = Camera_Buffer, Mem1 = Camera_Buffer_2
-   if (HAL_DMAEx_MultiBufferStart(&hdma_dcmi,
+   if (HAL_DMAEx_MultiBufferStart_IT(&hdma_dcmi,
                            (uint32_t)&DCMI->DR,
                            (uint32_t)Camera_Buffer,
                            (uint32_t)Camera_Buffer_2,
@@ -138,11 +138,16 @@ void OV2640_DMA_Transmit_Continuous(uint32_t DMA_Buffer,uint32_t DMA_BufferSize)
       Error_Handler();
    }
 
-   // 启动 DCMI 采集（仅开采集，不再让 HAL_DCMI_Start_DMA 重新配置 DMA）
-   if (HAL_DCMI_Start(&hdcmi, DCMI_MODE_CONTINUOUS) != HAL_OK)
-   {
-      Error_Handler();
-   }
+   // 手动启动 DCMI 采集（不调用 HAL_DCMI_Start_DMA，以避免覆盖上面的双缓冲配置）
+   // 1) 使能 DCMI 外设
+   __HAL_DCMI_ENABLE(&hdcmi);
+   // 2) 设置连续采集模式
+   hdcmi.Instance->CR &= ~(DCMI_CR_CM);
+   hdcmi.Instance->CR |= DCMI_MODE_CONTINUOUS;
+   // 3) 使能帧中断（首次帧回调的触发开关）
+   __HAL_DCMI_ENABLE_IT(&hdcmi, DCMI_IT_FRAME);
+   // 4) 开启采集
+   hdcmi.Instance->CR |= DCMI_CR_CAPTURE;
 }
 
 /***************************************************************************************************************************************
@@ -722,6 +727,10 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
    }
 
    DCMI_FrameState = 1;  // 传输完成标志位置1
+
+   // 由于 HAL_DCMI_IRQHandler 在进入帧中断时会关闭 FRAME 中断，这里需要在回调末尾重新打开，
+   // 以便继续接收后续帧的回调。
+   __HAL_DCMI_ENABLE_IT(hdcmi, DCMI_IT_FRAME);
 }
 
 /***************************************************************************************************************************************
