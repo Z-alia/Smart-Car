@@ -77,7 +77,7 @@ void motor_stop(void);
 //循迹
 //void motor_follow_line_straight(PIDController* pid);
 
-void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta);
+//void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta);
 extern Motor leftmotor;
 extern Motor rightmotor;
 extern volatile int32_t delta_v;

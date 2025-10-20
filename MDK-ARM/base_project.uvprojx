@@ -622,11 +622,6 @@
               <FilePath>..\camera_process\Binarization.h</FilePath>
             </File>
             <File>
-              <FileName>Element_recognition.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\camera_process\Element_recognition.c</FilePath>
-            </File>
-            <File>
               <FileName>Element_recognition.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\camera_process\Element_recognition.h</FilePath>
@@ -640,6 +635,11 @@
               <FileName>morph_binary_bitpacked.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\camera_process\morph_binary_bitpacked.c</FilePath>
+            </File>
+            <File>
+              <FileName>Element_recognition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\camera_process\Element_recognition.c</FilePath>
             </File>
           </Files>
         </Group>

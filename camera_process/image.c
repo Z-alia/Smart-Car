@@ -122,7 +122,6 @@ example：
 	search_l_r((uint16)USE_num,image,&data_stastics_l, &data_stastics_r,start_point_l[0],
 				start_point_l[1], start_point_r[0], start_point_r[1],&hightest);
  */
-#define USE_num	image_h*3	//定义找点的数组成员个数按理说300个点能放下，但是有些特殊情况确实难顶，多定义了一点
 
  //存放点的x，y坐标
 uint16 points_l[(uint16)USE_num][2] = { {  0 } };//左线
@@ -645,4 +644,31 @@ if (get_start_point(image_h - 2))//找到起点了，再执行八领域，没找
 
 }
 
-
+//学长逆透视
+void IPS_ShowEdge(uint8 *p, uint16 width, uint16 height)
+{
+    int16 i, j;
+   
+    //�ı��ȡ���ص��˳��
+    for (j = height - 1; j >= 0; j--)
+    //for (j = 0; j <height; j++);
+    {
+        for (i = 0; i < width; i++)
+        {
+            if (*(p + j * width + i) == 1)
+               LCD_DrawPoint(i, j, LIGHT_RED);
+            else if (*(p + j * width + i) == 2)
+               LCD_DrawPoint(i, j, LIGHT_GREEN);
+            else if (*(p + j * width + i) == 3)
+               LCD_DrawPoint(i, j, LIGHT_YELLOW);
+            else if (*(p + j * width + i) == 4)
+                LCD_DrawPoint(i, j, LIGHT_GREY);
+            else if (*(p + j * width + i) == 5)
+                LCD_DrawPoint(i, j, LIGHT_BLUE);
+            else if (*(p + j * width + i) == 6)
+                LCD_DrawPoint(i, j, LCD_GREEN);
+            else
+                LCD_DrawPoint(i, j, LCD_BLACK);
+        }
+    }
+}

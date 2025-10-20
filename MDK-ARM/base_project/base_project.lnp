@@ -14,9 +14,9 @@
 "base_project\dcmi_ov2640.o"
 "base_project\sccb.o"
 "base_project\binarization.o"
-"base_project\element_recognition.o"
 "base_project\image.o"
 "base_project\morph_binary_bitpacked.o"
+"base_project\element_recognition.o"
 "base_project\stm32h7xx_hal_cortex.o"
 "base_project\stm32h7xx_hal_dcmi.o"
 "base_project\stm32h7xx_hal_rcc.o"
@@ -39,6 +39,9 @@
 "base_project\stm32h7xx_hal_tim.o"
 "base_project\stm32h7xx_hal_tim_ex.o"
 "base_project\system_stm32h7xx.o"
+"base_project\motor.o"
+"base_project\mpu6050.o"
+"base_project\soft_iic.o"
 --strict --scatter "base_project\base_project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

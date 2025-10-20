@@ -190,98 +190,97 @@ void motor_stop(void)
     motor_run(&rightmotor, 0);
 }
 //图像到误差转换
-void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta)
-{
-    float sum=0.0,temp=0.0; // 平均值，可后加加权
-	
-	
-	//直道
-	if(watch->Straight_flag==1)
-	{
-		uint16_t length=0;
-	
-    for(uint8_t i=1;i<30;i++)
-    {
-		if(lineinfo[i].mid!=0)
-			length++;
-       temp+=((float)lineinfo[i].mid);
-    }
-	sum+=(temp/length)*weight_dw;
-	length=0;
-	temp=0.0;
-	for(uint8_t i=30;i<60;i++)
-    {
-	   if(lineinfo[i].mid!=0)
-	   length++;
-       temp+=((float)lineinfo[i].mid);
-    }
-	sum+=(temp/length)*weight_md;
-	temp=0.0;
-	length=0;
-	for(uint8_t i=60;i<120;i++)
-    {
-	   if(lineinfo[i].mid!=0)
-	   length++;
-       temp+=((float)lineinfo[i].mid);
-    }
-	sum+=(temp/(float)length)*weight_up;
-    PID->error = sum- (94.0+derta);
-	
-    }
-	//弯道
-	
-	else
-	{
-    //用原始中线计算误差
-	int16_t top=watch->LastLine;
-	int16_t middle=top-5;
-	int16_t bottom=0;
-	    if(top==0||middle==0)
-    {
-        PID->error=0;
-        return;
-    }
-    for(int16_t i=bottom;i<middle;i++)
-    {
-       temp+=((float)lineinfo[i].mid);
-    }
-	sum+=((temp/middle)-94.0f)*weight_curve_up;
-	temp=0.0;
-	for(int16_t i=middle;i<=top;i++)
-    {
-       temp+=((float)lineinfo[i].mid);
-    }
-	sum+=(temp/5.0-94.0f)*weight_curve_down;
-	sum=sum*110.0f/(float)top;
-    PID->error = sum- derta;
-	}
-    
-	/*
-    //用预测中线计算误差
-    int16_t top=watch->PredictTopMidline;
-	int16_t middle=2*(top/3);
-	int16_t bottom=0;
-	    if(top==0||middle==0)
-    {
-        PID->error=0;
-        return;
-    }
+//void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta)
+//{
+//    float sum=0.0,temp=0.0; // 平均值，可后加加权
+//	
+//	
+//	//直道
+//	if(watch->Straight_flag==1)
+//	{
+//		uint16_t length=0;
+//	
+//    for(uint8_t i=1;i<30;i++)
+//    {
+//		if(lineinfo[i].mid!=0)
+//			length++;
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/length)*weight_dw;
+//	length=0;
+//	temp=0.0;
+//	for(uint8_t i=30;i<60;i++)
+//    {
+//	   if(lineinfo[i].mid!=0)
+//	   length++;
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/length)*weight_md;
+//	temp=0.0;
+//	length=0;
+//	for(uint8_t i=60;i<120;i++)
+//    {
+//	   if(lineinfo[i].mid!=0)
+//	   length++;
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/(float)length)*weight_up;
+//    PID->error = sum- (94.0+derta);
+//	
+//    }
+//	//弯道
+//	
+//	else
+//	{
+//    //用原始中线计算误差
+//	int16_t top=watch->LastLine;
+//	int16_t middle=top-5;
+//	int16_t bottom=0;
+//	    if(top==0||middle==0)
+//    {
+//        PID->error=0;
+//        return;
+//    }
+//    for(int16_t i=bottom;i<middle;i++)
+//    {
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=((temp/middle)-94.0f)*weight_curve_up;
+//	temp=0.0;
+//	for(int16_t i=middle;i<=top;i++)
+//    {
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/5.0-94.0f)*weight_curve_down;
+//	sum=sum*110.0f/(float)top;
+//    PID->error = sum- derta;
+//	}
+//    
+//	/*
+//    //用预测中线计算误差
+//    int16_t top=watch->PredictTopMidline;
+//	int16_t middle=2*(top/3);
+//	int16_t bottom=0;
+//	    if(top==0||middle==0)
+//    {
+//        PID->error=0;
+//        return;
+//    }
 
-    for(int16_t i=bottom;i<middle;i++)
-    {
-       temp+=((float)lineinfo[i].midpredict);
-    }
-	sum+=(temp/middle)*weight_curve_down;
-	temp=0.0;
-	for(int16_t i=middle;i<=top;i++)
-    {
-       temp+=((float)lineinfo[i].midpredict);
-    }
-	sum+=(temp/(top-middle))*weight_curve_up;
-	sum=sum*(110.0/(float)top);
-    PID->error = sum- (94.0+derta);
-	}
-	*/
-}
-
+//    for(int16_t i=bottom;i<middle;i++)
+//    {
+//       temp+=((float)lineinfo[i].midpredict);
+//    }
+//	sum+=(temp/middle)*weight_curve_down;
+//	temp=0.0;
+//	for(int16_t i=middle;i<=top;i++)
+//    {
+//       temp+=((float)lineinfo[i].midpredict);
+//    }
+//	sum+=(temp/(top-middle))*weight_curve_up;
+//	sum=sum*(110.0/(float)top);
+//    PID->error = sum- (94.0+derta);
+//	}
+//	*/
+//}
 

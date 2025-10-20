@@ -121,8 +121,8 @@ int main(void)
 	OV2640_Init();	//配置OV2640
 	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
 	LCD_Init();//显示屏初始化
-	pid_init(&PID_image,p_st,i_st,d_st);//外环pid初始化（默认直线）
-	pid_init(&PID_speed,p_sp,i_sp,d_sp);//内环pid初始化
+//	pid_init(&PID_image,p_st,i_st,d_st);//外环pid初始化（默认直线）
+//	pid_init(&PID_speed,p_sp,i_sp,d_sp);//内环pid初始化
 	motor_init();
   /* USER CODE END 2 */
 
@@ -255,10 +255,10 @@ if (htim->Instance == TIM7)
 		{
 			run_follow(&PID_speed,&leftmotor,&rightmotor);//与内环耦合的循迹
 		}
-		else if(watch.Curve_flag==1)
-		{
-			motor_follow_line_curve(&PID_speed,&leftmotor,&rightmotor);//与内环耦合的循迹
-		}
+//		else if(watch.Curve_flag==1)
+//		{
+//			motor_follow_line_curve(&PID_speed,&leftmotor,&rightmotor);//与内环耦合的循迹
+//		}
 	}
 }
 
