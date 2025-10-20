@@ -1,6 +1,5 @@
 #ifndef _IMAGE_H
 #define _IMAGE_H
-#include "type_def.h"
 #include <stdint.h>
 //绘制边界线
 void draw_edge();
@@ -19,9 +18,9 @@ void draw_edge();
 
 extern void image_process(void); //直接在中断或循环里调用此程序就可以循环执行了
 
-extern uint8 l_border[image_h];//左线数组
-extern uint8 r_border[image_h];//右线数组
-extern uint8 center_line[image_h];//中线数组
+extern uint8_t l_border[image_h];//左线数组
+extern uint8_t r_border[image_h];//右线数组
+extern uint8_t center_line[image_h];//中线数组
 
 #endif /*_IMAGE_H*/
 

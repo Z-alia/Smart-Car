@@ -3874,7 +3874,7 @@ Removing Unused input sections from the image.
     Removing image.o(.text), (0 bytes).
     Removing image.o(.text.my_abs), (8 bytes).
     Removing image.o(.ARM.exidx.text.my_abs), (8 bytes).
-    Removing image.o(.text.limit_a_b), (18 bytes).
+    Removing image.o(.text.limit_a_b), (14 bytes).
     Removing image.o(.ARM.exidx.text.limit_a_b), (8 bytes).
     Removing image.o(.text.limit1), (18 bytes).
     Removing image.o(.ARM.exidx.text.limit1), (8 bytes).
@@ -5014,7 +5014,7 @@ Removing Unused input sections from the image.
     Removing system_stm32h7xx.o(.text.SystemCoreClockUpdate), (304 bytes).
     Removing system_stm32h7xx.o(.ARM.exidx.text.SystemCoreClockUpdate), (8 bytes).
 
-1354 unused section(s) (total 107670 bytes) removed from the image.
+1354 unused section(s) (total 107666 bytes) removed from the image.
 
 ==============================================================================
 
@@ -6453,7 +6453,7 @@ Image component sizes
         52          0          0          0          0       5476   dma.o
        446          0          0          0          0       6254   gpio.o
        254          0          0          0         84       8166   i2c.o
-      5970          8          0          0       4694      25970   image.o
+      5970          8          0          0       4694      25892   image.o
          0          0       4560         12          0       1078   lcd_fonts.o
       5480         12          8          0       2072      40292   lcd_spi_200.o
        726          4          0          0          0       5580   main.o
@@ -6481,7 +6481,7 @@ Image component sizes
       1102          0          0          0        380      14617   tim.o
 
     ----------------------------------------------------------------------
-     57264        222       5632         28      67332     522629   Object Totals
+     57264        222       5632         28      67332     522551   Object Totals
          0          0         32          0          0          0   (incl. Generated)
        438         12          0          0         10          0   (incl. Padding)
 
@@ -6583,8 +6583,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     64156        474       6184         28      67428     524169   Grand Totals
-     64156        474       6184         28      67428     524169   ELF Image Totals
+     64156        474       6184         28      67428     524091   Grand Totals
+     64156        474       6184         28      67428     524091   ELF Image Totals
      64156        474       6184         28          0          0   ROM Totals
 
 ==============================================================================

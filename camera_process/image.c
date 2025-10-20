@@ -21,7 +21,7 @@ if(value>=0) return value;
 else return -value;
 }
 
-int16 limit_a_b(int16 x, int a, int b)
+int16_t limit_a_b(int16_t x, int16_t a, int16_t b)
 {
     if(x<a) x = a;
     if(x>b) x = b;
@@ -29,7 +29,7 @@ int16 limit_a_b(int16 x, int a, int b)
 }
 
 /*
-函数名称：int16 limit(int16 x, int16 y)
+函数名称：int16_t limit(int16_t x, int16_t y)
 功能说明：求x,y中的最小值
 参数说明：
 函数返回：返回两值中的最小值
@@ -37,7 +37,7 @@ int16 limit_a_b(int16 x, int a, int b)
 备    注：
 example：  limit( x,  y)
  */
-int16 limit1(int16 x, int16 y)
+int16_t limit1(int16_t x, int16_t y)
 {
 	if (x > y)             return y;
 	else if (x < -y)       return -y;
@@ -55,11 +55,11 @@ int16 limit1(int16 x, int16 y)
 备    注：
 example：  get_start_point(image_h-2)
  */
-uint8 start_point_l[2] = { 0 };//左边起点的x，y值
-uint8 start_point_r[2] = { 0 };//右边起点的x，y值
-uint8 get_start_point(uint8 start_row)
+uint8_t start_point_l[2] = { 0 };//左边起点的x，y值
+uint8_t start_point_r[2] = { 0 };//右边起点的x，y值
+uint8_t get_start_point(uint8_t start_row)
 {
-	uint16 i = 0,l_found = 0,r_found = 0;
+	uint16_t i = 0,l_found = 0,r_found = 0;
 	//清零
 	start_point_l[0] = 0;//x
 	start_point_l[1] = 0;//y
@@ -125,39 +125,39 @@ example：
 #define USE_num	image_h*3	//定义找点的数组成员个数按理说300个点能放下，但是有些特殊情况确实难顶，多定义了一点
 
  //存放点的x，y坐标
-uint16 points_l[(uint16)USE_num][2] = { {  0 } };//左线
-uint16 points_r[(uint16)USE_num][2] = { {  0 } };//右线
-uint16 dir_r[(uint16)USE_num] = { 0 };//用来存储右边生长方向
-uint16 dir_l[(uint16)USE_num] = { 0 };//用来存储左边生长方向
-uint16 data_stastics_l = 0;//统计左边找到点的个数
-uint16 data_stastics_r = 0;//统计右边找到点的个数
-uint8 hightest = 0;//最高点
-void search_l_r(uint16 break_flag, uint8(*image)[image_w], uint16 *l_stastic, uint16 *r_stastic, uint8 l_start_x, uint8 l_start_y, uint8 r_start_x, uint8 r_start_y, uint8*hightest)
+uint16_t points_l[(uint16_t)USE_num][2] = { {  0 } };//左线
+uint16_t points_r[(uint16_t)USE_num][2] = { {  0 } };//右线
+uint16_t dir_r[(uint16_t)USE_num] = { 0 };//用来存储右边生长方向
+uint16_t dir_l[(uint16_t)USE_num] = { 0 };//用来存储左边生长方向
+uint16_t data_stastics_l = 0;//统计左边找到点的个数
+uint16_t data_stastics_r = 0;//统计右边找到点的个数
+uint8_t hightest = 0;//最高点
+void search_l_r(uint16_t break_flag, uint8_t(*image)[image_w], uint16_t *l_stastic, uint16_t *r_stastic, uint8_t l_start_x, uint8_t l_start_y, uint8_t r_start_x, uint8_t r_start_y, uint8_t *hightest)
 {
 
-	uint8 i = 0, j = 0;
+	uint8_t i = 0, j = 0;
 
 	//左边变量
-	uint8 search_filds_l[8][2] = { {  0 } };
-	uint8 index_l = 0;
-	uint8 temp_l[8][2] = { {  0 } };
-	uint8 center_point_l[2] = {  0 };
-	uint16 l_data_statics;//统计左边
+	uint8_t search_filds_l[8][2] = { {  0 } };
+	uint8_t index_l = 0;
+	uint8_t temp_l[8][2] = { {  0 } };
+	uint8_t center_point_l[2] = {  0 };
+	uint16_t l_data_statics;//统计左边
 	//定义八个邻域
-	static int8 seeds_l[8][2] = { {0,  1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1},{1,  0},{1, 1}, };
+	static int8_t seeds_l[8][2] = { {0,  1},{-1,1},{-1,0},{-1,-1},{0,-1},{1,-1},{1,  0},{1, 1}, };
 	//{-1,-1},{0,-1},{+1,-1},
 	//{-1, 0},	     {+1, 0},
 	//{-1,+1},{0,+1},{+1,+1},
 	//这个是顺时针
 
 	//右边变量
-	uint8 search_filds_r[8][2] = { {  0 } };
-	uint8 center_point_r[2] = { 0 };//中心坐标点
-	uint8 index_r = 0;//索引下标
-	uint8 temp_r[8][2] = { {  0 } };
-	uint16 r_data_statics;//统计右边
+	uint8_t search_filds_r[8][2] = { {  0 } };
+	uint8_t center_point_r[2] = { 0 };//中心坐标点
+	uint8_t index_r = 0;//索引下标
+	uint8_t temp_r[8][2] = { {  0 } };
+	uint16_t r_data_statics;//统计右边
 	//定义八个邻域
-	static int8 seeds_r[8][2] = { {0,  1},{1,1},{1,0}, {1,-1},{0,-1},{-1,-1}, {-1,  0},{-1, 1}, };
+	static int8_t seeds_r[8][2] = { {0,  1},{1,1},{1,0}, {1,-1},{0,-1},{-1,-1}, {-1,  0},{-1, 1}, };
 	//{-1,-1},{0,-1},{+1,-1},
 	//{-1, 0},	     {+1, 0},
 	//{-1,+1},{0,+1},{+1,+1},
@@ -320,12 +320,12 @@ total_L	：找到的点的总数
 备    注：
 example： get_left(data_stastics_l );
  */
-uint8 l_border[image_h];//左线数组
-uint8 r_border[image_h];//右线数组
-uint8 center_line[image_h];//中线数组
-void get_left(uint16 total_L)
+uint8_t l_border[image_h];//左线数组
+uint8_t r_border[image_h];//右线数组
+uint8_t center_line[image_h];//中线数组
+void get_left(uint16_t total_L)
 {
-	uint16 j;
+	uint16_t j;
 	//初始化左边界为最小值
 	for (j = 0; j < image_h; j++)
 	{
@@ -335,8 +335,8 @@ void get_left(uint16 total_L)
 	// 遍历所有找到的点，更新l_border数组
 	for (j = 0; j < total_L; j++)
 	{
-		uint16 row = points_l[j][1];
-		uint16 col = points_l[j][0];
+		uint16_t row = points_l[j][1];
+		uint16_t col = points_l[j][0];
 		if (row < image_h) // 确保行号在范围内
 		{
 			// 如果当前行的边界还是初始值，或者找到了一个更左边的点
@@ -357,9 +357,9 @@ total_R  ：找到的点的总数
 备    注：
 example：get_right(data_stastics_r);
  */
-void get_right(uint16 total_R)
+void get_right(uint16_t total_R)
 {
-	uint16 j;
+	uint16_t j;
 	//初始化右边界为最大值
 	for (j = 0; j < image_h; j++)
 	{
@@ -369,8 +369,8 @@ void get_right(uint16 total_R)
 	// 遍历所有找到的点，更新r_border数组
 	for (j = 0; j < total_R; j++)
 	{
-		uint16 row = points_r[j][1];
-		uint16 col = points_r[j][0];
+		uint16_t row = points_r[j][1];
+		uint16_t col = points_r[j][0];
 		if (row < image_h) // 确保行号在范围内
 		{
 			// 如果当前行的边界还是初始值，或者找到了一个更右边的点
@@ -391,10 +391,10 @@ void get_right(uint16 total_R)
 备    注：
 example： image_draw_rectan(bin_image);
  */
-void image_draw_rectan(uint8(*image)[image_w])
+void image_draw_rectan(uint8_t(*image)[image_w])
 {
 
-	uint8 i = 0;
+	uint8_t i = 0;
 	for (i = 0; i < image_h; i++)
 	{
 		image[i][0] = 0;
@@ -435,10 +435,10 @@ void draw_edge()
 *     -<em>false</em> fail
 *     -<em>true</em> succeed
 */
-float Slope_Calculate(uint8 begin, uint8 end, uint8 *border)
+float Slope_Calculate(uint8_t begin, uint8_t end, uint8_t *border)
 {
 	float xsum = 0, ysum = 0, xysum = 0, x2sum = 0;
-	int16 i = 0;
+	int16_t i = 0;
 	float result = 0;
 	static float resultlast=0.0f;
 
@@ -474,10 +474,10 @@ float Slope_Calculate(uint8 begin, uint8 end, uint8 *border)
 *     -<em>false</em> fail
 *     -<em>true</em> succeed
 */
-void calculate_s_i(uint8 start, uint8 end, uint8 *border, float *slope_rate, float *intercept)
+void calculate_s_i(uint8_t start, uint8_t end, uint8_t *border, float *slope_rate, float *intercept)
 {
-	uint16 i, num = 0;
-	uint16 xsum = 0, ysum = 0;
+	uint16_t i, num = 0;
+	uint16_t xsum = 0, ysum = 0;
 	float y_average, x_average;
 
 	num = 0;
@@ -521,13 +521,13 @@ void calculate_s_i(uint8 start, uint8 end, uint8 *border, float *slope_rate, flo
 *     -<em>false</em> fail
 *     -<em>true</em> succeed
  */
-void cross_fill(uint8(*image)[image_w], uint8 *l_border, uint8 *r_border, uint16 total_num_l, uint16 total_num_r,
-										 uint16 *dir_l, uint16 *dir_r, uint16(*points_l)[2], uint16(*points_r)[2])
+void cross_fill(uint8_t(*image)[image_w], uint8_t *l_border, uint8_t *r_border, uint16_t total_num_l, uint16_t total_num_r,
+										 uint16_t *dir_l, uint16_t *dir_r, uint16_t(*points_l)[2], uint16_t(*points_r)[2])
 {
-	uint16 i;
-	uint8 break_num_l = 0;
-	uint8 break_num_r = 0;
-	uint8 start, end;
+	uint16_t i;
+	uint8_t break_num_l = 0;
+	uint8_t break_num_r = 0;
+	uint8_t start, end;
 	float slope_l_rate = 0, intercept_l = 0;
 	//出十字
 	for (i = 1; i + 7 < total_num_l; i++)
@@ -595,8 +595,8 @@ example： image_process();
  */
 void image_process(void)
 {
-uint16 i;
-uint8 Hightest = 0;//定义一个最高行，tip：这里的最高指的是y值的最小
+	uint16_t i;
+	uint8_t Hightest = 0;//定义一个最高行，tip：这里的最高指的是y值的最小
 
 //滤波（形态学处理）
 morph_clean_u8_binary_adapter(Grayscale[0], image_w, image_h, imo[0]);

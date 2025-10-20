@@ -1,5 +1,5 @@
 base_project/image.o: ..\camera_process\image.c ..\camera_process\image.h \
-  ..\Base\type_def.h ..\camera_process\Binarization.h ..\Core\Inc\main.h \
+  ..\camera_process\Binarization.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -29,5 +29,5 @@ base_project/image.o: ..\camera_process\image.c ..\camera_process\image.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
-  ..\HardWare\LCD\lcd_spi_200.h ..\HardWare\LCD\lcd_fonts.h \
-  ..\camera_process\morph_binary_bitpacked.h
+  ..\Base\type_def.h ..\HardWare\LCD\lcd_spi_200.h \
+  ..\HardWare\LCD\lcd_fonts.h ..\camera_process\morph_binary_bitpacked.h
