@@ -32,10 +32,26 @@ struct watch_o
     uint8_t Curve_flag;		//弯道标志位
     uint8_t Cross_flag;		//十字路口标志位
 
-    uint8_t Crossroads_flag_left;	//左环岛标志位
-	uint8_t Crossroads_flag_right;//右环岛标志位
-    uint8_t Left_Break_flag;	//左断续线标志位
-    uint8_t Right_Break_flag;	//右断续线标志位
+    /*圆环状态0:无环
+    1：检测到左环第一个角点，此时补左侧第一条线保持直行
+    2：正在入环，此时右侧补线入环
+    3：从陀螺仪积分一定值，此时完全入环
+    4：陀螺仪积分完成，准备出环
+    5：出圆环后直行 6：检测到右环第一个角点，之后类推*/
+    uint8_t InLoop;
+    //出环标记变量 1:出环时进入直道与圆环交界处
+    uint8_t OutLoop;
+	
+	//圆环标志位
+    int InLoopAngleL;  //入左环前直行的第一个角所在行（直道与圆环交接的角点）
+    int InLoopAngleR;  //入右环前直行的第一个角所在行（直道与圆环交接的角点）
+    int InLoopCirc;   //圆环上凸弧
+    int InLoopAngle2; //开始转向入环时前方的角点所在行（直道与圆环交接的角点）
+    int InLoopAngle2_x;
+    int InLoopAngle2_y;//开始转向入环时前方的角点所在列
+    int OutLoopAngle2; //出环后直行时前方的角点所在行（直道与圆环交接的角点）
+    int OutLoopAngle1; //出环时边上的角点（出左环时在右侧，出右环时在左侧）
+    int OutLoop_turn_point_x;//转向点横坐标，根据该点进行补线
 	
     int16_t CurrentY;           //当前的Y值
 	int16_t LastLine;           //如果断线（不论是否接回） 最后有效中点行数

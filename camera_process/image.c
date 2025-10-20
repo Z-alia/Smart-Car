@@ -643,32 +643,3 @@ if (get_start_point(image_h - 2))//找到起点了，再执行八领域，没找
 
 
 }
-
-//学长逆透视
-void IPS_ShowEdge(uint8 *p, uint16 width, uint16 height)
-{
-    int16 i, j;
-   
-    //�ı��ȡ���ص��˳��
-    for (j = height - 1; j >= 0; j--)
-    //for (j = 0; j <height; j++);
-    {
-        for (i = 0; i < width; i++)
-        {
-            if (*(p + j * width + i) == 1)
-               LCD_DrawPoint(i, j, LIGHT_RED);
-            else if (*(p + j * width + i) == 2)
-               LCD_DrawPoint(i, j, LIGHT_GREEN);
-            else if (*(p + j * width + i) == 3)
-               LCD_DrawPoint(i, j, LIGHT_YELLOW);
-            else if (*(p + j * width + i) == 4)
-                LCD_DrawPoint(i, j, LIGHT_GREY);
-            else if (*(p + j * width + i) == 5)
-                LCD_DrawPoint(i, j, LIGHT_BLUE);
-            else if (*(p + j * width + i) == 6)
-                LCD_DrawPoint(i, j, LCD_GREEN);
-            else
-                LCD_DrawPoint(i, j, LCD_BLACK);
-        }
-    }
-}

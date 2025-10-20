@@ -20,7 +20,6 @@ void draw_edge();
 #define USE_num	image_h*3	//定义找点的数组成员个数按理说300个点能放下，但是有些特殊情况确实难顶，多定义了一点
 
 extern void image_process(void); //直接在中断或循环里调用此程序就可以循环执行了
-void IPS_ShowEdge(uint8 *p, uint16 width, uint16 height);//牢学长逆透视
 
 extern uint8 l_border[image_h];//左线数组
 extern uint8 r_border[image_h];//右线数组
