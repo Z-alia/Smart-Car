@@ -16,8 +16,10 @@ typedef struct{
     uint8_t right_up[6];
     uint8_t up_left[6];
     uint8_t up_right[6];
-    uint8_t up_leftcircle[6];
-    uint8_t up_rightcircle[6];
+    uint8_t up_leftdownarc[6];
+    uint8_t up_rightdownarc[6];
+    uint8_t right_uparc[6];
+    uint8_t left_uparc[6];
 }growth_array;
 
 
