@@ -448,7 +448,7 @@ void draw_edge()
 
 
 /**
- * @brief 严格整数序列匹配函数 (支持间隔容忍, 使用标准化类型)
+ * @brief 整数序列匹配函数
  *
  * 功能：
  * 1. 在 'input' 序列中查找 'pattern' 序列。
@@ -463,7 +463,7 @@ void draw_edge()
  *
  * @return match_result_t 结构体, 包含匹配状态和置信度
  */
-match_result_t match_strict_sequence_with_gaps(
+match_result match_strict_sequence_with_gaps(
     const uint16_t* input,     // 输入序列
     size_t         input_len,
     const uint16_t* pattern,    //目标模式序列
@@ -471,7 +471,7 @@ match_result_t match_strict_sequence_with_gaps(
     uint16_t        max_gap       // 允许的最大单段间隔
 ) {
     // 默认结果
-    match_result_t result = {0, 0, 0.0f}; 
+    match_result result = {0, 0, 0.0f}; 
     
     // 1. 鲁棒性检查
     if (!input || !pattern || pattern_len == 0 || input_len == 0 || max_gap < 0) {

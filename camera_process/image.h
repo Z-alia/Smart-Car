@@ -9,7 +9,17 @@ typedef struct {
     uint16_t matched;       // 是否完整匹配 (0 = false, 1 = true)
     uint16_t total_gap;     // 实际总间隔数 (越小越好)
     float   confidence;    // 置信度：1.0 = 完美连续, 0.0 = 间隔最大
-} match_result_t;
+} match_result;
+
+typedef struct{
+    uint8_t left_up[6];
+    uint8_t right_up[6];
+    uint8_t up_left[6];
+    uint8_t up_right[6];
+    uint8_t up_leftcircle[6];
+    uint8_t up_rightcircle[6];
+}growth_array;
+
 
 //宏定义
 #define image_h	120//图像高度
