@@ -412,7 +412,7 @@ void image_draw_rectan(uint8_t(*image)[image_w])
 	}
 }
 
-//绘制边界线
+//绘制边界线(横向去重)
 void draw_edge()
 {
 	int row=0;
@@ -424,6 +424,121 @@ void draw_edge()
 	}
 }
 
+/*绘制边界线(完全体)
+void draw_edge()
+{
+    // 显示所有左边界点
+    for (int i = 0; i < data_stastics_l; i++) {
+        int row = points_l[i][1];
+        int col = points_l[i][0];
+        imo[row][col] = 1; // 左边界点标记为1
+    }
+    // 显示所有右边界点
+    for (int i = 0; i < data_stastics_r; i++) {
+        int row = points_r[i][1];
+        int col = points_r[i][0];
+        imo[row][col] = 2; // 右边界点标记为2
+    }
+    // 如果还要显示中线，可以保留原来的
+    for (int row = 0; row < image_h; row++) {
+        imo[row][center_line[row]] = 3;
+    }
+}
+*/
+
+
+/**
+ * @brief 严格整数序列匹配函数 (支持间隔容忍, 使用标准化类型)
+ *
+ * 功能：
+ * 1. 在 'input' 序列中查找 'pattern' 序列。
+ * 2. 严格匹配 'pattern' 中的每一个元素, 包括重复。
+ * 3. 允许 'pattern' 中相邻元素之间存在最多 'max_gap' 个 "噪声" 元素。
+ *
+ * @param input        输入整数序列
+ * @param input_len    输入长度
+ * @param pattern      目标模式序列
+ * @param pattern_len  模式长度 (必须 > 0)
+ * @param max_gap      允许的最大单段间隔 (应 >= 0)
+ *
+ * @return match_result_t 结构体, 包含匹配状态和置信度
+ */
+match_result_t match_strict_sequence_with_gaps(
+    const uint16_t* input,     // 输入序列
+    size_t         input_len,
+    const uint16_t* pattern,    //目标模式序列
+    size_t         pattern_len,
+    uint16_t        max_gap       // 允许的最大单段间隔
+) {
+    // 默认结果
+    match_result_t result = {0, 0, 0.0f}; 
+    
+    // 1. 鲁棒性检查
+    if (!input || !pattern || pattern_len == 0 || input_len == 0 || max_gap < 0) {
+        return result;
+    }
+
+    size_t  pat_idx = 0;           // 模式索引 (使用 size_t)
+    uint16_t current_gap = 0;     // 标准化
+    uint16_t total_gap = 0;         // 标准化
+
+    for (size_t i = 0; i < input_len; i++) {
+        
+        // 2. 提前退出剪枝
+        if (input_len - i < pattern_len - pat_idx) {
+            break; 
+        }
+
+        if (input[i] == pattern[pat_idx]) {
+            // 3. 找到匹配项
+            if (pat_idx > 0) {
+                total_gap += current_gap;
+            }
+            pat_idx++;
+            current_gap = 0; 
+
+            // 4. 检查是否完全匹配
+            if (pat_idx == pattern_len) {
+                result.matched = 1; 
+                result.total_gap = total_gap;
+                
+                // (pattern_len - 1) 可能会溢出如果 pattern_len 是 0,
+                // 但我们已在开头检查过 pattern_len > 0, 所以这里是安全的。
+                uint16_t max_possible_gap = (uint16_t)(pattern_len - 1) * max_gap; // 标准化
+                
+                if (max_possible_gap == 0) {
+                    result.confidence = (total_gap == 0) ? 1.0f : 0.0f;
+                } else {
+                    // 强制类型转换为 float 以进行浮点数除法
+                    result.confidence = 1.0f - (float)total_gap / (float)max_possible_gap;
+                }
+                return result; 
+            }
+        } else {
+            // 5. 不匹配
+            if (pat_idx > 0) {
+                // 计入间隔
+                current_gap++;
+                
+                if (current_gap > max_gap) {
+                    // 间隔超限, 重置状态
+                    pat_idx = 0;
+                    current_gap = 0;
+                    total_gap = 0;
+
+                    // 检查当前这个 input[i] 是否是 pattern[0]
+                    if (input[i] == pattern[0]) {
+                        pat_idx = 1;
+                    }
+                }
+            }
+            // else (pat_idx == 0), 继续寻找 pattern[0]
+        }
+    }
+
+    // 循环结束仍未匹配
+    return result;
+}
 
 /** 
 * @brief 最小二乘法

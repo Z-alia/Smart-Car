@@ -4,6 +4,12 @@
 //绘制边界线
 void draw_edge();
 
+//生长方向序列匹配结构体
+typedef struct {
+    uint16_t matched;       // 是否完整匹配 (0 = false, 1 = true)
+    uint16_t total_gap;     // 实际总间隔数 (越小越好)
+    float   confidence;    // 置信度：1.0 = 完美连续, 0.0 = 间隔最大
+} match_result_t;
 
 //宏定义
 #define image_h	120//图像高度
