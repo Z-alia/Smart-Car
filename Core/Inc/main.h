@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define WIFI_IO1_Pin GPIO_PIN_2
+#define WIFI_IO1_GPIO_Port GPIOA
+#define WIFI_IO2_Pin GPIO_PIN_3
+#define WIFI_IO2_GPIO_Port GPIOA
 #define MOTOR_PWM_LEFT_Pin GPIO_PIN_9
 #define MOTOR_PWM_LEFT_GPIO_Port GPIOE
 #define LCD_CS_Pin GPIO_PIN_11
@@ -77,6 +81,8 @@ void Error_Handler(void);
 #define CAMREA_PWDN_GPIO_Port GPIOD
 #define LCD_BL_Pin GPIO_PIN_15
 #define LCD_BL_GPIO_Port GPIOD
+#define WIFI_CS_Pin GPIO_PIN_0
+#define WIFI_CS_GPIO_Port GPIOD
 #define SCCB_SCL_Pin GPIO_PIN_8
 #define SCCB_SCL_GPIO_Port GPIOB
 #define SCCB_SDA_Pin GPIO_PIN_9

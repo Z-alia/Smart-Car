@@ -6,20 +6,20 @@ void draw_edge();
 
 //生长方向序列匹配结构体
 typedef struct {
+    uint8_t end;              // 若匹配到序列 记录终止行号
     uint16_t matched;       // 是否完整匹配 (0 = false, 1 = true)
     uint16_t total_gap;     // 实际总间隔数 (越小越好)
     float   confidence;    // 置信度：1.0 = 完美连续, 0.0 = 间隔最大
 } match_result;
 
+//生长方向序列结构体
 typedef struct{
-    uint8_t left_up[6];
-    uint8_t right_up[6];
-    uint8_t up_left[6];
-    uint8_t up_right[6];
-    uint8_t up_leftdownarc[6];
-    uint8_t up_rightdownarc[6];
-    uint8_t right_uparc[6];
-    uint8_t left_uparc[6];
+    uint16_t outer_up[6];
+    uint16_t inner_up[6];
+    uint16_t up_outer[6];
+    uint16_t up_inner[6];
+    uint16_t up_outerdownarc[8];
+    uint16_t outer_uparc[8];
 }growth_array;
 
 

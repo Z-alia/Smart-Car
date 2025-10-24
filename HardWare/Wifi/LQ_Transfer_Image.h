@@ -17,7 +17,7 @@
 #define TR_IO2_PIN        WIFI_IO2_Pin
 
 /* SPI接口定义 - 使用SPI3 */
-#define TR_SPI            hspi3                   // 使用SPI3
+#define TR_SPI            hspi2                  // 使用SPI2
 
 /* GPIO操作宏定义 */
 #define TR_CS_H           HAL_GPIO_WritePin(TR_CS_PORT, TR_CS_PIN, GPIO_PIN_SET)

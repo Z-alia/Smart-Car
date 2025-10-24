@@ -39,6 +39,7 @@
 "base_project\stm32h7xx_hal_tim.o"
 "base_project\stm32h7xx_hal_tim_ex.o"
 "base_project\system_stm32h7xx.o"
+"base_project\lq_transfer_image.o"
 --strict --scatter "base_project\base_project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
