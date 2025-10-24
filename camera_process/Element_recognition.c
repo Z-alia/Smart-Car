@@ -299,8 +299,8 @@ void left_ring_in_loop()
             //watch.InLoopCirc = 0;
             watch.InLoop = 3;
             //change_pid_para(&CAM_Turn,&setpara.loop_turn_PID);//将转向PID参数调为环内转向PID
-            set_speed(setpara.loop_target_speed+3);
-            beep2(3,20);
+            //set_speed(setpara.loop_target_speed+3);
+            //beep2(3,20);
         }
 }
 //小车角度积分完成，准备出环
@@ -452,4 +452,202 @@ void left_ring_complete_out()
          //beep2(7,20);
      }
     }
+}
+
+//十字进入函数
+void cross_enter()
+{
+    uint8 cross_count=0;
+    for(int y=40;y<100;y++)
+    {
+        if(leftlost[y]&&
+           leftlost[y]&&
+           Grayscale[119-y][93]==255&&
+           Grayscale[119-y][94]==255&&
+           Grayscale[119-y][1]==255&&
+           Grayscale[119-y][186]==255
+		//&&y<watch.track_count_far
+		)
+        {
+            cross_count++;
+        }
+    }
+    if(cross_count>6&&watch.cross_flag==0)
+    {
+
+        enter_element(crossing);   //进入十字 clear_all_flags();元素
+//        watch.angle_far_line=110;
+        //set_speed(setpara.cross_speed);
+        watch.cross_flag=3;//正入十字
+        //begin_distant_integeral(9000);
+    }
+	//setpara为编码器耦合部分
+    //if(setpara.cross_open_flag==1){
+    for(int y=20;y<60;y++)
+    {
+        if(leftlost[y]&&
+           leftlost[y+1]&&
+           leftlost[y+2]&&
+           leftlost[y+3]&&
+           leftlost[y-1]&&
+           leftlost[y-2]&&
+           leftlost[y-5]&&
+           !rightlost[y]&&
+           !rightlost[y-1]&&
+           !rightlost[y-2]&&
+           r_border[y]<=r_border[y+1]&&
+           r_border[y+1]<=r_border[y+2]&&
+           r_border[y+2]<=r_border[y+3]&&
+           r_border[y]<=r_border[y-1]&&
+           r_border[y-1]<=r_border[y-2]&&
+           r_border[y-2]<=r_border[y-3]&&
+           r_border[y-2]<r_border[y-4]&&
+           r_border[y-1]<r_border[y-3]&&
+           r_border[y]<r_border[y-2]&&
+           r_border[y]<r_border[y+2]&&
+           r_border[y+1]<r_border[y+3]&&
+           Grayscale[119-y-2][r_border[y]]==255&&//避免弯道边缘因反光形成角点
+           Grayscale[119-y-3][r_border[y]]==255&&
+           Grayscale[119-y-4][r_border[y]]==255&&
+           Grayscale[119-y-5][r_border[y]+5]==255
+
+
+
+
+                )
+        {
+            //车身右倾进入十字
+            enter_element(crossing);   //进入十字 clear_all_flags();元素
+    //        watch.angle_far_line=110;
+            //set_speed(setpara.cross_speed);
+            watch.cross_flag=2;
+            watch.cross_RD_angle=y;
+            begin_distant_integeral(8000);
+        }
+        else if(rightlost[y]&&
+           rightlost[y+1]&&
+           rightlost[y+2]&&
+           rightlost[y+3]&&
+           rightlost[y-1]&&
+           rightlost[y-2]&&
+           rightlost[y-5]&&
+           !leftlost[y]&&
+           !leftlost[y-1]&&
+           !leftlost[y-2]&&
+           l_border[y]<=l_border[y+1]&&
+           l_border[y+1]<=l_border[y+2]&&
+           l_border[y+2]<=l_border[y+3]&&
+           l_border[y]<=l_border[y-1]&&
+           l_border[y-1]<=l_border[y-2]&&
+           l_border[y-2]<=l_border[y-3]&&
+           l_border[y-2]<l_border[y-4]&&
+           l_border[y-1]<l_border[y-3]&&
+           l_border[y]<l_border[y-2]&&
+           l_border[y]<l_border[y+2]&&
+           l_border[y+1]<l_border[y+3]&&
+           Grayscale[119-y-2][l_border[y]]==255&&//避免弯道边缘因反光形成角点
+           Grayscale[119-y-3][l_border[y]]==255&&
+           Grayscale[119-y-4][l_border[y]]==255&&
+           Grayscale[119-y-5][l_border[y]+5]==255
+
+
+
+                )
+        {
+            //车身左倾进入十字
+            //enter_element(crossing);   //进入十字 clear_all_flags();元素
+    //        watch.angle_far_line=110;
+            watch.cross_LD_angle=y;
+            //set_speed(setpara.cross_speed);
+            watch.cross_flag=1;
+            //begin_distant_integeral(8000);
+        }
+    }
+    //}
+}
+//后可加偏转入十字的代码
+
+
+//黑色障碍物
+void black_obstacle_enter()
+{
+    if(mycar.RUNTIME<setpara.bla_obs_begin_time)return;//一次性进入，写死
+    for(int y=25;y<80;y++)
+    {
+        if(watch.black_obstacle_flag==0&&
+           (r_border[y-6]-l_border[y-6])-(r_border[y-5]-l_border[y-5]<=4)&&//检测上下两行宽度之差
+           (r_border[y-5]-l_border[y-5])-(r_border[y-4]-l_border[y-4]<=4)&&
+           (r_border[y-4]-l_border[y-4])-(r_border[y]-l_border[y])>16&&//上下两行宽度突变（减小）
+           (r_border[y-1]-l_border[y-1])-(r_border[y]-l_border[y])>4&&
+           (r_border[y]-l_border[y])-(r_border[y+1]-l_border[y+1]<=4)&&
+           (r_border[y+1]-l_border[y+1])-(r_border[y+2]-l_border[y+2]<=4)&&
+           ((r_border[y-11]-r_border[y-5]<10)&&(l_border[y-5]-l_border[y-11]<10))&&
+             !leftlost[y+10]&&!rightlost[y+10]&&//左右侧均不丢线
+             !leftlost[y+8]&&!rightlost[y+8]&&
+             !leftlost[y+6]&&!rightlost[y+6]&&
+             !leftlost[y+4]&&!rightlost[y+4]&&
+             !leftlost[y+2]&&!rightlost[y+2]&&
+             !leftlost[y]&&!rightlost[y]&&
+             !leftlost[y-5]&&!rightlost[y-5]&&
+             !leftlost[y-10]&&!rightlost[y-10]&&
+             !leftlost[y-15]&&!rightlost[y-15]&&
+             !leftlost[y-20]&&!rightlost[y-20]&&
+             !leftlost[y-3]&&!rightlost[y-3]
+        )
+        {
+
+            watch.black_obstacle_line=y;
+            if(Element==None)     //在当前无元素时进行以下操作
+            {
+             black_obstacle_confirm();
+            }
+//            change_pid_para(&CAM_Turn,&setpara.black_obstacle_turn_PID);//将转向PID参数调为路障转向PID（p、d调小，车转而不多）;
+            if(watch.left_obstacle_flag){
+                watch.left_obstacle_x=lineinfo[watch.black_obstacle_line].left;
+            }
+            if(watch.right_obstacle_flag){
+                watch.right_obstacle_x=lineinfo[watch.black_obstacle_line].right;
+            }
+
+        }
+//        if(watch.left_obstacle_flag){
+//            find_angle_left(watch.left_obstacle_x, watch.black_obstacle_line, &watch.left_obstacle_x, &watch.black_obstacle_line);
+//          }
+//        if(watch.right_obstacle_flag){
+//            find_angle_right_down(watch.right_obstacle_x, watch.black_obstacle_line, &watch.right_obstacle_x, &watch.black_obstacle_line);
+//          }
+    }
+}
+
+void black_obstacle_confirm()
+{
+    if(lineinfo[watch.black_obstacle_line].left-lineinfo[watch.black_obstacle_line-4].left>10&&
+       lineinfo[watch.black_obstacle_line+1].left-lineinfo[watch.black_obstacle_line-5].left>10&&
+       lineinfo[watch.black_obstacle_line-4].right-lineinfo[watch.black_obstacle_line].right<6&&
+       lineinfo[watch.black_obstacle_line-5].right-lineinfo[watch.black_obstacle_line+1].right<8){
+        watch.left_obstacle_flag=1;
+        watch.right_obstacle_flag=0;
+        enter_element(black_obstacle);
+        //set_speed(setpara.bla_obs_speed);
+        //begin_distant_integeral(9000);//路障长240mm，折合脉冲数约2824个
+        watch.black_obstacle_flag=1;
+        //beep2(7,100);
+        }
+    else if(lineinfo[watch.black_obstacle_line-4].right-lineinfo[watch.black_obstacle_line].right>10&&
+            lineinfo[watch.black_obstacle_line-5].right-lineinfo[watch.black_obstacle_line+1].right>10&&
+            lineinfo[watch.black_obstacle_line].left-lineinfo[watch.black_obstacle_line-4].left<6&&
+            lineinfo[watch.black_obstacle_line+1].left-lineinfo[watch.black_obstacle_line-5].left<8){
+        watch.left_obstacle_flag=0;
+        watch.right_obstacle_flag=1;
+        enter_element(black_obstacle);
+        set_speed(setpara.bla_obs_speed);
+        begin_distant_integeral(9000);//路障长240mm，折合脉冲数约2824个
+        watch.black_obstacle_flag=1;
+        beep2(7,100);
+        }
+    else{
+        watch.left_obstacle_flag=0;
+        watch.right_obstacle_flag=0;
+        }
+
 }

@@ -27,11 +27,143 @@ Project File Date:  10/20/2025
 <h2>Output:</h2>
 *** Using Compiler 'V6.24', folder: 'D:\keil5\ARM\ARMCLANG\Bin'
 Build target 'base_project'
+compiling main.c...
+compiling lcd_spi_200.c...
+compiling spi.c...
+compiling stm32h7xx_hal_flash.c...
+compiling stm32h7xx_hal_cortex.c...
+compiling stm32h7xx_hal_msp.c...
+compiling tim.c...
+compiling dma.c...
+compiling gpio.c...
+compiling lcd_fonts.c...
+compiling i2c.c...
+../camera_process/Element_recognition.c(102): error: use of undeclared identifier 'leftlost'
+  102 |             ((leftlost[y + 1]||((l_border[y]-l_border[y+1])>=5*(l_border[y+1]-l_border[y+2])))///////////
+      |               ^
+../camera_process/Element_recognition.c(103): error: use of undeclared identifier 'leftlost'
+  103 |             && !leftlost[y - 3]
+      |                 ^
+../camera_process/Element_recognition.c(104): error: use of undeclared identifier 'leftlost'
+  104 |             && !leftlost[y - 2]
+      |                 ^
+../camera_process/Element_recognition.c(105): error: use of undeclared identifier 'leftlost'
+  105 |             && !leftlost[y - 1]
+      |                 ^
+../camera_process/Element_recognition.c(106): error: use of undeclared identifier 'leftlost'
+  106 |             && !leftlost[y]
+      |                 ^
+../camera_process/Element_recognition.c(107): error: use of undeclared identifier 'rightlost'; did you mean 'hightest'?
+  107 |             && !rightlost[y + 5]
+      |                 ^~~~~~~~~
+      |                 hightest
+../camera_process\image.h(29): note: 'hightest' declared here
+   29 | extern uint8 hightest;//最高点
+      |              ^
+../camera_process/Element_recognition.c(107): error: subscripted value is not an array, pointer, or vector
+  107 |             && !rightlost[y + 5]
+      |                 ~~~~~~~~~^~~~~~
+../camera_process/Element_recognition.c(108): error: use of undeclared identifier 'rightlost'; did you mean 'hightest'?
+  108 |             && !rightlost[y + 3]
+      |                 ^~~~~~~~~
+      |                 hightest
+../camera_process\image.h(29): note: 'hightest' declared here
+   29 | extern uint8 hightest;//最高点
+      |              ^
+../camera_process/Element_recognition.c(108): error: subscripted value is not an array, pointer, or vector
+  108 |             && !rightlost[y + 3]
+      |                 ~~~~~~~~~^~~~~~
+../camera_process/Element_recognition.c(109): error: use of undeclared identifier 'rightlost'; did you mean 'hightest'?
+  109 |             && !rightlost[y + 2]
+      |                 ^~~~~~~~~
+      |                 hightest
+../camera_process\image.h(29): note: 'hightest' declared here
+   29 | extern uint8 hightest;//最高点
+      |              ^
+../camera_process/Element_recognition.c(109): error: subscripted value is not an array, pointer, or vector
+  109 |             && !rightlost[y + 2]
+      |                 ~~~~~~~~~^~~~~~
+../camera_process/Element_recognition.c(110): error: use of undeclared identifier 'rightlost'; did you mean 'hightest'?
+  110 |             && !rightlost[y + 1]
+      |                 ^~~~~~~~~
+      |                 hightest
+../camera_process\image.h(29): note: 'hightest' declared here
+   29 | extern uint8 hightest;//最高点
+      |              ^
+../camera_process/Element_recognition.c(110): error: subscripted value is not an array, pointer, or vector
+  110 |             && !rightlost[y + 1]
+      |                 ~~~~~~~~~^~~~~~
+../camera_process/Element_recognition.c(111): error: use of undeclared identifier 'rightlost'; did you mean 'hightest'?
+  111 |             && !rightlost[y]
+      |                 ^~~~~~~~~
+      |                 hightest
+../camera_process\image.h(29): note: 'hightest' declared here
+   29 | extern uint8 hightest;//最高点
+      |              ^
+../camera_process/Element_recognition.c(111): error: subscripted value is not an array, pointer, or vector
+  111 |             && !rightlost[y]
+      |                 ~~~~~~~~~^~
+../camera_process/Element_recognition.c(112): error: use of undeclared identifier 'rightlost'; did you mean 'hightest'?
+  112 |             && !rightlost[y - 1]
+      |                 ^~~~~~~~~
+      |                 hightest
+../camera_process\image.h(29): note: 'hightest' declared here
+   29 | extern uint8 hightest;//最高点
+      |              ^
+../camera_process/Element_recognition.c(112): error: subscripted value is not an array, pointer, or vector
+  112 |             && !rightlost[y - 1]
+      |                 ~~~~~~~~~^~~~~~
+../camera_process/Element_recognition.c(113): error: use of undeclared identifier 'rightlost'; did you mean 'hightest'?
+  113 |             && !rightlost[y - 2]
+      |                 ^~~~~~~~~
+      |                 hightest
+../camera_process\image.h(29): note: 'hightest' declared here
+   29 | extern uint8 hightest;//最高点
+      |              ^
+../camera_process/Element_recognition.c(113): error: subscripted value is not an array, pointer, or vector
+  113 |             && !rightlost[y - 2]
+      |                 ~~~~~~~~~^~~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
 compiling Element_recognition.c...
-linking...
-Program Size: Code=62964 RO-data=6168 RW-data=44 ZI-data=62540  
-FromELF: creating hex file...
-"base_project\base_project.axf" - 0 Error(s), 0 Warning(s).
+compiling Binarization.c...
+compiling stm32h7xx_it.c...
+compiling dcmi.c...
+compiling stm32h7xx_hal_hsem.c...
+compiling stm32h7xx_hal_flash_ex.c...
+compiling stm32h7xx_hal_rcc.c...
+compiling stm32h7xx_hal_gpio.c...
+compiling sccb.c...
+compiling dcmi_ov2640.c...
+compiling stm32h7xx_hal_dcmi.c...
+compiling stm32h7xx_hal_rcc_ex.c...
+../camera_process/morph_binary_bitpacked.c(259): warning: passing 'const uint32_t *restrict' (aka 'const unsigned int *restrict') to parameter of type 'uint32_t *' (aka 'unsigned int *') discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+  259 |     dilate3x3_bitpacked(tmp1_bits, src_bits, width, height);
+      |                                    ^~~~~~~~
+../camera_process/morph_binary_bitpacked.c(170): note: passing argument to parameter 'dst_bits' here
+  170 | void dilate3x3_bitpacked(const uint32_t* RESTRICT src_bits, uint32_t* RESTRICT dst_bits, int width, int height) {
+      |                                                                                ^
+1 warning generated.
+compiling morph_binary_bitpacked.c...
+compiling stm32h7xx_hal_dma.c...
+compiling stm32h7xx_hal_dma_ex.c...
+compiling image.c...
+compiling stm32h7xx_hal_pwr.c...
+compiling stm32h7xx_hal.c...
+compiling stm32h7xx_hal_pwr_ex.c...
+compiling stm32h7xx_hal_mdma.c...
+compiling stm32h7xx_hal_i2c_ex.c...
+compiling stm32h7xx_hal_exti.c...
+compiling stm32h7xx_hal_i2c.c...
+compiling stm32h7xx_hal_spi_ex.c...
+compiling motor.c...
+compiling system_stm32h7xx.c...
+compiling mpu6050.c...
+compiling stm32h7xx_hal_tim_ex.c...
+compiling stm32h7xx_hal_spi.c...
+compiling soft_iic.c...
+compiling stm32h7xx_hal_tim.c...
+"base_project\base_project.axf" - 19 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -54,7 +186,8 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE@6.1.1
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:00
+Target not created.
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

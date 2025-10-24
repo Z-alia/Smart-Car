@@ -30,8 +30,9 @@ struct watch_o
     uint8_t Curve_right_flag;	//右弯道标志位
     uint8_t Curve_left_flag;	//左弯道标志位
     uint8_t Curve_flag;		//弯道标志位
-    uint8_t Cross_flag;		//十字路口标志位
-
+    uint8_t cross_flag;		//十字路口标志位
+	uint8_t zebra_flag;		//斑马线标志位
+	uint8_t black_obstacle_flag;	//黑色障碍标志位
     /*圆环状态0:无环
     1：检测到左环第一个角点，此时补左侧第一条线保持直行
     2：正在入环，此时右侧补线入环
@@ -52,6 +53,14 @@ struct watch_o
     int OutLoopAngle2; //出环后直行时前方的角点所在行（直道与圆环交接的角点）
     int OutLoopAngle1; //出环时边上的角点（出左环时在右侧，出右环时在左侧）
     int OutLoop_turn_point_x;//转向点横坐标，根据该点进行补线
+	
+	//小型黑色路障标记位
+    uint8 black_obstacle_flag;
+    uint8 left_obstacle_flag;
+    uint8 right_obstacle_flag;
+    int black_obstacle_line;
+    int left_obstacle_x;
+    int right_obstacle_x;
 	
     int16_t CurrentY;           //当前的Y值
 	int16_t LastLine;           //如果断线（不论是否接回） 最后有效中点行数
