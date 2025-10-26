@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32H750xx,USE_PWR_LDO_SUPPLY</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../HardWare/LCD;../HardWare/OV2640;../camera_process;../Base;../Middlewares/ST/ARM/DSP/Inc;../HardWare/Wifi</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../HardWare/LCD;../HardWare/OV2640;../camera_process;../Base;../Middlewares/ST/ARM/DSP/Inc;../HardWare/Wifi;..\HardWare\persp</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -770,6 +770,21 @@
               <FileName>LQ_Transfer_Image.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HardWare\Wifi\LQ_Transfer_Image.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>persp</GroupName>
+          <Files>
+            <File>
+              <FileName>act_persp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HardWare\persp\act_persp.c</FilePath>
+            </File>
+            <File>
+              <FileName>act_persp.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HardWare\persp\act_persp.h</FilePath>
             </File>
           </Files>
         </Group>
