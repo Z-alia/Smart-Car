@@ -17,6 +17,4 @@ version: "2.1"
 options:
     base_project:
         files: {}
-        virtualPathFiles:
-            <virtual_root>/Application/User/Core/i2c.c: ""
-            <virtual_root>/Application/User/Core/tim.c: ""
+        virtualPathFiles: {}

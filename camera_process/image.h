@@ -6,20 +6,20 @@ void draw_edge();
 
 //生长方向序列匹配结构体
 typedef struct {
-    uint8_t end;              // 若匹配到序列 记录终止行号
-    uint16_t matched;       // 是否完整匹配 (0 = false, 1 = true)
-    uint16_t total_gap;     // 实际总间隔数 (越小越好)
+    uint16_t start;            // 若匹配到序列 记录起始行号（匹配第一个元素的位置）
+    uint16_t end;              // 若匹配到序列 记录终止行号（匹配最后一个元素的位置）
+    uint8_t matched;       // 是否完整匹配 (0 = false, 1 = true)
+    uint8_t total_gap;     // 实际总间隔数 (越小越好)
     float   confidence;    // 置信度：1.0 = 完美连续, 0.0 = 间隔最大
 } match_result;
 
 //生长方向序列结构体
 typedef struct{
-    uint16_t outer_up[6];
-    uint16_t inner_up[6];
-    uint16_t up_outer[6];
+    uint16_t up[6];
+    uint16_t outer[6];
     uint16_t up_inner[6];
-    uint16_t up_outerdownarc[8];
-    uint16_t outer_uparc[8];
+    uint16_t inner[6];
+    uint16_t corner1[6];
 }growth_array;
 
 
@@ -35,10 +35,32 @@ typedef struct{
 #define border_min	1	//边界最小值	
 
 extern void image_process(void); //直接在中断或循环里调用此程序就可以循环执行了
+extern match_result match_strict_sequence_with_gaps(
+    const uint16_t* input,     // 输入序列
+    size_t         input_len,
+    const uint16_t* pattern,    //目标模式序列
+    size_t         pattern_len,
+    uint16_t        max_gap,      // 允许的最大单段间隔
+    size_t         start_pos,      // 起始匹配位置（新增参数）
+    int8_t         direction
+);
+extern match_result match_strict_sequence_with_gaps_u8(
+    const uint8_t* input,     // 输入序列
+    size_t         input_len,
+    const uint8_t* pattern,    //目标模式序列
+    size_t         pattern_len,
+    uint8_t        max_gap,      // 允许的最大单段间隔
+    size_t         start_pos,      // 起始匹配位置（新增参数）
+    int8_t         direction       // 匹配方向：1=正向，-1=反向
+);
 
 extern uint8_t l_border[image_h];//左线数组
 extern uint8_t r_border[image_h];//右线数组
 extern uint8_t center_line[image_h];//中线数组
+extern uint8_t left_lost_num;//左线丢失总行数
+extern uint8_t right_lost_num;//右线丢失总行数
+extern uint8_t left_lost[image_h];//左线丢失标志数组
+extern uint8_t right_lost[image_h];//右线丢失标志数组
 
 #endif /*_IMAGE_H*/
 

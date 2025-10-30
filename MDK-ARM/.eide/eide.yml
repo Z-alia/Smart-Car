@@ -25,8 +25,11 @@ virtualFolder:
                 - path: ../Core/Src/dcmi.c
                 - path: ../Core/Src/dma.c
                 - path: ../Core/Src/i2c.c
+                - path: ../Core/Src/quadspi.c
+                - path: ../Core/Src/sdmmc.c
                 - path: ../Core/Src/spi.c
                 - path: ../Core/Src/tim.c
+                - path: ../Core/Src/usart.c
                 - path: ../Core/Src/stm32h7xx_it.c
                 - path: ../Core/Src/stm32h7xx_hal_msp.c
               folders: []
@@ -80,10 +83,19 @@ virtualFolder:
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_i2c_ex.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_exti.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_qspi.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_delayblock.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd_ex.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc_ex.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi_ex.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c
+            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c
           folders: []
         - name: CMSIS
           files:
