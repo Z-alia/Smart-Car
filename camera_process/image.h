@@ -3,7 +3,7 @@
 #include <stdint.h>
 //绘制边界线
 void draw_edge();
-
+/*
 //生长方向序列匹配结构体
 typedef struct {
     uint16_t start;            // 若匹配到序列 记录起始行号（匹配第一个元素的位置）
@@ -22,7 +22,7 @@ typedef struct{
     uint16_t corner1[6];
 }growth_array;
 
-
+*/
 //宏定义
 #define image_h	120//图像高度
 #define image_w	188//图像宽度
@@ -35,6 +35,7 @@ typedef struct{
 #define border_min	1	//边界最小值	
 
 extern void image_process(void); //直接在中断或循环里调用此程序就可以循环执行了
+/*
 extern match_result match_strict_sequence_with_gaps(
     const uint16_t* input,     // 输入序列
     size_t         input_len,
@@ -53,7 +54,7 @@ extern match_result match_strict_sequence_with_gaps_u8(
     size_t         start_pos,      // 起始匹配位置（新增参数）
     int8_t         direction       // 匹配方向：1=正向，-1=反向
 );
-
+*/
 extern uint8_t l_border[image_h];//左线数组
 extern uint8_t r_border[image_h];//右线数组
 extern uint8_t center_line[image_h];//中线数组

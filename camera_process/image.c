@@ -28,8 +28,9 @@
 //  - HAVE_EXTERNAL_LCD_SHOW
 
 // 使用 global_image_buffer.h 中的全局数组
-
+/*
 #ifndef HAVE_EXTERNAL_LCD_SHOW
+
 // LCD 显示函数空实现（避免链接错误）
 void show_ov2640_image_int8(int start_x, int start_y,
 							uint8_t *data,
@@ -39,7 +40,7 @@ void show_ov2640_image_int8(int start_x, int start_y,
 	(void)start_x; (void)start_y; (void)data; (void)w; (void)h; (void)stride_w; (void)stride_h;
 }
 #endif
-
+*/
 /*
 函数名称：int my_abs(int value)
 功能说明：求绝对值
@@ -648,6 +649,7 @@ void draw_edge()
  * @return match_result_t 结构体, 包含匹配状态和置信度
  * @note result.start 和 result.end 返回的是匹配在整个input数组中的起始和结束索引（不是相对于start_pos） 永远有start<end 不论匹配顺序
  */
+/*
 match_result match_strict_sequence_with_gaps(
     const uint16_t* input,     // 输入序列
     size_t         input_len,
@@ -901,7 +903,7 @@ growth_array arr = {
     .corner1 = {4,3,2,1,1,1}
 };
 
-
+*/
 
 
 /*

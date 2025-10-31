@@ -7,7 +7,7 @@
 #define image_h 120
 //绘制边界线
 void draw_edge();
-
+/*
 //生长方向序列匹配结构体
 typedef struct {
     uint8_t end;              // 若匹配到序列 记录终止行号
@@ -26,7 +26,7 @@ typedef struct{
     uint16_t outer_uparc[8];
 }growth_array;
 
-
+*/
 struct watch_o
 {
 	/* 大津法使用 */
@@ -75,7 +75,6 @@ struct watch_o
     int OutLoop_turn_point_x;//转向点横坐标，根据该点进行补线
 	
     //十字的标志位
-    int cross_flag;
     int cross_RD_angle;//十字右下角点
     int cross_LD_angle;//十字左下角点
 

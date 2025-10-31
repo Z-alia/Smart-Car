@@ -229,7 +229,7 @@ void left_ring_confirm()
     watch.InLoopAngleL=120;
 }
 /*函数名称：void left_ring_circular_arc()
-/*功能说明：左环上凸弧扫描函数
+功能说明：左环上凸弧扫描函数
 */
 void left_ring_circular_arc()
 {

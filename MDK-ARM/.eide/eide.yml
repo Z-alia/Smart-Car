@@ -3,7 +3,9 @@ name: base_project
 type: ARM
 deviceName: null
 packDir: null
-srcDirs: []
+srcDirs:
+  - ../HardWare/42688
+  - ../Base/control
 virtualFolder:
   name: <virtual_root>
   files: []
@@ -139,8 +141,11 @@ targets:
         - ../HardWare/persp
         - .cmsis/include
         - RTE/_base_project
+        - ../HardWare/42688
+        - ../Base/control
       libList: []
-    excludeList: []
+    excludeList:
+      - ../HardWare/42688/ICM42688P_Test.c
     toolchain: AC6
     toolchainConfigMap:
       AC6:

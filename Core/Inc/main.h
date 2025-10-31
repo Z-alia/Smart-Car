@@ -61,6 +61,10 @@ void Error_Handler(void);
 #define LED_signal_GPIO_Port GPIOA
 #define Press_Pin GPIO_PIN_3
 #define Press_GPIO_Port GPIOA
+#define wifi_io1_Pin GPIO_PIN_7
+#define wifi_io1_GPIO_Port GPIOE
+#define wifi_io2_Pin GPIO_PIN_8
+#define wifi_io2_GPIO_Port GPIOE
 #define LCD_CS_Pin GPIO_PIN_11
 #define LCD_CS_GPIO_Port GPIOE
 #define LCD_SCL_Pin GPIO_PIN_12
@@ -69,6 +73,8 @@ void Error_Handler(void);
 #define LCD_SDA_GPIO_Port GPIOE
 #define LCD_DC_Pin GPIO_PIN_15
 #define LCD_DC_GPIO_Port GPIOE
+#define WIFI_CS_Pin GPIO_PIN_12
+#define WIFI_CS_GPIO_Port GPIOB
 #define PH_LMOTOR_Pin GPIO_PIN_8
 #define PH_LMOTOR_GPIO_Port GPIOD
 #define PH_RMOTOR_Pin GPIO_PIN_9
@@ -79,8 +85,6 @@ void Error_Handler(void);
 #define MOTOR_PWM_LEFT_GPIO_Port GPIOA
 #define MOTOR_PWM_RIGHT_Pin GPIO_PIN_9
 #define MOTOR_PWM_RIGHT_GPIO_Port GPIOA
-#define WIFI_CS_Pin GPIO_PIN_0
-#define WIFI_CS_GPIO_Port GPIOD
 #define sccb_scl_Pin GPIO_PIN_6
 #define sccb_scl_GPIO_Port GPIOD
 #define sccb_sda_Pin GPIO_PIN_7

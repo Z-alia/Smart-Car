@@ -7,14 +7,14 @@
 #include <string.h>
 
 /* WiFi模块引脚定义 - 根据您的硬件连接修改 */
-#define TR_CS_PORT        WIFI_CS_GPIO_Port      // WiFi CS引脚 - PD13
+#define TR_CS_PORT        WIFI_CS_GPIO_Port      // WiFi CS引脚 - PB12
 #define TR_CS_PIN         WIFI_CS_Pin
 
-#define TR_IO1_PORT       WIFI_IO1_GPIO_Port     // WiFi IO1引脚 - PD11 (模式配置)
-#define TR_IO1_PIN        WIFI_IO1_Pin
+#define TR_IO1_PORT       wifi_io1_GPIO_Port     // WiFi IO1引脚 - PD11 (模式配置)
+#define TR_IO1_PIN        wifi_io1_Pin
 
-#define TR_IO2_PORT       WIFI_IO2_GPIO_Port     // WiFi IO2引脚 - PB6 (握手信号)
-#define TR_IO2_PIN        WIFI_IO2_Pin
+#define TR_IO2_PORT       wifi_io2_GPIO_Port     // WiFi IO2引脚 - PB6 (握手信号)
+#define TR_IO2_PIN        wifi_io2_Pin
 
 /* SPI接口定义 - 使用SPI3 */
 #define TR_SPI            hspi2                  // 使用SPI2
