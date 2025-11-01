@@ -6,7 +6,8 @@
     ],
     "settings": {
         "files.associations": {
-            "image.h": "c"
+            "image.h": "c",
+            "control.h": "c"
         }
     },
     "extensions": {}

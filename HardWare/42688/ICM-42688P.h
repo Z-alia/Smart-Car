@@ -104,6 +104,7 @@ typedef struct
 
 } IMU_Data;
 
+extern IMU_Data imu_data;//数据接口
 /* Exported functions prototypes ---------------------------------------------*/
 
 /**

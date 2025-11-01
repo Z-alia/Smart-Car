@@ -36,6 +36,9 @@
 #include "Element_recognition.h"
 #include "image.h"
 #include "LQ_Transfer_Image.h"
+#include "integral.h"
+#include "control.h"
+#include "ICM-42688P.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -202,7 +205,9 @@ int main(void)
 	OV2640_Init();	//配置OV2640
 	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
 	LCD_Init();//显示屏初始化
-	
+	//陀螺仪初始化
+  ICM42688P_Init();
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -341,6 +346,24 @@ void MPU_Config(void)
 	HAL_MPU_ConfigRegion(&MPU_InitStruct);	
 
 	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);	// 使能MPU
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  // 检查是否是TIM15的更新事件中断
+  if (htim->Instance == TIM15)
+  {
+    // tim15为100ms中断一次
+    //进行编码器积分
+    control.lencoder_count = (int16_t)__HAL_TIM_GET_COUNTER(&htim2);//左编码器计数
+    control.rencoder_count = (int16_t)__HAL_TIM_GET_COUNTER(&htim5);//右编码器计数
+    distant_integeral(get_speed());
+    control.lencoder_count_last = control.lencoder_count;
+    control.rencoder_count_last = control.rencoder_count;
+    //进行陀螺仪数据收集和积分
+    ICM42688P_ReadIMUData(&imu_data);
+    angal_integeral(imu_data.gyro_z);
+  }
 }
 /* USER CODE END 4 */
 

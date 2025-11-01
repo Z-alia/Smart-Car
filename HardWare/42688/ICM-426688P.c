@@ -8,10 +8,11 @@
 
 #include "ICM-42688P.h"
 #include <stdint.h>
+#include "ICM42688P_Config.h"
 
 // 外部SPI句柄声明
 extern SPI_HandleTypeDef hspi4;
-
+IMU_Data imu_data;
 /**
  * @brief 通过SPI发送数据（使用HAL库）
  * @param bytes 要发送的数据缓冲区
@@ -96,12 +97,12 @@ uint8_t ICM42688P_Init(void)
         return 0;
     }
     // 这里未来添加判断EEPROM是否存在过去配置，如果存在就用非出厂模式启动，如果不存在就使用出厂测试模式流程
-    // ICM42688P_LoadDefaultConfig(&config);
-    // ICM42688P_ReadGyroFactoryCalibration(&config);
-    //   ICM42688P_Clock_Config();
-    //   // ICM42688P_Interrupt_Config();
-    //   ICM42688P_ODR_Config();
-    //   ICM42688P_Start();
+    //ICM42688P_LoadDefaultConfig(&g_internal_config);
+    //ICM42688P_ReadGyroFactoryCalibration(&g_internal_config);
+    ICM42688P_Clock_Config();
+    ICM42688P_Interrupt_Config();
+    ICM42688P_ODR_Config();
+    ICM42688P_Start();
 }
 
 /**
