@@ -30,6 +30,10 @@ typedef struct {
     float speed_ratio;      // 差速映射比例系数
     float max_diff_speed;   // 最大差速(m/s)
     float smooth_alpha;     // 平滑系数 0..1
+    
+    // 非线性增益参数(可选)
+    int   enable_nonlinear; // 是否启用非线性增益 0=禁用, 1=启用
+    float nonlinear_k;      // 非线性增益系数,建议1e-7~1e-5
 } DiffMapParams;
 
 // 差速映射状态

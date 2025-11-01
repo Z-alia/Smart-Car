@@ -166,11 +166,15 @@ float speed_pid_calculate(SpeedPID* pid, float target, float actual)
  */
 static void cascade_pid_init(void)
 {
-    // 初始化差速映射参数(仿照cam_err_calculation的非线性逻辑)
-    g_control.cascade_diff_params.half_track = 0.065f;      // 半轮距(m)
-    g_control.cascade_diff_params.speed_ratio = 0.01f;      // 差速映射比例,类似cam_err的输出缩放
+    // 初始化差速映射参数(基于物理运动学模型)
+    g_control.cascade_diff_params.half_track = 0.065f;      // 半轮距(m) - 测量值,如13cm轮距则=0.065
+    g_control.cascade_diff_params.speed_ratio = 10.0f;      // 误差→角速度增益(rad/s per 千分之一),建议5~15
     g_control.cascade_diff_params.max_diff_speed = 1.5f;    // 最大差速(m/s)
     g_control.cascade_diff_params.smooth_alpha = 0.20f;     // 平滑系数,仿照变化率限幅思想
+    
+    // 非线性增益参数(高级特性,默认禁用)
+    g_control.cascade_diff_params.enable_nonlinear = 0;     // 0=禁用, 1=启用
+    g_control.cascade_diff_params.nonlinear_k = 1e-6f;      // 非线性系数(仿照cam_err的1e-7)
     
     memset(&g_control.cascade_diff_state, 0, sizeof(DiffMapState));
     
@@ -199,9 +203,10 @@ static void cascade_pid_init(void)
  * @param pwm_R_out 右轮PWM输出指针
  * @note 执行流程:
  *       1. cam_err_calculation() 获取横向误差
- *       2. 比例映射到差速控制量(仿照cam_err的非线性增益)
- *       3. 差速+前进速度 → 左右轮目标速度
- *       4. 双轮独立PID → PWM输出
+ *       2. [可选]非线性增益处理: output=(1+K·err²)·err
+ *       3. 物理映射: 误差→角速度→差速(基于运动学)
+ *       4. 差速+前进速度 → 左右轮目标速度
+ *       5. 双轮独立PID → PWM输出
  */
 static void cascade_pid_control(float v_forward, 
                                 float vL_actual, 
@@ -213,10 +218,27 @@ static void cascade_pid_control(float v_forward,
     // 调用cam_err_calculation()获取误差(仿照原逻辑)
     float err = cam_err_calculation();
     
-    // 仿照cam_err_calculation最后的非线性放大:
-    // return (1.f + 1e-7f * SteerKpchange * angle_target^2) * angle_target
-    // 这里简化处理,直接用比例映射到差速
-    float speed_diff = err * g_control.cascade_diff_params.speed_ratio;
+    // 【可选】非线性增益处理(仿照cam_err_calculation的二次项)
+    // output = (1 + K·err²)·err, 小误差线性,大误差增强
+    float err_processed = err;
+    if (g_control.cascade_diff_params.enable_nonlinear) {
+        float K = g_control.cascade_diff_params.nonlinear_k;
+        err_processed = (1.0f + K * err * err) * err;
+    }
+    
+    // 物理模型映射公式:
+    // cam_err = AngleLeft + AngleRight (左右切线斜率之和,单位:千分之一弧度)
+    // 将切线斜率误差转换为期望角速度 ω (rad/s)
+    // ω = K_err × err / 1000 (除以1000是因为cam_err的单位是千分之一)
+    // 再转换为差速: Δv = ω × L (L为半轮距)
+    float half_track = g_control.cascade_diff_params.half_track;
+    float err_to_omega = g_control.cascade_diff_params.speed_ratio; // 误差→角速度增益
+    
+    // 角速度 = 误差增益 × 归一化误差
+    float omega = err_to_omega * (err_processed / 1000.0f);
+    
+    // 差速 = 角速度 × 半轮距 (根据运动学: vL=v-ω·L, vR=v+ω·L)
+    float speed_diff = omega * half_track;
     
     // 限幅(仿照cam_err的cam_limit)
     speed_diff = clampf(speed_diff, 
@@ -263,11 +285,14 @@ static void cascade_pid_control(float v_forward,
  */
 static void adrc_init(void)
 {
-    // 初始化ADRC参数(仿照ADRC.c的逻辑)
+    // 初始化ADRC参数(基于差速小车运动学模型)
     // 【必须标定的参数】
-    g_control.adrc_params.b = 7.7f;         // 系统增益:b ≈ 1/轮距
+    // 物理建模: 输入u为角速度ω(rad/s), 输出y为横向误差err
+    // 简化模型: err' = -K·ω, 其中K是系统响应增益
+    // ADRC的b参数: b ≈ 系统响应增益(根据开环测试标定)
+    g_control.adrc_params.b = 5.0f;         // 系统增益(需开环标定),建议3~10
     g_control.adrc_params.h = 0.001f;       // 采样时间(秒)
-    g_control.adrc_params.u_max = 1.5f;     // 最大差速(m/s)
+    g_control.adrc_params.u_max = 15.0f;    // 最大角速度(rad/s),约860度/秒
     
     // 【可调节参数】(有默认值)
     g_control.adrc_params.r = 50.0f;        // TD跟踪速度
@@ -383,10 +408,15 @@ static void adrc_control(float v_forward,
     float err = cam_err_calculation();
     
     // 调用ADRC控制器
-    // y = err:当前横向误差(系统输出)
+    // y = err:当前横向误差(系统输出,范围约±200)
     // v = 0:期望横向误差为0(目标)
-    // 返回:差速控制量(m/s),正值=右转,负值=左转
-    float speed_diff = adrc_control_core(err, 0.0f);
+    // 返回:角速度控制量(rad/s)
+    float omega = adrc_control_core(err, 0.0f);
+    
+    // ADRC输出的是角速度,需要转换为差速
+    // 注意:ADRC的b参数物理意义是 b ≈ 1/(响应时间常数)
+    // 这里的 u_max 已经是角速度单位,直接用于差速计算
+    float speed_diff = omega;
     
     // 差速 → 左右轮目标速度
     g_control.vL_target = v_forward - speed_diff * 0.5f;
