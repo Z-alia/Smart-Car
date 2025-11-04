@@ -22,7 +22,6 @@
 #include "dma.h"
 #include "i2c.h"
 #include "quadspi.h"
-#include "sdmmc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -125,20 +124,20 @@ int main(void)
   MX_I2C2_Init();
   MX_SPI2_Init();
   MX_QUADSPI_Init();
-  MX_SDMMC1_SD_Init();
   MX_SPI1_Init();
   MX_TIM5_Init();
   MX_TIM8_Init();
   MX_UART4_Init();
   MX_TIM15_Init();
   MX_TIM16_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-	TR_driver_init();//wifi初始化
-	OV2640_Init();	//配置OV2640
-	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
+//	TR_driver_init();//wifi初始化
+//	OV2640_Init();	//配置OV2640
+//	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
 	LCD_Init();//显示屏初始化
-	ICM42688P_Init();//陀螺仪初始化
-	motor_init();//电机初始化
+//	ICM42688P_Init();//陀螺仪初始化
+//	motor_init();//电机初始化
 	/*----------以下为使能----------*/
 	HAL_TIM_Base_Start_IT(&htim15);//tim15中断使能
 	HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_1);//左A
@@ -171,7 +170,7 @@ int main(void)
 //			show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 //			//显示二值化扫线图
 //			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
-//      LCD_DisplayNumber(250, 250, OV2640_FPS, 3); // 显示当前帧率
+      LCD_DisplayNumber(250, 250, OV2640_FPS, 3); // 显示当前帧率
 //      
 //			image_process();
 //		}

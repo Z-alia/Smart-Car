@@ -27,7 +27,7 @@
 #include "spi.h"
 #include "lcd_spi_200.h"
 
-#define  LCD_SPI  hspi4           // SPI局部宏，方便修改和移植
+#define  LCD_SPI  hspi1           // SPI局部宏，方便修改和移植
 
 static pFONT *LCD_AsciiFonts;		// 英文字体，ASCII字符集
 static pFONT *LCD_CHFonts;		   // 中文字体（同时也包含英文字体）
@@ -67,9 +67,11 @@ HAL_StatusTypeDef LCD_SPI_TransmitBuffer (SPI_HandleTypeDef *hspi, uint16_t *pDa
 
 void  LCD_WriteCommand(uint8_t lcd_command)
 {
+   LCD_CS_LOW;         // 片选拉低，选中LCD
    LCD_DC_Command;     // 数据指令选择 引脚输出低电平，代表本次传输 指令
 
    HAL_SPI_Transmit(&LCD_SPI, &lcd_command, 1, 1000); // 启动SPI传输
+   LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
 /****************************************************************************************************************************************
@@ -83,9 +85,11 @@ void  LCD_WriteCommand(uint8_t lcd_command)
 
 void  LCD_WriteData_8bit(uint8_t lcd_data)
 {
+   LCD_CS_LOW;         // 片选拉低，选中LCD
    LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
 
    HAL_SPI_Transmit(&LCD_SPI, &lcd_data, 1, 1000) ; // 启动SPI传输
+   LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
 /****************************************************************************************************************************************
@@ -100,12 +104,14 @@ void  LCD_WriteData_8bit(uint8_t lcd_data)
 void  LCD_WriteData_16bit(uint16_t lcd_data)
 {
    uint8_t lcd_data_buff[2];    // 数据发送区
+   LCD_CS_LOW;         // 片选拉低，选中LCD
    LCD_DC_Data;      // 数据指令选择 引脚输出高电平，代表本次传输 数据
  
    lcd_data_buff[0] = lcd_data>>8;  // 将数据拆分
    lcd_data_buff[1] = lcd_data;
 		
 	HAL_SPI_Transmit(&LCD_SPI, lcd_data_buff, 2, 1000) ;   // 启动SPI传输
+   LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
 /****************************************************************************************************************************************
@@ -119,6 +125,7 @@ void  LCD_WriteData_16bit(uint16_t lcd_data)
 
 void  LCD_WriteBuff(uint16_t *DataBuff, uint16_t DataSize)
 {
+	LCD_CS_LOW;         // 片选拉低，选中LCD
 	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
 
 // 修改为16位数据宽度，写入数据更加效率，不需要拆分	
@@ -130,6 +137,7 @@ void  LCD_WriteBuff(uint16_t *DataBuff, uint16_t DataSize)
 // 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
 	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
    HAL_SPI_Init(&LCD_SPI);	
+   LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
 /****************************************************************************************************************************************
@@ -142,6 +150,37 @@ void  LCD_WriteBuff(uint16_t *DataBuff, uint16_t DataSize)
 void LCD_Init(void)
 {
    //MX_SPI4_Init();               // 初始化SPI和控制引脚
+   
+   // 初始化GPIO引脚
+   GPIO_InitTypeDef GPIO_InitStruct = {0};
+   
+   // 使能所有需要的GPIO时钟
+   GPIO_LDC_CS_CLK_ENABLE;       // 使能片选引脚时钟
+   GPIO_LDC_DC_CLK_ENABLE;       // 使能DC引脚时钟
+   GPIO_LDC_Backlight_CLK_ENABLE;// 使能背光引脚时钟
+   
+   // 初始化片选引脚 (PB0)
+   GPIO_InitStruct.Pin = LCD_CS_PIN;
+   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+   GPIO_InitStruct.Pull = GPIO_NOPULL;
+   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+   HAL_GPIO_Init(LCD_CS_PORT, &GPIO_InitStruct);
+   LCD_CS_HIGH;                  // 初始状态，取消选中LCD
+   
+   // 初始化DC引脚 (PC5)
+   GPIO_InitStruct.Pin = LCD_DC_PIN;
+   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+   GPIO_InitStruct.Pull = GPIO_NOPULL;
+   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+   HAL_GPIO_Init(LCD_DC_PORT, &GPIO_InitStruct);
+   
+   // 初始化背光引脚 (PD15)
+   GPIO_InitStruct.Pin = LCD_Backlight_PIN;
+   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+   GPIO_InitStruct.Pull = GPIO_NOPULL;
+   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+   HAL_GPIO_Init(LCD_Backlight_PORT, &GPIO_InitStruct);
+   LCD_Backlight_OFF;            // 初始化时先关闭背光
    
    HAL_Delay(10);               	// 屏幕刚完成复位时（包括上电复位），需要等待至少5ms才能发送指令
 
