@@ -41,6 +41,12 @@ void show_ov2640_image_int8(int start_x, int start_y,
 }
 #endif
 */
+//逆透视声明
+int16_t persp_lx[120]={0};      // 左线逆透视x坐标(透视变换后)
+int16_t persp_rx[120]={0};      // 右线逆透视x坐标(透视变换后)
+uint8_t persp_ly[120]={0};      // 左线逆透视y坐标(透视变换后)
+uint8_t persp_ry[120]={0};      // 右线逆透视y坐标(透视变换后)
+
 /*
 函数名称：int my_abs(int value)
 功能说明：求绝对值

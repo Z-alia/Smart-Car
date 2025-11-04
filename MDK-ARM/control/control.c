@@ -10,6 +10,195 @@
 
 // 全局控制器状态
 ControlState g_control = {0};
+control_t control = {0};
+
+// 全局摄像头误差计算数据(简化版)
+CamErrData g_cam_err_data = {0};
+
+// ==================== 摄像头误差计算实现(直接使用image数据) ====================
+
+/**
+ * @brief 摄像头误差计算函数(完全恢复原版算法)
+ * @return 横向偏差误差值(带非线性增益)
+ * @note 核心逻辑(与原版cam_err_calculation完全一致):
+ *       1. 使用逆透视坐标计算每行边界点到车轮的切线斜率
+ *          公式: angel = 125 × (persp_x - camw_x) / (persp_y - camw_y)
+ *       2. 遍历图像行,寻找左右切线斜率(AngleLeft最小, AngleRight最大)
+ *       3. 左右斜率之和作为原始误差
+ *       4. 变化率限幅(防止突变)
+ *       5. 可选非线性增益: output = (1 + K·err²)·err
+ * 
+ * @note 数据来源: 
+ *       - 边线: l_border/r_border/left_lost/right_lost (来自image.c)
+ *       - 逆透视: persp_lx/ly/rx/ry (来自persp模块)
+ *       - 车轮位置: camwl/camwr/camwf (配置参数)
+ * 
+ * @note 距离判断: 使用逆透视坐标 persp_ly/ry 判断行的远近
+ */
+float cam_err_calculation(void)
+{
+    #define CAM_D_ERR_LIMIT 30     // 变化率限幅
+    #define CAM_OUTPUT_LIMIT 200   // 输出限幅
+    
+    CamErrData* cam = &g_cam_err_data;
+    CamErrParams* params = &cam->params;
+    CamErrState* state = &cam->state;
+    
+    // 初始化切线斜率为极值
+    int AngleLeft = (int)0x80000000;   // 负无穷(寻找最小值,即左切线)
+    int AngleRight = 0x7FFFFFFF;        // 正无穷(寻找最大值,即右切线)
+    int AngleLeftLast = 0, AngleRightLast = 0;
+    
+    int watchleft = params->far_line;
+    int watchright = params->far_line;
+    int left_lost_count = 0, right_lost_count = 0;
+    
+    // 遍历图像行,计算切线斜率并寻找最优切线
+    for (int y = params->near_line; y < params->far_line && y < IMAGE_H - 1; y++)
+    {
+        // 使用逆透视坐标判断是否跳过过近的行
+        // 原逻辑: 0.625 * (persp_ly + persp_ry) < forward_near
+        if (0.625f * ((int)persp_ly[y] + (int)persp_ry[y]) < cam->forward_near)
+        {
+            continue;
+        }
+        
+        // ========== 原版算法：计算边界点到车轮的切线斜率 ==========
+        // 公式: angel_left = 125 × (persp_lx - camwl) / (persp_ly - camwf)
+        // 含义: 左边界点到左轮的斜率倒数×1000 (实际公式为×125，原注释有误)
+        int angel_left = 0;
+        int angel_right = 0;
+        
+        // 避免除零
+        int denom_left = (int)persp_ly[y] - (int)params->camwf;
+        int denom_right = (int)persp_ry[y] - (int)params->camwf;
+        
+        if (denom_left != 0) {
+            angel_left = 125 * ((int)persp_lx[y] - (int)params->camwl) / denom_left;
+        }
+        
+        if (denom_right != 0) {
+            angel_right = 125 * ((int)persp_rx[y] - (int)params->camwr) / denom_right;
+        }
+        // ========== 原版算法结束 ==========
+        
+        // 左边线处理:寻找斜率最小的切线(左切线)
+        if (left_lost_count < 10)
+        {
+            // 统计连续丢线次数
+            if (y > 40) {
+                if (left_lost[y] && params->track_count < 75)
+                    left_lost_count++;
+                else
+                    left_lost_count = 0;
+            }
+            
+            // 更新左切线斜率(取最小值,且变化量不超过400)
+            if (AngleLeft < angel_left &&
+                !left_lost[y] &&
+                (abs(AngleLeft - AngleLeftLast) < 400))
+            {
+                AngleLeft = angel_left;
+                watchleft = y;
+            }
+        }
+        
+        // 右边线处理:寻找斜率最大的切线(右切线)
+        if (right_lost_count < 10)
+        {
+            // 统计连续丢线次数
+            if (y > 40) {
+                if (right_lost[y] && params->track_count < 75)
+                    right_lost_count++;
+                else
+                    right_lost_count = 0;
+            }
+            
+            // 更新右切线斜率(取最大值,且变化量不超过400)
+            if (AngleRight > angel_right &&
+                !right_lost[y] &&
+                (abs(AngleRight - AngleRightLast) < 400))
+            {
+                AngleRight = angel_right;
+                watchright = y;
+            }
+        }
+        
+        // 终止条件1:左斜率大于右斜率(某行已越过垂直线)
+        // 终止条件2:该行太远(基于逆透视坐标判断)
+        // 原逻辑: 0.4 * (persp_ly + persp_ry) > forward_far
+        if (AngleLeft > AngleRight || 
+            0.4f * ((int)persp_ly[y] + (int)persp_ry[y]) > cam->forward_far)
+        {
+            break;
+        }
+        
+        AngleLeftLast = AngleLeft;
+        AngleRightLast = AngleRight;
+    }
+    
+    // 记录切点位置(用于调试显示)
+    state->watchleft = watchleft + 1;
+    state->watchright = watchright + 1;
+    
+    // 原始误差 = 左斜率 + 右斜率
+    float angle_target = (float)(AngleLeftLast + AngleRightLast);
+    
+    // 变化率限幅(防止误差突变)
+    float d_err = angle_target - state->angle_target_last;
+    if (d_err > CAM_D_ERR_LIMIT)
+        angle_target = state->angle_target_last + CAM_D_ERR_LIMIT;
+    else if (d_err < -CAM_D_ERR_LIMIT)
+        angle_target = state->angle_target_last - CAM_D_ERR_LIMIT;
+    
+    // 输出限幅
+    if (angle_target > CAM_OUTPUT_LIMIT)
+        angle_target = CAM_OUTPUT_LIMIT;
+    else if (angle_target < -CAM_OUTPUT_LIMIT)
+        angle_target = -CAM_OUTPUT_LIMIT;
+    
+    // 保存本次结果供下次使用
+    state->angle_target_last = angle_target;
+    state->angle_target = angle_target;
+    
+    // 非线性增益处理: output = (1 + K·err²)·err
+    // K = 1e-7 × SteerKpchange
+    float output = (1.0f + 1e-7f * params->SteerKpchange * angle_target * angle_target) * angle_target;
+    
+    return output;
+    
+    #undef CAM_D_ERR_LIMIT
+    #undef CAM_OUTPUT_LIMIT
+}
+
+/**
+ * @brief 初始化摄像头误差计算模块(简化版)
+ * @param near_line 近端行(打角起始行)
+ * @param far_line 远端行(打角终止行)
+ * @param forward_near 近端距离阈值
+ * @param forward_far 远端距离阈值
+ * @note 使用示例:
+ *       cam_err_init(20, 80, 10, 100);  // 从第20行到第80行打角
+ */
+void cam_err_init(int near_line, int far_line, int forward_near, int forward_far)
+{
+    memset(&g_cam_err_data, 0, sizeof(CamErrData));
+    
+    // 设置参数
+    g_cam_err_data.params.near_line = near_line;
+    g_cam_err_data.params.far_line = far_line;
+    g_cam_err_data.forward_near = forward_near;
+    g_cam_err_data.forward_far = forward_far;
+    
+    // 默认参数
+    g_cam_err_data.params.SteerKpchange = 0.0f;  // 默认不启用非线性增益
+    g_cam_err_data.params.track_count = 0;
+    
+    // 车轮位置参数(原版默认值)
+    g_cam_err_data.params.camwl = 76;   // 左轮x位置
+    g_cam_err_data.params.camwr = 97;   // 右轮x位置
+    g_cam_err_data.params.camwf = 0;    // 前轮y位置
+}
 
 // ==================== 私有辅助函数 ====================
 
@@ -563,3 +752,286 @@ void control_loop(float v_forward,
             break;
     }
 }
+
+
+// ==================== 便捷调参接口实现 ====================
+
+/**
+ * @brief 使用默认参数初始化串级PID
+ * @note 最简单的初始化方式,适合快速测试
+ */
+void control_init_cascade_pid_default(void)
+{
+    memset(&g_control, 0, sizeof(ControlState));
+    g_control.active_scheme = CONTROL_SCHEME_CASCADE_PID;
+    cascade_pid_init();
+}
+
+/**
+ * @brief 使用自定义参数初始化串级PID
+ * @param config 参数配置结构体指针
+ * @note 允许完全自定义所有参数,适合精细调参
+ */
+void control_init_cascade_pid(const CascadePIDConfig* config)
+{
+    if (!config) {
+        control_init_cascade_pid_default();
+        return;
+    }
+    
+    memset(&g_control, 0, sizeof(ControlState));
+    g_control.active_scheme = CONTROL_SCHEME_CASCADE_PID;
+    
+    // 配置外环差速映射参数
+    g_control.cascade_diff_params.half_track = config->half_track;
+    g_control.cascade_diff_params.speed_ratio = config->speed_ratio;
+    g_control.cascade_diff_params.max_diff_speed = config->max_diff_speed;
+    g_control.cascade_diff_params.smooth_alpha = config->smooth_alpha;
+    g_control.cascade_diff_params.enable_nonlinear = config->enable_nonlinear;
+    g_control.cascade_diff_params.nonlinear_k = config->nonlinear_k;
+    
+    memset(&g_control.cascade_diff_state, 0, sizeof(DiffMapState));
+    
+    // 配置内环速度PID(左轮)
+    speed_pid_init(&g_control.cascade_speed_left, 
+                   config->speed_left_kp,
+                   config->speed_left_ki,
+                   config->speed_left_kd,
+                   config->integral_max,
+                   config->output_max);
+    
+    // 配置内环速度PID(右轮)
+    speed_pid_init(&g_control.cascade_speed_right, 
+                   config->speed_right_kp,
+                   config->speed_right_ki,
+                   config->speed_right_kd,
+                   config->integral_max,
+                   config->output_max);
+}
+
+/**
+ * @brief 使用默认参数初始化ADRC
+ * @note 最简单的初始化方式,适合快速测试
+ */
+void control_init_adrc_default(void)
+{
+    memset(&g_control, 0, sizeof(ControlState));
+    g_control.active_scheme = CONTROL_SCHEME_ADRC;
+    adrc_init();
+}
+
+/**
+ * @brief 使用自定义参数初始化ADRC
+ * @param config 参数配置结构体指针
+ * @note 允许完全自定义所有参数,适合精细调参
+ */
+void control_init_adrc(const ADRCConfig* config)
+{
+    if (!config) {
+        control_init_adrc_default();
+        return;
+    }
+    
+    memset(&g_control, 0, sizeof(ControlState));
+    g_control.active_scheme = CONTROL_SCHEME_ADRC;
+    
+    // 配置ADRC参数
+    g_control.adrc_params.b = config->b;
+    g_control.adrc_params.h = config->h;
+    g_control.adrc_params.u_max = config->u_max;
+    g_control.adrc_params.r = config->r;
+    g_control.adrc_params.w0 = config->w0;
+    g_control.adrc_params.kp = config->kp;
+    g_control.adrc_params.kd = config->kd;
+    g_control.adrc_params.delta = config->delta;
+    g_control.adrc_params.a1 = config->a1;
+    g_control.adrc_params.a2 = config->a2;
+    
+    memset(&g_control.adrc_state, 0, sizeof(ADRC_State));
+    
+    // 配置内环速度PID(左轮)
+    speed_pid_init(&g_control.adrc_speed_left, 
+                   config->speed_left_kp,
+                   config->speed_left_ki,
+                   config->speed_left_kd,
+                   config->integral_max,
+                   config->output_max);
+    
+    // 配置内环速度PID(右轮)
+    speed_pid_init(&g_control.adrc_speed_right, 
+                   config->speed_right_kp,
+                   config->speed_right_ki,
+                   config->speed_right_kd,
+                   config->integral_max,
+                   config->output_max);
+}
+
+/**
+ * @brief 在线修改串级PID外环参数
+ * @param speed_ratio 误差→角速度增益
+ * @param max_diff_speed 最大差速(m/s)
+ * @param smooth_alpha 平滑系数
+ * @note 允许运行时动态调节,无需重启
+ */
+void control_update_cascade_outer(float speed_ratio, float max_diff_speed, float smooth_alpha)
+{
+    if (g_control.active_scheme != CONTROL_SCHEME_CASCADE_PID) {
+        return; // 只在串级PID模式下有效
+    }
+    
+    g_control.cascade_diff_params.speed_ratio = speed_ratio;
+    g_control.cascade_diff_params.max_diff_speed = max_diff_speed;
+    g_control.cascade_diff_params.smooth_alpha = smooth_alpha;
+}
+
+/**
+ * @brief 在线修改串级PID速度环参数
+ * @param kp_left 左轮比例系数
+ * @param ki_left 左轮积分系数
+ * @param kd_left 左轮微分系数
+ * @param kp_right 右轮比例系数
+ * @param ki_right 右轮积分系数
+ * @param kd_right 右轮微分系数
+ * @note 允许运行时动态调节,修改后自动重置PID状态
+ */
+void control_update_cascade_speed_pid(float kp_left, float ki_left, float kd_left,
+                                      float kp_right, float ki_right, float kd_right)
+{
+    if (g_control.active_scheme != CONTROL_SCHEME_CASCADE_PID) {
+        return; // 只在串级PID模式下有效
+    }
+    
+    // 更新左轮PID参数
+    g_control.cascade_speed_left.kp = kp_left;
+    g_control.cascade_speed_left.ki = ki_left;
+    g_control.cascade_speed_left.kd = kd_left;
+    speed_pid_reset(&g_control.cascade_speed_left);
+    
+    // 更新右轮PID参数
+    g_control.cascade_speed_right.kp = kp_right;
+    g_control.cascade_speed_right.ki = ki_right;
+    g_control.cascade_speed_right.kd = kd_right;
+    speed_pid_reset(&g_control.cascade_speed_right);
+}
+
+/**
+ * @brief 在线修改ADRC核心参数
+ * @param b 系统增益
+ * @param w0 ESO带宽
+ * @param r TD跟踪速度
+ * @param kp 位置增益
+ * @param kd 速度增益
+ * @note 允许运行时动态调节,修改后自动重置ADRC状态
+ */
+void control_update_adrc_core(float b, float w0, float r, float kp, float kd)
+{
+    if (g_control.active_scheme != CONTROL_SCHEME_ADRC) {
+        return; // 只在ADRC模式下有效
+    }
+    
+    g_control.adrc_params.b = b;
+    g_control.adrc_params.w0 = w0;
+    g_control.adrc_params.r = r;
+    g_control.adrc_params.kp = kp;
+    g_control.adrc_params.kd = kd;
+    
+    // 重置ADRC状态
+    memset(&g_control.adrc_state, 0, sizeof(ADRC_State));
+}
+
+/**
+ * @brief 启用/禁用非线性增益
+ * @param enable 0=禁用, 1=启用
+ * @param nonlinear_k 非线性系数(仅在enable=1时有效)
+ * @note 串级PID专用,允许运行时切换
+ */
+void control_set_nonlinear_gain(int enable, float nonlinear_k)
+{
+    if (g_control.active_scheme != CONTROL_SCHEME_CASCADE_PID) {
+        return; // 只在串级PID模式下有效
+    }
+    
+    g_control.cascade_diff_params.enable_nonlinear = enable;
+    if (enable) {
+        g_control.cascade_diff_params.nonlinear_k = nonlinear_k;
+    }
+}
+
+/*-----------------编码器配套--------------------*/
+float get_speed(void)
+{
+    control.left_speed = 10.0f * (float)(control.lencoder_count - control.lencoder_count_last) * 6.28f * Radius / Encoder_PPR;
+    control.right_speed = 10.0f * (float)(control.rencoder_count - control.rencoder_count_last) * 6.28f * Radius / Encoder_PPR;
+    return (control.left_speed + control.right_speed) / 2.0f; // 返回平均速度 近似车身速度
+}
+
+// ==================== 完整控制链路实现 ====================
+
+/**
+ * @brief 完整控制流程(图像→误差→控制→输出)
+ * @param v_forward 前进基准速度(m/s)
+ * @note 执行流程:
+ *       1. 使用 get_speed() 获取编码器速度
+ *       2. 调用 control_loop() 执行控制算法
+ *       3. 将PWM输出写入 control.left_target_speed / control.right_target_speed
+ *       4. 设置方向标志 control.left_dir / control.right_dir
+ * @note 外部调用: 在定时器中断或主循环中周期性调用(建议1ms)
+ * @note 配合使用: motor_run(&leftmotor, control.left_target_speed)
+ */
+void control_execute(float v_forward)
+{
+    // 1. 获取编码器速度(已通过get_speed更新control.left_speed和control.right_speed)
+    float vL_actual = control.left_speed;
+    float vR_actual = control.right_speed;
+    
+    // 2. 执行控制循环(内部调用cam_err_calculation)
+    float pwm_L, pwm_R;
+    control_loop(v_forward, vL_actual, vR_actual, &pwm_L, &pwm_R);
+    
+    // 3. 将PWM输出写入control结构体(供motor模块使用)
+    // PWM转换: float → int16_t, 并设置方向
+    if (pwm_L >= 0) {
+        control.left_target_speed = (int16_t)pwm_L;
+        control.left_dir = 1;  // 正向
+    } else {
+        control.left_target_speed = (int16_t)(-pwm_L);
+        control.left_dir = 0;  // 反向
+    }
+    
+    if (pwm_R >= 0) {
+        control.right_target_speed = (int16_t)pwm_R;
+        control.right_dir = 1;  // 正向
+    } else {
+        control.right_target_speed = (int16_t)(-pwm_R);
+        control.right_dir = 0;  // 反向
+    }
+}
+
+// ==================== 使用说明 ====================
+/*
+ * cam_err_calculation() 使用流程:
+ * 
+ * 1. 初始化(在main函数中调用一次):
+ *    cam_err_init(20, 80, 10, 100);  // 设置打角范围和距离阈值
+ * 
+ * 2. 每帧图像处理后,填充 g_cam_err_data.lineinfo[]:
+ *    for (int y = 0; y < 120; y++) {
+ *        g_cam_err_data.lineinfo[y].angel_left = ...;    // 左切线斜率(千分之一)
+ *        g_cam_err_data.lineinfo[y].angel_right = ...;   // 右切线斜率(千分之一)
+ *        g_cam_err_data.lineinfo[y].persp_ly = ...;      // 左边线y坐标
+ *        g_cam_err_data.lineinfo[y].persp_ry = ...;      // 右边线y坐标
+ *        g_cam_err_data.lineinfo[y].left_lost = ...;     // 左线丢失标志
+ *        g_cam_err_data.lineinfo[y].right_lost = ...;    // 右线丢失标志
+ *    }
+ * 
+ * 3. 在控制循环中调用(已集成到control_loop中):
+ *    float err = cam_err_calculation();  // 获取横向误差
+ * 
+ * 4. 可选:调整非线性增益(高级特性):
+ *    g_cam_err_data.params.SteerKpchange = 1.0f;  // 非线性系数,0为禁用
+ * 
+ * 注意事项:
+ * - lineinfo[y].angel_left/right 单位是千分之一(如1000表示斜率1.0)
+ * - 返回值范围约±200,已包含非线性增益
+ * - 需要外部图像处理模块提供 lineinfo 数据
+ */

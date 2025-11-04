@@ -6,6 +6,7 @@ packDir: null
 srcDirs:
   - ../HardWare/42688
   - ../Base/control
+  - ../HardWare/MOTOR
 virtualFolder:
   name: <virtual_root>
   files: []

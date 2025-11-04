@@ -1,6 +1,7 @@
 #ifndef _IMAGE_H
 #define _IMAGE_H
 #include <stdint.h>
+#include "control.h"
 //绘制边界线
 void draw_edge();
 /*
@@ -62,6 +63,10 @@ extern uint8_t left_lost_num;//左线丢失总行数
 extern uint8_t right_lost_num;//右线丢失总行数
 extern uint8_t left_lost[image_h];//左线丢失标志数组
 extern uint8_t right_lost[image_h];//右线丢失标志数组
+extern int16_t persp_lx[120];      // 左线逆透视x坐标(透视变换后)
+extern int16_t persp_rx[120];      // 右线逆透视x坐标(透视变换后)
+extern uint8_t persp_ly[120];      // 左线逆透视y坐标(透视变换后)
+extern uint8_t persp_ry[120];      // 右线逆透视y坐标(透视变换后)
 
 #endif /*_IMAGE_H*/
 

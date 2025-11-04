@@ -75,14 +75,12 @@ void persp_task(int16 xl,int16 xr,int16 y)
         oyl=get_persp_data_oy(xl,y);
         oxr=get_persp_data_ox(xr,y);
         oyr=get_persp_data_oy(xr,y);
-        /*
-        lineinfo[y].persp_lx = oxl;
-        lineinfo[y].persp_ly = oyl;
-        lineinfo[y].persp_rx = oxr;
-        lineinfo[y].persp_ry = oyr;
-        */
-/* 功能未知
-    //计算此行左边界点到左轮的斜率的倒数的1000倍
+
+        persp_lx[y] = oxl;
+        persp_ly[y] = oyl;
+        persp_rx[y] = oxr;
+        persp_ry[y] = oyr;
+/*
     lineinfo[y].angel_left  = 125 * (lineinfo[y].persp_lx - setpara.camwl ) / (lineinfo[y].persp_ly - setpara.camwf );//persp_lx=67
     //计算此行右边界点到右轮的斜率的倒数的1000倍
     lineinfo[y].angel_right = 125 * (lineinfo[y].persp_rx - setpara.camwr ) / (lineinfo[y].persp_ry - setpara.camwf );//persp_lf=97
