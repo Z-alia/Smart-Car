@@ -132,9 +132,9 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-//	TR_driver_init();//wifi初始化
-//	OV2640_Init();	//配置OV2640
-//	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
+	TR_driver_init();//wifi初始化
+	OV2640_Init();	//配置OV2640
+	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
 	LCD_Init();//显示屏初始化
 //	ICM42688P_Init();//陀螺仪初始化
 //	motor_init();//电机初始化
@@ -170,7 +170,7 @@ int main(void)
 //			show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 //			//显示二值化扫线图
 //			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
-      LCD_DisplayNumber(250, 250, OV2640_FPS, 3); // 显示当前帧率
+//      LCD_DisplayNumber(250, 250, OV2640_FPS, 3); // 显示当前帧率
 //      
 //			image_process();
 //		}
@@ -192,7 +192,7 @@ int main(void)
 		Sauvola_Binarization(119, 0.5f, 32767.0f);
 
 		// wifi图传
-		//TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
+		TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
 
 		/* 显示摄像头图像 */
 		//显示原图像
