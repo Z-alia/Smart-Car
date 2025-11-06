@@ -22,14 +22,16 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 
 /**
- * @brief 片选信号置高
+ * @brief 片选信号置高 (SPI4硬件NSS: PE11)
+ * @note  使用硬件NSS时，HAL库会自动控制片选信号
+ *        这些宏保留用于需要手动控制的场景
  */
-#define cs_high() HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_SET)
+#define cs_high() HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_SET)
 
 /**
- * @brief 片选信号置低
+ * @brief 片选信号置低 (SPI4硬件NSS: PE11)
  */
-#define cs_low() HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET)
+#define cs_low() HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET)
 
 /**
  * @brief 陀螺仪全量程，设置为2000dps
@@ -108,9 +110,35 @@ extern IMU_Data imu_data;//数据接口
 /* Exported functions prototypes ---------------------------------------------*/
 
 /**
- * @brief 初始化ICM42688P传感器
+ * @brief 初始化ICM42688P传感器（优化版）
+ * @return 0=成功, 1=WHOAMI读取失败, 2=配置后通信失败, 3=传感器未正确启动
+ * 
+ * 优化的初始化流程包含13个步骤和完整的错误检测：
+ * 1. SPI使能检查
+ * 2. 上电稳定延时(150ms)
+ * 3. Bank 0选择
+ * 4. WHOAMI读取验证
+ * 5. 如需要则软件复位
+ * 6. 复位后重试(最多5次)
+ * 7. 传感器配置开始
+ * 8. 时钟配置
+ * 9. 中断配置
+ * 10. 输出数据速率配置
+ * 11. 启动传感器
+ * 12. 最终WHOAMI验证
+ * 13. PWR_MGMT0状态验证
+ * 
+ * 所有延时使用软件循环实现,避免HAL_Delay在特殊环境下的问题
  */
 uint8_t ICM42688P_Init(void);
+
+/**
+ * @brief 最小化测试函数 - 只测试 SPI 通信
+ * @return 读取到的 WHOAMI 值
+ * 
+ * 这个函数只做最基础的 SPI 读取操作，用于测试 SPI 是否工作
+ */
+uint8_t ICM42688P_Test_MinimalRead(void);
 
 /**
  * @brief 停止ICM42688P传感器
@@ -165,6 +193,24 @@ void ICM42688P_Bank_Select(uint8_t bank);
 void ICM42688P_ReadRegister(uint8_t reg_address, uint8_t *rxdata, uint8_t length);
 
 /**
+ * @brief SPI 安全读取函数
+ * @param reg_address 寄存器地址
+ * @param rxdata 接收数据缓冲区
+ * @param length 数据长度
+ * @return 0=成功, 1=失败
+ */
+uint8_t ICM42688P_SafeRead(uint8_t reg_address, uint8_t *rxdata, uint8_t length);
+
+/**
+ * @brief 手动 SPI 读取寄存器（不依赖 HAL 库超时）
+ * @param reg_address 寄存器地址
+ * @param rxdata 接收数据缓冲区
+ * @param length 数据长度
+ * @return 0=成功, 1=失败
+ */
+uint8_t ICM42688P_ManualRead(uint8_t reg_address, uint8_t *rxdata, uint8_t length);
+
+/**
  * @brief 写入寄存器
  * @param reg_address 寄存器地址
  * @param txdata 发送数据缓冲区
@@ -173,8 +219,49 @@ void ICM42688P_ReadRegister(uint8_t reg_address, uint8_t *rxdata, uint8_t length
  */
 uint8_t ICM42688P_WriteRegister(uint8_t reg_address, uint8_t *txdata, uint8_t length);
 
+// 测试函数
+uint8_t ICM42688P_Test_MinimalRead(void);
+void ICM42688P_SPI_Diagnostic(void);  // SPI 通信诊断
+uint8_t ICM42688P_Test_DirectRead(void);  // 直接读取测试
+
+/**
+ * @brief ICM42688P 传感器检测和显示函数
+ * @note 该函数执行完整的ICM检测流程并在LCD上显示结果和实时数据
+ * 
+ * 功能包括：
+ * 1. 硬件连接检测（CS引脚、SPI状态）
+ * 2. 传感器初始化
+ * 3. WHOAMI验证
+ * 4. 实时显示IMU数据（加速度、角速度、温度）
+ * 5. 数据刷新率显示
+ */
+void ICM42688P_DetectAndDisplay(void);
+
+/**
+ * @brief ICM42688P 快速状态检测（用于调试）
+ * @return 0=正常, 1=WHOAMI错误, 2=传感器未启动
+ * 
+ * 该函数快速检测ICM传感器状态，不初始化，只读取关键寄存器
+ */
+uint8_t ICM42688P_QuickCheck(void);
+
+/**
+ * @brief 在LCD上显示简化的IMU数据（适合集成到主循环）
+ * @param x 显示起始X坐标
+ * @param y 显示起始Y坐标
+ * 
+ * 该函数显示紧凑的IMU数据，适合在主循环中周期性调用
+ */
+void ICM42688P_DisplayCompact(uint16_t x, uint16_t y);
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* ICM42688P_H */
+
+#ifdef __cplusplus
+}
+#endif
+
+//#endif /* ICM42688P_H */

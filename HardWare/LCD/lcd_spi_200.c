@@ -68,9 +68,16 @@ HAL_StatusTypeDef LCD_SPI_TransmitBuffer (SPI_HandleTypeDef *hspi, uint16_t *pDa
 void  LCD_WriteCommand(uint8_t lcd_command)
 {
    LCD_CS_LOW;         // 片选拉低，选中LCD
+   __NOP();            // 添加延时，确保 CS 稳定
+   __NOP();
    LCD_DC_Command;     // 数据指令选择 引脚输出低电平，代表本次传输 指令
+   __NOP();            // 添加延时，确保 DC 稳定
+   __NOP();
 
    HAL_SPI_Transmit(&LCD_SPI, &lcd_command, 1, 1000); // 启动SPI传输
+   
+   __NOP();            // 添加延时，确保数据传输完成
+   __NOP();
    LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
@@ -86,9 +93,16 @@ void  LCD_WriteCommand(uint8_t lcd_command)
 void  LCD_WriteData_8bit(uint8_t lcd_data)
 {
    LCD_CS_LOW;         // 片选拉低，选中LCD
+   __NOP();            // 添加延时，确保 CS 稳定
+   __NOP();
    LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
+   __NOP();            // 添加延时，确保 DC 稳定
+   __NOP();
 
    HAL_SPI_Transmit(&LCD_SPI, &lcd_data, 1, 1000) ; // 启动SPI传输
+   
+   __NOP();            // 添加延时，确保数据传输完成
+   __NOP();
    LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
@@ -105,12 +119,19 @@ void  LCD_WriteData_16bit(uint16_t lcd_data)
 {
    uint8_t lcd_data_buff[2];    // 数据发送区
    LCD_CS_LOW;         // 片选拉低，选中LCD
+   __NOP();            // 添加延时，确保 CS 稳定
+   __NOP();
    LCD_DC_Data;      // 数据指令选择 引脚输出高电平，代表本次传输 数据
+   __NOP();            // 添加延时，确保 DC 稳定
+   __NOP();
  
    lcd_data_buff[0] = lcd_data>>8;  // 将数据拆分
    lcd_data_buff[1] = lcd_data;
 		
 	HAL_SPI_Transmit(&LCD_SPI, lcd_data_buff, 2, 1000) ;   // 启动SPI传输
+   
+   __NOP();            // 添加延时，确保数据传输完成
+   __NOP();
    LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
@@ -126,18 +147,19 @@ void  LCD_WriteData_16bit(uint16_t lcd_data)
 void  LCD_WriteBuff(uint16_t *DataBuff, uint16_t DataSize)
 {
 	LCD_CS_LOW;         // 片选拉低，选中LCD
-	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
+	__NOP();            // 添加延时，确保 CS 稳定
+	__NOP();
+	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
+	__NOP();            // 添加延时，确保 DC 稳定
+	__NOP();
 
-// 修改为16位数据宽度，写入数据更加效率，不需要拆分	
-   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
-   HAL_SPI_Init(&LCD_SPI);		
+	// 不再切换 DataSize，使用 8 位模式传输 16 位数据（作为 2 个字节）
+	// 这样更稳定，避免运行时重新初始化 SPI
+	HAL_SPI_Transmit(&LCD_SPI, (uint8_t *)DataBuff, DataSize * 2, 1000);  // DataSize*2 因为每个16位数据占2字节
 	
-	HAL_SPI_Transmit(&LCD_SPI, (uint8_t *)DataBuff, DataSize, 1000) ; // 启动SPI传输
-	
-// 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
-	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
-   HAL_SPI_Init(&LCD_SPI);	
-   LCD_CS_HIGH;        // 片选拉高，取消选中
+	__NOP();            // 添加延时，确保数据传输完成
+	__NOP();
+	LCD_CS_HIGH;        // 片选拉高，取消选中
 }
 
 /****************************************************************************************************************************************
@@ -155,11 +177,11 @@ void LCD_Init(void)
    GPIO_InitTypeDef GPIO_InitStruct = {0};
    
    // 使能所有需要的GPIO时钟
-   GPIO_LDC_CS_CLK_ENABLE;       // 使能片选引脚时钟
-   GPIO_LDC_DC_CLK_ENABLE;       // 使能DC引脚时钟
-   GPIO_LDC_Backlight_CLK_ENABLE;// 使能背光引脚时钟
+   GPIO_LDC_CS_CLK_ENABLE;       // 使能片选引脚时钟 (PC4)
+   GPIO_LDC_DC_CLK_ENABLE;       // 使能DC引脚时钟 (PC5)
+   GPIO_LDC_Backlight_CLK_ENABLE;// 使能背光引脚时钟 (PB0)
    
-   // 初始化片选引脚 (PB0)
+   // 初始化片选引脚 (PC4)
    GPIO_InitStruct.Pin = LCD_CS_PIN;
    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
    GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -174,7 +196,7 @@ void LCD_Init(void)
    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
    HAL_GPIO_Init(LCD_DC_PORT, &GPIO_InitStruct);
    
-   // 初始化背光引脚 (PD15)
+   // 初始化背光引脚 (PB0)
    GPIO_InitStruct.Pin = LCD_Backlight_PIN;
    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
    GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -429,17 +451,28 @@ void LCD_Clear(void)
 {
    LCD_SetAddress(0,0,LCD.Width-1,LCD.Height-1);	// 设置坐标
 	
-	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
+	LCD_CS_LOW;         // 片选拉低
+	__NOP();
+	__NOP();
+	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
+	__NOP();
+	__NOP();
 
-// 修改为16位数据宽度，写入数据更加效率，不需要拆分	
-   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
-   HAL_SPI_Init(&LCD_SPI);		
+	// 不切换 DataSize，使用 8 位模式填充屏幕
+	// 将 16 位颜色拆分为高低字节循环发送
+	uint8_t color_h = LCD.BackColor >> 8;
+	uint8_t color_l = LCD.BackColor & 0xFF;
+	uint32_t total_pixels = LCD.Width * LCD.Height;
 	
-   LCD_SPI_Transmit(&LCD_SPI, LCD.BackColor, LCD.Width * LCD.Height) ;   // 启动传输
-
-// 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
-	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
-   HAL_SPI_Init(&LCD_SPI);
+	for(uint32_t i = 0; i < total_pixels; i++)
+	{
+		HAL_SPI_Transmit(&LCD_SPI, &color_h, 1, 100);
+		HAL_SPI_Transmit(&LCD_SPI, &color_l, 1, 100);
+	}
+	
+	__NOP();
+	__NOP();
+	LCD_CS_HIGH;        // 片选拉高
 }
 
 /****************************************************************************************************************************************
@@ -461,18 +494,27 @@ void LCD_ClearRect(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
    LCD_SetAddress( x, y, x+width-1, y+height-1);	// 设置坐标	
 	
-	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
+	LCD_CS_LOW;         // 片选拉低
+	__NOP();
+	__NOP();
+	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
+	__NOP();
+	__NOP();
 
-// 修改为16位数据宽度，写入数据更加效率，不需要拆分	
-   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
-   HAL_SPI_Init(&LCD_SPI);		
+	// 不切换 DataSize，使用 8 位模式填充区域
+	uint8_t color_h = LCD.BackColor >> 8;
+	uint8_t color_l = LCD.BackColor & 0xFF;
+	uint32_t total_pixels = width * height;
 	
-   LCD_SPI_Transmit(&LCD_SPI, LCD.BackColor, width*height) ;  // 启动传输
-
-// 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
-	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
-   HAL_SPI_Init(&LCD_SPI);
-
+	for(uint32_t i = 0; i < total_pixels; i++)
+	{
+		HAL_SPI_Transmit(&LCD_SPI, &color_h, 1, 100);
+		HAL_SPI_Transmit(&LCD_SPI, &color_l, 1, 100);
+	}
+	
+	__NOP();
+	__NOP();
+	LCD_CS_HIGH;        // 片选拉高
 }
 
 /****************************************************************************************************************************************
@@ -1254,40 +1296,121 @@ void	LCD_CopyBuffer(uint16_t x, uint16_t y,uint16_t width,uint16_t height,uint16
 	
 }
 //-------------------------------------------------------------------------------------------------------------------
-// 函数简介     LCD_200 显示 16bit 灰度图像 带二值化阈值
+// 函数简介     LCD_200 显示 16bit 灰度图像 带二值化阈值（指针数组版本）
 // 参数说明     x               坐标x方向的起点 参数范围 [0, ips200_width_max-1]
 // 参数说明     y               坐标y方向的起点 参数范围 [0, ips200_height_max-1]
-// 参数说明     *image          图像数组指针
+// 参数说明     **image_rows    图像指针数组（每个元素指向一行）
 // 参数说明     width           图像实际宽度
 // 参数说明     height          图像实际高度
 // 参数说明     dis_width       图像显示宽度 参数范围 [0, ips200_width_max]
 // 参数说明     dis_height      图像显示高度 参数范围 [0, ips200_height_max]
 // 参数说明     threshold       二值化显示阈值 0-不开启二值化
 // 返回参数     void
-// 使用示例     show_ov2640_image(0, 0, mt9v03x_image[0], MT9V03X_W, MT9V03X_H,MT9V03X_W, MT9V03X_H, 0);
-// 备注信息     用于显示摄像头的图像
-//              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
-//              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
-//              如果要显示二值化图像 直接修改最后一个参数为需要的二值化阈值即可
+// 使用示例     show_ov2640_image_from_ptr_array(0, 0, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
+// 备注信息     用于显示摄像头的图像（指针数组结构）
+//              mt9v03x_image 是 uint16_t *mt9v03x_image[120] 类型
+//-------------------------------------------------------------------------------------------------------------------
+void show_ov2640_image_from_ptr_array(uint16_t x, uint16_t y, uint16_t **image_rows, 
+                                       uint16_t width, uint16_t height, 
+                                       uint16_t dis_width, uint16_t dis_height, uint8_t threshold)
+{
+    LCD_SetAddress(x, y, x+dis_width-1, y+dis_height-1);
+    
+    LCD_CS_LOW;
+    LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据
+    
+	uint8_t data_bytes[dis_width * 2];
+
+	// 不切换 SPI 数据宽度，始终使用 8 位模式
+	for(uint32_t j = 0; j < dis_height; j++)
+	{
+        // 正确计算源行索引
+        uint32_t src_row = j * height / dis_height;
+        
+        // 检查行索引是否有效
+        if(src_row >= height) src_row = height - 1;
+        
+        // 获取该行的指针
+        uint16_t *row_ptr = image_rows[src_row];
+        
+	for(uint32_t i = 0; i < dis_width; i++)
+	{
+            // 正确计算源列索引
+            uint32_t src_col = i * width / dis_width;
+            if(src_col >= width) src_col = width - 1;
+            
+			// 读取像素（RGB565）
+			uint16_t pixel = row_ptr[src_col];
+
+			// 如果启用了阈值（二值化），先将 RGB565 转换为 8-bit 亮度
+			if(threshold != 0)
+			{
+				// 拆分为 R/G/B 分量
+				uint8_t r5 = (pixel >> 11) & 0x1F;
+				uint8_t g6 = (pixel >> 5) & 0x3F;
+				uint8_t b5 = pixel & 0x1F;
+
+				// 扩展到 8 位
+				uint8_t r8 = (r5 * 255) / 31;
+				uint8_t g8 = (g6 * 255) / 63;
+				uint8_t b8 = (b5 * 255) / 31;
+
+				// 计算简单亮度（加权）
+				uint16_t luma = (299 * r8 + 587 * g8 + 114 * b8) / 1000;
+
+				if(luma < threshold)
+				{
+					pixel = 0x0000;
+				}
+				else
+				{
+					pixel = 0xFFFF;
+				}
+			}
+
+			// 将 16-bit 像素按 高字节优先 (MSB first) 填充到字节数组
+			data_bytes[2*i]     = (uint8_t)(pixel >> 8);    // 高字节
+			data_bytes[2*i + 1] = (uint8_t)(pixel & 0xFF);  // 低字节
+        }
+        
+		// 使用 8 位模式传输 16 位数据（高字节在前）
+		HAL_SPI_Transmit(&LCD_SPI, data_bytes, dis_width * 2, 1000);
+    }
+    
+    LCD_CS_HIGH;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+// 函数简介     LCD_200 显示 16bit 灰度图像 带二值化阈值（旧版本，保留兼容性）
+// 参数说明     x               坐标x方向的起点 参数范围 [0, ips200_width_max-1]
+// 参数说明     y               坐标y方向的起点 参数范围 [0, ips200_height_max-1]
+// 参数说明     *image          图像数组指针（连续内存）
+// 参数说明     width           图像实际宽度
+// 参数说明     height          图像实际高度
+// 参数说明     dis_width       图像显示宽度 参数范围 [0, ips200_width_max]
+// 参数说明     dis_height      图像显示高度 参数范围 [0, ips200_height_max]
+// 参数说明     threshold       二值化显示阈值 0-不开启二值化
+// 返回参数     void
+// 备注信息     此函数需要图像数据在连续内存中，对于指针数组请使用 show_ov2640_image_from_ptr_array
 //-------------------------------------------------------------------------------------------------------------------
 void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t width, uint16_t height , uint16_t dis_width, uint16_t dis_height,uint8_t threshold)
 {
 	LCD_SetAddress(x,y,x+dis_width-1,y+dis_height-1);
-
+	
+	LCD_CS_LOW;
 	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
 	uint32_t i = 0, j = 0;
     uint16_t temp = 0;
     uint16_t data_buffer[dis_width];
-		const uint16_t *image_temp;
-// 修改为16位数据宽度，写入数据更加效率，不需要拆分	
-   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
-   HAL_SPI_Init(&LCD_SPI);	    
+	const uint16_t *image_temp;
+	
+	// 不切换 SPI 数据宽度，始终使用 8 位模式
 	for(j = 0; j < dis_height; j ++)
     {
-        image_temp = image + j * height / dis_height * width;                   // 直接对 image 操作会 Hardfault 暂时不知道为什么
+        image_temp = image + j * height / dis_height * width;  // 假设图像在连续内存中
         for(i = 0; i < dis_width; i ++)
         {
-            temp = *(image_temp + i * width / dis_width);                       // 读取像素点
+            temp = *(image_temp + i * width / dis_width);  // 读取像素点
             if(threshold == 0)
             {
                 data_buffer[i] = (temp);
@@ -1301,11 +1424,11 @@ void show_ov2640_image (uint16_t x, uint16_t y, const uint16_t *image, uint16_t 
                 data_buffer[i] =0xffff;
             }
         }
-		LCD_SPI_TransmitBuffer(&LCD_SPI, data_buffer,dis_width) ;
+		// 使用 8 位模式传输
+		HAL_SPI_Transmit(&LCD_SPI, (uint8_t*)data_buffer, dis_width * 2, 1000);
     }
-// 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
-	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
-	HAL_SPI_Init(&LCD_SPI);	
+	
+	LCD_CS_HIGH;
 }
 //将一个24位RGB888格式的颜色值转换为16位RGB565格式的颜色值
 uint16_t RGB888_to_RGB565(uint32_t Color)
@@ -1325,46 +1448,54 @@ void show_ov2640_image_int8(uint16_t x, uint16_t y, const uint8_t *image, uint16
 {
 	LCD_SetAddress(x,y,x+dis_width-1,y+dis_height-1);
 
+	LCD_CS_LOW;
 	LCD_DC_Data;     // 数据指令选择 引脚输出高电平，代表本次传输 数据	
+	
 	uint32_t i = 0, j = 0;
     uint16_t temp = 0;
-    uint16_t data_buffer[dis_width];
-		const uint8_t *image_temp;
-// 修改为16位数据宽度，写入数据更加效率，不需要拆分	
-   LCD_SPI.Init.DataSize 	= SPI_DATASIZE_16BIT;   //	16位数据宽度
-   HAL_SPI_Init(&LCD_SPI);	    
+    uint8_t data_bytes[dis_width * 2];  // 字节数组，用于高字节优先传输
+	const uint8_t *image_temp;
+	
+	// 不切换 SPI 数据宽度，始终使用 8 位模式
 	for(j = 0; j < dis_height; j ++)
     {
         image_temp = image + j * height / dis_height * width;                   // 直接对 image 操作会 Hardfault 暂时不知道为什么
         for(i = 0; i < dis_width; i ++)
         {
             temp = *(image_temp + i * width / dis_width);                       // 读取像素点
+            
+            uint16_t pixel;
             if(temp == 0)
             {
-                data_buffer[i] = (RGB888_to_RGB565(DARK_GREY));
+                pixel = RGB888_to_RGB565(DARK_GREY);
             }
-						else if(temp == 1)
-						{
-								data_buffer[i] = (RGB888_to_RGB565(LCD_GREEN));
-						}
-						else if(temp == 2)
-						{
-								data_buffer[i] = (RGB888_to_RGB565(LCD_RED));
-						}
-						else if(temp == 3)
-						{
-								data_buffer[i] = (RGB888_to_RGB565(LCD_BLUE));
-						}
-						else
-						{
-								data_buffer[i] = (RGB888_to_RGB565(LCD_WHITE));
-						}
+			else if(temp == 1)
+			{
+				pixel = RGB888_to_RGB565(LCD_GREEN);
+			}
+			else if(temp == 2)
+			{
+				pixel = RGB888_to_RGB565(LCD_RED);
+			}
+			else if(temp == 3)
+			{
+				pixel = RGB888_to_RGB565(LCD_BLUE);
+			}
+			else
+			{
+				pixel = RGB888_to_RGB565(LCD_WHITE);
+			}
+			
+			// 将 16-bit 像素按 高字节优先 (MSB first) 填充到字节数组
+			data_bytes[2*i]     = (uint8_t)(pixel >> 8);    // 高字节
+			data_bytes[2*i + 1] = (uint8_t)(pixel & 0xFF);  // 低字节
         }
-		LCD_SPI_TransmitBuffer(&LCD_SPI, data_buffer,dis_width) ;
+		
+		// 使用 8 位模式传输 16 位数据（高字节在前）
+		HAL_SPI_Transmit(&LCD_SPI, data_bytes, dis_width * 2, 1000);
     }
-// 改回8位数据宽度，因为指令和部分数据都是按照8位传输的
-	LCD_SPI.Init.DataSize 	= SPI_DATASIZE_8BIT;    //	8位数据宽度
-	HAL_SPI_Init(&LCD_SPI);		
+	
+	LCD_CS_HIGH;
 }
 /**********************************************************************************************************************************
 *

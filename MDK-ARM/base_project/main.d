@@ -40,4 +40,5 @@ base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Base\type_def.h ..\camera_process\Element_recognition.h \
   ..\camera_process\image.h ..\Base\control\control.h \
   ..\HardWare\Wifi\LQ_Transfer_Image.h ..\Base\control\integral.h \
-  ..\HardWare\42688\ICM-42688P.h ..\HardWare\MOTOR\motor.h
+  ..\HardWare\42688\ICM-42688P.h ..\HardWare\MOTOR\motor.h \
+  ..\HardWare\42688\ICM42688P_Simple.h

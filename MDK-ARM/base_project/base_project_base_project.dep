@@ -1,8 +1,8 @@
 Dependencies for Project 'base_project', Target 'base_project': (DO NOT MODIFY !)
 CompilerVersion: 6240000::V6.24::ARMCLANG
-F (startup_stm32h750xx.s)(0x690AD47A)(--target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-Wa,armasm,--pd,"__UVISION_VERSION SETA 543" -Wa,armasm,--pd,"STM32H750xx SETA 1" -Wa,armasm,--pd,"_RTE_ SETA 1"-o base_project/startup_stm32h750xx.o)
-F (../Core/Src/main.c)(0x690AD370)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/main.o -MMD)
-I (..\Core\Inc\main.h)(0x690A2507)
+F (startup_stm32h750xx.s)(0x690CB26E)(--target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-Wa,armasm,--pd,"__UVISION_VERSION SETA 543" -Wa,armasm,--pd,"STM32H750xx SETA 1" -Wa,armasm,--pd,"_RTE_ SETA 1"-o base_project/startup_stm32h750xx.o)
+F (../Core/Src/main.c)(0x690CBC0E)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/main.o -MMD)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -44,22 +44,23 @@ I (..\Core\Inc\spi.h)(0x68FF654A)
 I (..\Core\Inc\tim.h)(0x690A1D54)
 I (..\Core\Inc\usart.h)(0x68FF654A)
 I (..\Core\Inc\gpio.h)(0x68FE17A3)
-I (..\HardWare\LCD\lcd_spi_200.h)(0x690A23D6)
+I (..\HardWare\LCD\lcd_spi_200.h)(0x690C38CE)
 I (..\HardWare\LCD\lcd_fonts.h)(0x68FE1F15)
 I (..\HardWare\OV2640\dcmi_ov2640.h)(0x68FE1F15)
-I (..\HardWare\OV2640\sccb.h)(0x68FE1F15)
+I (..\HardWare\OV2640\sccb.h)(0x690B233F)
 I (..\camera_process\Binarization.h)(0x68FE1F19)
 I (..\Base\type_def.h)(0x68FE1F15)
 I (..\camera_process\Element_recognition.h)(0x6904B7CC)
 I (..\camera_process\image.h)(0x69073CDC)
-I (..\Base\control\control.h)(0x69072516)
+I (..\Base\control\control.h)(0x690CB5B3)
 I (..\HardWare\Wifi\LQ_Transfer_Image.h)(0x6904BB8C)
 I (..\Base\control\integral.h)(0x6904C8B7)
-I (..\HardWare\42688\ICM-42688P.h)(0x690622B3)
+I (..\HardWare\42688\ICM-42688P.h)(0x690CA97C)
 I (..\HardWare\MOTOR\motor.h)(0x6907204B)
-F (../Core/Src/gpio.c)(0x690A2504)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/gpio.o -MMD)
+I (..\HardWare\42688\ICM42688P_Simple.h)(0x690CAC53)
+F (../Core/Src/gpio.c)(0x690B7803)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/gpio.o -MMD)
 I (..\Core\Inc\gpio.h)(0x68FE17A3)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -93,9 +94,9 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-F (../Core/Src/dcmi.c)(0x68FE1F19)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/dcmi.o -MMD)
+F (../Core/Src/dcmi.c)(0x690B6844)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/dcmi.o -MMD)
 I (..\Core\Inc\dcmi.h)(0x68FE17A3)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -131,7 +132,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 F (../Core/Src/dma.c)(0x68FE1F15)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/dma.o -MMD)
 I (..\Core\Inc\dma.h)(0x68FE1F15)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -167,7 +168,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 F (../Core/Src/i2c.c)(0x6904C4D3)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/i2c.o -MMD)
 I (..\Core\Inc\i2c.h)(0x68FE1F15)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -203,7 +204,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 F (../Core/Src/quadspi.c)(0x68FF654A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/quadspi.o -MMD)
 I (..\Core\Inc\quadspi.h)(0x68FF654A)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -237,9 +238,9 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-F (../Core/Src/spi.c)(0x690AD477)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/spi.o -MMD)
+F (../Core/Src/spi.c)(0x690C9754)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/spi.o -MMD)
 I (..\Core\Inc\spi.h)(0x68FF654A)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -273,9 +274,9 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-F (../Core/Src/tim.c)(0x690A1D54)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/tim.o -MMD)
+F (../Core/Src/tim.c)(0x690CB5B3)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/tim.o -MMD)
 I (..\Core\Inc\tim.h)(0x690A1D54)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -311,7 +312,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 F (../Core/Src/usart.c)(0x68FF654A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/usart.o -MMD)
 I (..\Core\Inc\usart.h)(0x68FF654A)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -345,8 +346,8 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-F (../Core/Src/stm32h7xx_it.c)(0x690A1D55)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/stm32h7xx_it.o -MMD)
-I (..\Core\Inc\main.h)(0x690A2507)
+F (../Core/Src/stm32h7xx_it.c)(0x690CB26B)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/stm32h7xx_it.o -MMD)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -380,9 +381,9 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-I (..\Core\Inc\stm32h7xx_it.h)(0x690A1D55)
+I (..\Core\Inc\stm32h7xx_it.h)(0x690CB26C)
 F (../Core/Src/stm32h7xx_hal_msp.c)(0x68FE17A3)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/stm32h7xx_hal_msp.o -MMD)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -419,9 +420,9 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 F (..\HardWare\LCD\lcd_fonts.c)(0x68FE1F15)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/lcd_fonts.o -MMD)
 I (..\HardWare\LCD\lcd_fonts.h)(0x68FE1F15)
 F (..\HardWare\LCD\lcd_fonts.h)(0x68FE1F15)()
-F (..\HardWare\LCD\lcd_spi_200.c)(0x690A1F34)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/lcd_spi_200.o -MMD)
+F (..\HardWare\LCD\lcd_spi_200.c)(0x690C4662)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/lcd_spi_200.o -MMD)
 I (..\Core\Inc\spi.h)(0x68FF654A)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -455,13 +456,13 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-I (..\HardWare\LCD\lcd_spi_200.h)(0x690A23D6)
+I (..\HardWare\LCD\lcd_spi_200.h)(0x690C38CE)
 I (..\HardWare\LCD\lcd_fonts.h)(0x68FE1F15)
-F (..\HardWare\LCD\lcd_spi_200.h)(0x690A23D6)()
-F (..\HardWare\OV2640\sccb.h)(0x68FE1F15)()
-F (..\HardWare\OV2640\dcmi_ov2640.c)(0x68FE1F15)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/dcmi_ov2640.o -MMD)
+F (..\HardWare\LCD\lcd_spi_200.h)(0x690C38CE)()
+F (..\HardWare\OV2640\sccb.h)(0x690B233F)()
+F (..\HardWare\OV2640\dcmi_ov2640.c)(0x690B2093)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/dcmi_ov2640.o -MMD)
 I (..\HardWare\OV2640\dcmi_ov2640.h)(0x68FE1F15)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -495,16 +496,16 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-I (..\HardWare\OV2640\sccb.h)(0x68FE1F15)
+I (..\HardWare\OV2640\sccb.h)(0x690B233F)
 I (..\Core\Inc\dcmi.h)(0x68FE17A3)
-I (..\HardWare\LCD\lcd_spi_200.h)(0x690A23D6)
+I (..\HardWare\LCD\lcd_spi_200.h)(0x690C38CE)
 I (..\HardWare\LCD\lcd_fonts.h)(0x68FE1F15)
-I (..\HardWare\OV2640\dcmi_ov2640_cfg.h)(0x68FE1F15)
+I (..\HardWare\OV2640\dcmi_ov2640_cfg.h)(0x690B62A2)
 F (..\HardWare\OV2640\dcmi_ov2640.h)(0x68FE1F15)()
-F (..\HardWare\OV2640\dcmi_ov2640_cfg.h)(0x68FE1F15)()
-F (..\HardWare\OV2640\sccb.c)(0x68FE1F15)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/sccb.o -MMD)
-I (..\HardWare\OV2640\sccb.h)(0x68FE1F15)
-I (..\Core\Inc\main.h)(0x690A2507)
+F (..\HardWare\OV2640\dcmi_ov2640_cfg.h)(0x690B62A2)()
+F (..\HardWare\OV2640\sccb.c)(0x690B233F)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/sccb.o -MMD)
+I (..\HardWare\OV2640\sccb.h)(0x690B233F)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -541,7 +542,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 F (..\Base\type_def.h)(0x68FE1F15)()
 F (..\camera_process\Binarization.c)(0x68FE1F19)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/binarization.o -MMD)
 I (..\camera_process\Binarization.h)(0x68FE1F19)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -578,14 +579,14 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 I (..\Base\type_def.h)(0x68FE1F15)
 I (..\camera_process\Element_recognition.h)(0x6904B7CC)
 I (..\HardWare\OV2640\dcmi_ov2640.h)(0x68FE1F15)
-I (..\HardWare\OV2640\sccb.h)(0x68FE1F15)
+I (..\HardWare\OV2640\sccb.h)(0x690B233F)
 I (..\Core\Inc\dcmi.h)(0x68FE17A3)
-I (..\HardWare\LCD\lcd_spi_200.h)(0x690A23D6)
+I (..\HardWare\LCD\lcd_spi_200.h)(0x690C38CE)
 I (..\HardWare\LCD\lcd_fonts.h)(0x68FE1F15)
 F (..\camera_process\Binarization.h)(0x68FE1F19)()
 F (..\camera_process\Element_recognition.c)(0x6904BBCD)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/element_recognition.o -MMD)
 I (..\camera_process\Element_recognition.h)(0x6904B7CC)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -621,15 +622,15 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 I (..\Base\type_def.h)(0x68FE1F15)
 I (..\camera_process\image.h)(0x69073CDC)
-I (..\Base\control\control.h)(0x69072516)
+I (..\Base\control\control.h)(0x690CB5B3)
 I (..\camera_process\Binarization.h)(0x68FE1F19)
 F (..\camera_process\Element_recognition.h)(0x6904B7CC)()
 F (..\camera_process\image.c)(0x6909F5D0)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/image.o -MMD)
 I (..\camera_process\image.h)(0x69073CDC)
-I (..\Base\control\control.h)(0x69072516)
+I (..\Base\control\control.h)(0x690CB5B3)
 I (..\camera_process\morph_binary_bitpacked.h)(0x68FE1F16)
 I (..\camera_process\Binarization.h)(0x68FE1F19)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -1552,7 +1553,7 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 F (..\HardWare\Wifi\LQ_Transfer_Image.c)(0x68FE1F19)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/lq_transfer_image.o -MMD)
 I (..\HardWare\Wifi\LQ_Transfer_Image.h)(0x6904BB8C)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -1590,7 +1591,7 @@ I (..\Core\Inc\spi.h)(0x68FF654A)
 I (..\Core\Inc\gpio.h)(0x68FE17A3)
 F (..\HardWare\persp\act_persp.c)(0x6909EFEF)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/act_persp.o -MMD)
 I (..\HardWare\persp\act_persp.h)(0x68FE2532)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -1625,14 +1626,14 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 I (..\camera_process\image.h)(0x69073CDC)
-I (..\Base\control\control.h)(0x69072516)
+I (..\Base\control\control.h)(0x690CB5B3)
 I (..\camera_process\Binarization.h)(0x68FE1F19)
 I (..\Base\type_def.h)(0x68FE1F15)
 F (..\HardWare\persp\act_persp.h)(0x68FE2532)()
 F (..\HardWare\42688\ICM42688P_Config.c)(0x68FDFE60)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/icm42688p_config.o -MMD)
 I (..\HardWare\42688\ICM42688P_Config.h)(0x690622B3)
-I (..\HardWare\42688\ICM-42688P.h)(0x690622B3)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\HardWare\42688\ICM-42688P.h)(0x690CA97C)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -1666,9 +1667,9 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
-F (..\HardWare\42688\ICM-426688P.c)(0x690622B3)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/icm-426688p.o -MMD)
-I (..\HardWare\42688\ICM-42688P.h)(0x690622B3)
-I (..\Core\Inc\main.h)(0x690A2507)
+F (..\HardWare\42688\ICM-426688P.c)(0x690CAAE8)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/icm-426688p.o -MMD)
+I (..\HardWare\42688\ICM-42688P.h)(0x690CA97C)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -1703,9 +1704,49 @@ I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
 I (..\HardWare\42688\ICM42688P_Config.h)(0x690622B3)
+I (..\HardWare\LCD\lcd_spi_200.h)(0x690C38CE)
+I (..\HardWare\LCD\lcd_fonts.h)(0x68FE1F15)
+I (..\Core\Inc\spi.h)(0x68FF654A)
+F (..\HardWare\42688\ICM42688P_Simple.c)(0x690CAC53)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/icm42688p_simple.o -MMD)
+I (..\HardWare\42688\ICM-42688P.h)(0x690CA97C)
+I (..\Core\Inc\main.h)(0x690AEBEE)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
+I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_def.h)(0x68C3E30B)
+I (..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h7xx.h)(0x68C3E30B)
+I (..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\stm32h750xx.h)(0x68C3E30B)
+I (..\Drivers\CMSIS\Include\core_cm7.h)(0x68C3E2AD)
+I (..\Drivers\CMSIS\Device\ST\STM32H7xx\Include\system_stm32h7xx.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc_ex.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_gpio_ex.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dma_ex.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_mdma.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_dcmi.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_exti.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_cortex.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_flash_ex.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_hsem.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_i2c_ex.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_pwr_ex.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_qspi.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_ll_delayblock.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_spi_ex.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h)(0x68C3E30B)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h)(0x68C3E30A)
+I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h)(0x68C3E30A)
+F (..\HardWare\42688\ICM42688P_Simple.h)(0x690CAC53)()
 F (..\HardWare\MOTOR\motor.c)(0x6909F737)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/motor.o -MMD)
 I (..\HardWare\MOTOR\motor.h)(0x6907204B)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)
@@ -1744,12 +1785,12 @@ I (..\camera_process\Element_recognition.h)(0x6904B7CC)
 I (..\Base\type_def.h)(0x68FE1F15)
 I (..\camera_process\Binarization.h)(0x68FE1F19)
 F (..\Base\control\control.c)(0x6909F28A)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/control.o -MMD)
-I (..\Base\control\control.h)(0x69072516)
+I (..\Base\control\control.h)(0x690CB5B3)
 I (..\camera_process\image.h)(0x69073CDC)
-F (..\Base\control\control.h)(0x69072516)()
+F (..\Base\control\control.h)(0x690CB5B3)()
 F (..\Base\control\integral.c)(0x690622B3)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m7 -mfpu=fpv5-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc -I ../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32H7xx/Include -I ../Drivers/CMSIS/Include -I ../HardWare/LCD -I ../HardWare/OV2640 -I ../camera_process -I ../Base -I ../Middlewares/ST/ARM/DSP/Inc -I ../HardWare/Wifi -I ../HardWare/persp -I ../HardWare/42688 -I ../HardWare/MOTOR -I ../Base/control-I./RTE/_base_project-ID:/keil5/ARM/PACK/ARM/CMSIS/6.2.0/CMSIS/Core/Include-D__UVISION_VERSION="543" -DSTM32H750xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32H750xx -DUSE_PWR_LDO_SUPPLY-o base_project/integral.o -MMD)
 I (..\Base\control\integral.h)(0x6904C8B7)
-I (..\Core\Inc\main.h)(0x690A2507)
+I (..\Core\Inc\main.h)(0x690AEBEE)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h)(0x68C3E30B)
 I (..\Core\Inc\stm32h7xx_hal_conf.h)(0x690A1D55)
 I (..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h)(0x68C3E30A)

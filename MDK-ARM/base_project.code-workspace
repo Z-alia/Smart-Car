@@ -4,12 +4,6 @@
             "path": "."
         }
     ],
-    "settings": {
-        "files.associations": {
-            "image.h": "c",
-            "control.h": "c",
-            "main.h": "c"
-        }
-    },
+    "settings": {},
     "extensions": {}
 }

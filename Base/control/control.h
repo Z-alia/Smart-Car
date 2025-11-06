@@ -19,10 +19,10 @@ typedef struct
     // 速度反馈(来自编码器)
     float left_speed;           // 左轮速度(m/s)
     float right_speed;          // 右轮速度(m/s)
-    int16_t lencoder_count;     // 左编码器当前计数
-    int16_t lencoder_count_last;// 左编码器上次计数
-    int16_t rencoder_count;     // 右编码器当前计数
-    int16_t rencoder_count_last;// 右编码器上次计数
+    int32_t lencoder_count;     // 左编码器当前计数 (32-bit to match 32-bit TIM counters)
+    int32_t lencoder_count_last;// 左编码器上次计数
+    int32_t rencoder_count;     // 右编码器当前计数 (32-bit to match 32-bit TIM counters)
+    int32_t rencoder_count_last;// 右编码器上次计数
     
     // 电机控制输出(传给motor模块)
     int16_t left_target_speed;  // 左轮目标速度(PWM值)

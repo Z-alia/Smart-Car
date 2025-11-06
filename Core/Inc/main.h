@@ -71,8 +71,6 @@ void Error_Handler(void);
 #define wifi_io1_GPIO_Port GPIOE
 #define wifi_io2_Pin GPIO_PIN_8
 #define wifi_io2_GPIO_Port GPIOE
-#define LCD_SDA_Pin GPIO_PIN_14
-#define LCD_SDA_GPIO_Port GPIOE
 #define WIFI_CS_Pin GPIO_PIN_12
 #define WIFI_CS_GPIO_Port GPIOB
 #define PH_LMOTOR_Pin GPIO_PIN_8

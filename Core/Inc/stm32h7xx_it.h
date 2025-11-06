@@ -60,7 +60,6 @@ void TIM6_DAC_IRQHandler(void);
 void TIM7_IRQHandler(void);
 void DMA2_Stream7_IRQHandler(void);
 void DCMI_IRQHandler(void);
-void TIM15_IRQHandler(void);
 void TIM16_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 

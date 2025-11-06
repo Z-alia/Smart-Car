@@ -1137,6 +1137,16 @@
               <FileType>1</FileType>
               <FilePath>..\HardWare\42688\ICM-426688P.c</FilePath>
             </File>
+            <File>
+              <FileName>ICM42688P_Simple.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HardWare\42688\ICM42688P_Simple.c</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688P_Simple.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HardWare\42688\ICM42688P_Simple.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

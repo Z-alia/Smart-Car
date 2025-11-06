@@ -29,7 +29,6 @@ virtualFolder:
                 - path: ../Core/Src/dma.c
                 - path: ../Core/Src/i2c.c
                 - path: ../Core/Src/quadspi.c
-                - path: ../Core/Src/sdmmc.c
                 - path: ../Core/Src/spi.c
                 - path: ../Core/Src/tim.c
                 - path: ../Core/Src/usart.c
@@ -88,11 +87,6 @@ virtualFolder:
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_exti.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_qspi.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_delayblock.c
-            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c
-            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd.c
-            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd_ex.c
-            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc.c
-            - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc_ex.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi_ex.c
             - path: ../Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim.c
@@ -112,6 +106,22 @@ virtualFolder:
       files:
         - path: ../HardWare/persp/act_persp.c
         - path: ../HardWare/persp/act_persp.h
+      folders: []
+    - name: "42688"
+      files:
+        - path: ../HardWare/42688/ICM42688P_Config.c
+        - path: ../HardWare/42688/ICM-426688P.c
+      folders: []
+    - name: MOTOR
+      files:
+        - path: ../HardWare/MOTOR/motor.c
+      folders: []
+    - name: control
+      files:
+        - path: ../Base/control/control.c
+        - path: ../Base/control/control.h
+        - path: ../Base/control/integral.c
+        - path: ../Base/control/integral.h
       folders: []
     - name: ::CMSIS
       files: []
@@ -140,13 +150,13 @@ targets:
         - ../Middlewares/ST/ARM/DSP/Inc
         - ../HardWare/Wifi
         - ../HardWare/persp
+        - ../HardWare/42688
+        - ../HardWare/MOTOR
+        - ../Base/control
         - .cmsis/include
         - RTE/_base_project
-        - ../HardWare/42688
-        - ../Base/control
       libList: []
-    excludeList:
-      - ../HardWare/42688/ICM42688P_Test.c
+    excludeList: []
     toolchain: AC6
     toolchainConfigMap:
       AC6:

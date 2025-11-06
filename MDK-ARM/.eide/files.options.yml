@@ -17,4 +17,12 @@ version: "2.1"
 options:
     base_project:
         files: {}
-        virtualPathFiles: {}
+        virtualPathFiles:
+            <virtual_root>/Application/User/Core/i2c.c: ""
+            <virtual_root>/Application/User/Core/quadspi.c: ""
+            <virtual_root>/Application/User/Core/tim.c: ""
+            <virtual_root>/Application/User/Core/usart.c: ""
+            <virtual_root>/Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_qspi.c: ""
+            <virtual_root>/Drivers/STM32H7xx_HAL_Driver/stm32h7xx_ll_delayblock.c: ""
+            <virtual_root>/Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_uart.c: ""
+            <virtual_root>/Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_uart_ex.c: ""

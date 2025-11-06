@@ -1,4 +1,4 @@
-base_project/icm-426688p.o: ..\HardWare\42688\ICM-426688P.c \
+base_project/icm42688p_simple.o: ..\HardWare\42688\ICM42688P_Simple.c \
   ..\HardWare\42688\ICM-42688P.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
@@ -32,6 +32,4 @@ base_project/icm-426688p.o: ..\HardWare\42688\ICM-426688P.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
-  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\HardWare\42688\ICM42688P_Config.h ..\HardWare\LCD\lcd_spi_200.h \
-  ..\HardWare\LCD\lcd_fonts.h ..\Core\Inc\spi.h
+  ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h
