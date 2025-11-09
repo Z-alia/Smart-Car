@@ -1,5 +1,5 @@
-base_project/icm-426688p.o: ..\HardWare\42688\ICM-426688P.c \
-  ..\HardWare\42688\ICM-42688P.h ..\Core\Inc\main.h \
+base_project/icm42688p_new.o: ..\HardWare\42688\ICM42688P_New.c \
+  ..\HardWare\42688\ICM42688P_New.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -33,4 +33,4 @@ base_project/icm-426688p.o: ..\HardWare\42688\ICM-426688P.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\HardWare\42688\ICM42688P_Config.h
+  ..\Core\Inc\spi.h

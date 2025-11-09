@@ -432,7 +432,7 @@
 
   <Group>
     <GroupName>ov2640</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -987,6 +987,18 @@
     <File>
       <GroupNumber>11</GroupNumber>
       <FileNumber>58</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\HardWare\42688\ICM-42688P.h</PathWithFileName>
+      <FilenameWithoutPath>ICM-42688P.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>11</GroupNumber>
+      <FileNumber>59</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -998,37 +1010,25 @@
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
-      <FileNumber>59</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\HardWare\42688\ICM-426688P.c</PathWithFileName>
-      <FilenameWithoutPath>ICM-426688P.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>11</GroupNumber>
       <FileNumber>60</FileNumber>
-      <FileType>1</FileType>
+      <FileType>5</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\HardWare\42688\ICM42688P_Simple.c</PathWithFileName>
-      <FilenameWithoutPath>ICM42688P_Simple.c</FilenameWithoutPath>
+      <PathWithFileName>..\HardWare\42688\ICM42688P_Config.h</PathWithFileName>
+      <FilenameWithoutPath>ICM42688P_Config.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>11</GroupNumber>
       <FileNumber>61</FileNumber>
-      <FileType>5</FileType>
+      <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\HardWare\42688\ICM42688P_Simple.h</PathWithFileName>
-      <FilenameWithoutPath>ICM42688P_Simple.h</FilenameWithoutPath>
+      <PathWithFileName>..\HardWare\42688\ICM-426688P.c</PathWithFileName>
+      <FilenameWithoutPath>ICM-426688P.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

@@ -5,7 +5,7 @@
 #include "Element_recognition.h"
 #include "Binarization.h"
 //本工程的PWM分辨率为1000
-#define tgtspd 100
+#define tgtspd 500
 #define TL_tgtspd 100
 #define TR_tgtspd 100
 Motor leftmotor={0, 1, tgtspd, 0};
@@ -16,7 +16,7 @@ void motor_init(void)
 {
     // 初始化电机控制引脚
     HAL_GPIO_WritePin(PH_LMOTOR_GPIO_Port, PH_LMOTOR_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(PH_RMOTOR_GPIO_Port, PH_RMOTOR_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(PH_RMOTOR_GPIO_Port, PH_RMOTOR_Pin, GPIO_PIN_SET);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
     motor_stop();

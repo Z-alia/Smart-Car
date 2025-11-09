@@ -39,7 +39,7 @@
 #include "control.h"
 #include "ICM-42688P.h"
 #include "motor.h"
-#include "ICM42688P_Simple.h"
+//#include "ICM42688P_Simple.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,7 +59,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern IMU_Data imu_data;  // 声明外部 IMU 数据结构
+//extern IMU_Data imu_data;  // 声明外部 IMU 数据结构
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -133,69 +133,31 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-	TR_driver_init();//wifi初始化
-	OV2640_Init();//摄像头初始化
-	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输，连续模式
+	LCD_Init();
+	OV2640_Init();
+	OV2640_DMA_Transmit_Continuous(Camera_Buffer, OV2640_BufferSize);
+	ICM42688P_Init();
+	motor_init();
 	
-	
-	
- LCD_Init();
-    LCD_Clear();
-    LCD_DisplayString(10, 10, "ICM-42688-P Test");
-    
-    // 初始化ICM
-    if(ICM42688P_Simple_Init() == 0) {
-        LCD_SetColor(LCD_GREEN);
-        LCD_DisplayString(10, 30, "Init: OK");
-        LCD_SetColor(LCD_WHITE);
-    } else {
-        LCD_SetColor(LCD_RED);
-        LCD_DisplayString(10, 30, "Init: FAIL");
-        LCD_SetColor(LCD_WHITE);
-        while(1);
-    }
-    
-    HAL_Delay(1000);
-    LCD_Clear();
-    
-    // 显示数据
-    unsigned char str[64];
-    
-  
-  
-	 while(1)
-	 {
-		 
-		 ICM42688P_Simple_ReadData(&imu_data);
-         HAL_Delay(50);
-//        // 加速度
-//        sprintf(str, "AX: %6.2f g", imu_data.accel_x);
-//        LCD_DisplayString(10, 10, str);
-//        sprintf(str, "AY: %6.2f g", imu_data.accel_y);
-//        LCD_DisplayString(10, 26, str);
-//        sprintf(str, "AZ: %6.2f g", imu_data.accel_z);
-//        LCD_DisplayString(10, 42, str);
-        
-//        // 陀螺仪
-//        sprintf(str, "GX: %6.1f dps", imu_data.gyro_x);
-//        LCD_DisplayString(10, 66, str);
-//        sprintf(str, "GY: %6.1f dps", imu_data.gyro_y);
-//        LCD_DisplayString(10, 82, str);
-//        sprintf(str, "GZ: %6.1f dps", imu_data.gyro_z);
-//        LCD_DisplayString(10, 98, str);
-        
-        // 温度
-  
-		TR_Log_AddFloat(imu_data.temperature);
-        HAL_Delay(50);  // 20Hz刷新
-	  	if (DCMI_FrameState == 1)	// 采集到了一帧图像
+	// 启动编码器模式（不使用中断，仅计数）
+    HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+    HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+
+    // 启动 TIM15 中断
+    HAL_TIM_Base_Start_IT(&htim15);
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+		/*---------------------------以下为功能测试--------------------------------*/
+	if (DCMI_FrameState == 1)	// 采集到了一帧图像
 		{
 			DCMI_FrameState = 0;		// 清零标志位
-			
-			
-			
-			
-			// 暂时注释掉耗时操作，测试原始帧率
 			
 			// 大津法全局二值化
 			//Global_Binarization();
@@ -211,50 +173,26 @@ int main(void)
 			//显示原图像
 			//show_ov2640_image_from_ptr_array(0, 0, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
 			//显示二值化扫线图
-		show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
+			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
 			//LCD_DisplayNumber(250, 250, 1, 3); // 显示当前帧率
 			    
 			image_process();
 			
 		}
-	
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-		/*---------------------------以下为功能测试--------------------------------*/
-//	//1.lcd及ov2640
-//	if (DCMI_FrameState == 1)	// 采集到了一帧图像
-//	{
-//		DCMI_FrameState = 0;		// 清零标志位
-//			
-//		// 大津法全局二值化
-//		//Global_Binarization();
-//		// 自适应阈值二值化
-//		//Adaptive_Binarization(119, 5); 
-//		// Sauvola自适应二值化
-//		Sauvola_Binarization(119, 0.5f, 32767.0f);
-
-//		// wifi图传
-//		//TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
-
-//		/* 显示摄像头图像 */
-//		//显示原图像
-//		show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
-//		//显示二值化扫线图
-//		//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
-//		//LCD_DisplayNumber(250, 250, OV2640_Init(), 3); // 显示当前帧率
-//      
-//		image_process();
-//	}
-	//2.陀螺仪
-		LCD_DisplayNumber(250, 250, (uint16_t)imu_data.gyro_z, 3);
-	//3.编码器
-//		LCD_DisplayNumber(250, 250, (uint8_t)get_speed(), 3);
-//		LCD_DisplayNumber(250, 300, (uint8_t)control.lencoder_count, 3);
-//		LCD_DisplayNumber(250, 320, (uint8_t)control.rencoder_count, 3);
+//	/*---------------imutest-----------------*/
+//	  //ICM42688P_ReadIMUData(&imu_data);
+//	  LCD_DisplayDecimals(50,200,imu_data.gyro_z,3,2);
+//	  LCD_DisplayDecimals(50,175,imu_data.accel_z,3,2);
+//	  LCD_DisplayDecimals(50,150,imu_data.temperature,3,1);
+//	//3.编码器
+//		LCD_DisplayDecimals(200, 150, get_speed(), 3,1);
+//		LCD_DisplayDecimals(250, 175, control.lencoder_count, 5,0);
+//		LCD_DisplayDecimals(250, 200, control.rencoder_count, 5,0);
+//		LCD_DisplayDecimals(150, 175, control.left_speed, 3,1);
+//		LCD_DisplayDecimals(150, 200, control.right_speed, 3,1);
 		
 //	//4.电机
-//		motor_run(&leftmotor,100);
+		//motor_run(&rightmotor,200);
 //	//5.wifi
 //		TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
   
@@ -384,9 +322,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     distant_integeral(get_speed());
     control.lencoder_count_last = control.lencoder_count;
     control.rencoder_count_last = control.rencoder_count;
-//    //进行陀螺仪数据收集和积分
+    //进行陀螺仪数据收集和积分
     ICM42688P_ReadIMUData(&imu_data);
-//    angal_integeral(imu_data.gyro_z);
+    angal_integeral(imu_data.gyro_z);
   }
 }
 /* USER CODE END 4 */

@@ -25,7 +25,7 @@ static ICM42688P_ConfigDiff g_diff;         // 静态diff结构体，复用节�
 /* ============================================================================
  * 寄存器映射表（用于增量对比）
  * ============================================================================ */
-
+ICM42688P_Config config;
 /**
  * @brief 寄存器映射条目
  */
@@ -417,7 +417,7 @@ void ICM42688P_LoadDefaultConfig(ICM42688P_Config *config)
     config->bank0.FIFO_CONFIG = 0x00;
     config->bank0.INTF_CONFIG0 = 0x30;
     config->bank0.INTF_CONFIG1 = 0x91;
-    config->bank0.PWR_MGMT0 = 0x00;     // Sleep模式
+    config->bank0.PWR_MGMT0 = 0x00;     // 睡眠
     config->bank0.GYRO_CONFIG0 = 0x06;  // ±2000dps, 1kHz
     config->bank0.ACCEL_CONFIG0 = 0x06; // ±16g, 1kHz
     config->bank0.GYRO_CONFIG1 = 0x16;
@@ -878,10 +878,10 @@ uint8_t ICM42688P_ApplyConfig(const ICM42688P_Config *config)
 {
     uint8_t error = 0;
 
-    // 验证配置
-    if (!ICM42688P_ValidateConfig(config)) {
-        return 1;
-    }
+//    // 验证配置
+//    if (!ICM42688P_ValidateConfig(config)) {
+//        return 1;
+//    }
 
     // ============================================================================
     // 关键修改：按照数据手册12.9要求的顺序配置
@@ -952,12 +952,12 @@ uint8_t ICM42688P_ApplyConfig(const ICM42688P_Config *config)
 
     // Step 3: 切回 Bank 0，最后写入电源管理配置
     ICM42688P_Bank_Select(0);
-    
+    //ICM42688P_Start();
     // 写入 PWR_MGMT0 配置值（可能是启动或关闭，取决于配置）
     // 数据手册14.36：从OFF到其他模式转换后，需等待200μs后再访问寄存器
     error |= ICM42688P_WriteRegister(0x4E, (uint8_t *)&config->bank0.PWR_MGMT0, 1);
     delay_ms(1);  // 等待电源状态转换稳定（>200μs）
-
+	
     // Level 1: 全局应用成功后，更新内部配置存储
     if (!error) {
         memcpy(&g_internal_config, config, sizeof(ICM42688P_Config));

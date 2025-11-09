@@ -9,7 +9,7 @@ extern "C" {
 
 //定义段
 #define Radius 0.03f //车轮半径，单位m
-#define Encoder_PPR 256.0f //编码器每转脉冲数 256线
+#define Encoder_PPR 256.0f*4.0f //编码器每转脉冲数 256线 四倍频
 #define IMAGE_H 120  // 图像高度
 #define IMAGE_W 188  // 图像宽度
 

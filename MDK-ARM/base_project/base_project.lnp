@@ -49,7 +49,6 @@
 "base_project\act_persp.o"
 "base_project\icm42688p_config.o"
 "base_project\icm-426688p.o"
-"base_project\icm42688p_simple.o"
 "base_project\motor.o"
 "base_project\control.o"
 "base_project\integral.o"
