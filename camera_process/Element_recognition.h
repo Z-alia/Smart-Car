@@ -53,6 +53,7 @@ struct watch_o
     uint8_t cross_flag;		//十字路口标志位
 	uint8_t zebra_flag;		//斑马线标志位
 	uint8_t black_obstacle_flag;	//黑色障碍标志位
+	unsigned short Red_obstacle_flag; //红色障碍物的距离
     /*圆环状态0:无环
     1：检测到左环第一个角点，此时补左侧第一条线保持直行
     2：正在入环，此时右侧补线入环

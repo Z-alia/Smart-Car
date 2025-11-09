@@ -8,7 +8,13 @@ extern "C" {
 #include <stdint.h>
 
 //定义段
-#define Radius 0.03f //车轮半径，单位m
+#define Radius 0.0034f //车轮半径，单位m
+#define Half_track 0.008f //半轮距，单位m
+#define Speed_ratio 10.0f //差速映射比例系数
+#define Max_diff_speed 1.5f //最大差速(m/s)
+#define Smooth_alpha 0.20f //平滑系数 0..1
+#define Integral_max 100.0f //积分限幅
+#define Output_max 1000.0f //输出限幅 (PWM)
 #define Encoder_PPR 256.0f*4.0f //编码器每转脉冲数 256线 四倍频
 #define IMAGE_H 120  // 图像高度
 #define IMAGE_W 188  // 图像宽度
@@ -154,6 +160,8 @@ typedef struct {
     float output_max;           // PWM输出限幅, 默认1000.0
 } CascadePIDConfig;
 
+extern CascadePIDConfig cascade_pid_config;
+
 /**
  * @brief ADRC参数配置结构体(用于外部调参)
  */
@@ -188,7 +196,10 @@ typedef struct {
     float integral_max;         // 积分限幅, 默认100.0
     float output_max;           // PWM输出限幅, 默认1000.0
 } ADRCConfig;
-
+//自定义参数初始化串级PID配置结构体
+void control_init_cascade_pid_config(CascadePIDConfig* config,
+                                     float kp_left, float ki_left, float kd_left,
+                                     float kp_right, float ki_right, float kd_right);
 // 使用默认参数初始化串级PID
 void control_init_cascade_pid_default(void);
 

@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32H750xx,USE_PWR_LDO_SUPPLY</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../HardWare/LCD;../HardWare/OV2640;../camera_process;../Base;../Middlewares/ST/ARM/DSP/Inc;../HardWare/Wifi;../HardWare/persp;../HardWare/42688;../HardWare/MOTOR;../Base/control</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc;../Drivers/STM32H7xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H7xx/Include;../Drivers/CMSIS/Include;../HardWare/LCD;../HardWare/OV2640;../camera_process;../Base;../Middlewares/ST/ARM/DSP/Inc;../HardWare/Wifi;../HardWare/persp;../HardWare/42688;../HardWare/MOTOR;../Base/control;..\HardWare\TOF</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1181,6 +1181,21 @@
               <FileName>integral.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Base\control\integral.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>TOF</GroupName>
+          <Files>
+            <File>
+              <FileName>tof.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HardWare\TOF\tof.c</FilePath>
+            </File>
+            <File>
+              <FileName>tof.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\HardWare\TOF\tof.h</FilePath>
             </File>
           </Files>
         </Group>

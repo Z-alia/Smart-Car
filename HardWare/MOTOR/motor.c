@@ -5,7 +5,7 @@
 #include "Element_recognition.h"
 #include "Binarization.h"
 //本工程的PWM分辨率为1000
-#define tgtspd 500
+#define tgtspd 100
 #define TL_tgtspd 100
 #define TR_tgtspd 100
 Motor leftmotor={0, 1, tgtspd, 0};

@@ -39,6 +39,8 @@
 #include "control.h"
 #include "ICM-42688P.h"
 #include "motor.h"
+#include "tof.h"
+//#include ""
 //#include "ICM42688P_Simple.h"
 /* USER CODE END Includes */
 
@@ -133,12 +135,24 @@ int main(void)
   MX_TIM16_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
+  /*----------------------------外设初始化--------------------------------------*/
 	LCD_Init();
 	OV2640_Init();
 	OV2640_DMA_Transmit_Continuous(Camera_Buffer, OV2640_BufferSize);
 	ICM42688P_Init();
 	motor_init();
-	
+	TR_driver_init();
+	TOF_Init();
+	TOF_SetOutputMode(0);
+	TOF_SetTriggerMode(0);
+  /*----------------------------控制初始化--------------------------------------*/
+  control_init_cascade_pid_config(&cascade_pid_config,
+                                  5.0f, 0.0f, 0.0f,   // 左轮PID参数
+                                  5.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
+  control_init(CONTROL_SCHEME_CASCADE_PID);//选择控制模式
+
+
+
 	// 启动编码器模式（不使用中断，仅计数）
     HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
@@ -154,7 +168,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		/*---------------------------以下为功能测试--------------------------------*/
+		/*---------------------------以下为图像区域--------------------------------*/
 	if (DCMI_FrameState == 1)	// 采集到了一帧图像
 		{
 			DCMI_FrameState = 0;		// 清零标志位
@@ -179,6 +193,7 @@ int main(void)
 			image_process();
 			
 		}
+    /*---------------------------以下为控制区域--------------------------------*/
 //	/*---------------imutest-----------------*/
 //	  //ICM42688P_ReadIMUData(&imu_data);
 //	  LCD_DisplayDecimals(50,200,imu_data.gyro_z,3,2);
@@ -195,7 +210,8 @@ int main(void)
 		//motor_run(&rightmotor,200);
 //	//5.wifi
 //		TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
-  
+    //tof test
+		LCD_DisplayDecimals(200, 200, watch.Red_obstacle_flag, 10,0);
   }
   /* USER CODE END 3 */
 }
@@ -325,6 +341,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     //进行陀螺仪数据收集和积分
     ICM42688P_ReadIMUData(&imu_data);
     angal_integeral(imu_data.gyro_z);
+	watch.Red_obstacle_flag=TOF_ReadDistanceFiltered();
   }
 }
 /* USER CODE END 4 */

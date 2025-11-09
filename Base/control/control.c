@@ -761,7 +761,9 @@ void control_loop(float v_forward,
 }
 
 
-// ==================== 便捷调参接口实现 ====================
+// ==================== 便捷调参接口实现 ==================== 
+
+CascadePIDConfig cascade_pid_config;
 
 /**
  * @brief 使用默认参数初始化串级PID
@@ -776,7 +778,7 @@ void control_init_cascade_pid_default(void)
 
 /**
  * @brief 使用自定义参数初始化串级PID
- * @param config 参数配置结构体指针
+ * @param config 全部参数配置结构体指针
  * @note 允许完全自定义所有参数,适合精细调参
  */
 void control_init_cascade_pid(const CascadePIDConfig* config)
@@ -814,6 +816,40 @@ void control_init_cascade_pid(const CascadePIDConfig* config)
                    config->speed_right_kd,
                    config->integral_max,
                    config->output_max);
+}
+/**
+ * @brief 使用自定义参数初始化串级PID配置结构体
+ * @param config 参数配置结构体指针 lkp,lki,lkd:左轮PID参数 rkp,rki,rkd:右轮PID参数
+ * @note 允许完全自定义所有参数,适合精细调参
+ */
+void control_init_cascade_pid_config(CascadePIDConfig* config,float lkp,float lki,float lkd,
+                                     float rkp,float rki,float rkd)
+{
+    if (config==NULL) {
+        return;
+    }
+    
+    // 配置外环差速映射参数
+    config->half_track = Half_track;      // 半轮距(m)
+    config->speed_ratio = Speed_ratio;      // 误差→角速度增益(rad/s per 千分之一)
+    config->max_diff_speed = Max_diff_speed;    // 最大差速(m/s)
+    config->smooth_alpha = Smooth_alpha;     // 平滑系数
+    config->enable_nonlinear = 0;     // 非线性增益 0=禁用, 1=启用
+    config->nonlinear_k = 1e-6f;      // 非线性系数
+    
+    // 配置内环速度PID参数(左轮)
+    config->speed_left_kp = lkp;
+    config->speed_left_ki = lki;
+    config->speed_left_kd = lkd;
+    
+    // 配置内环速度PID参数(右轮)
+    config->speed_right_kp = rkp;
+    config->speed_right_ki = rki;
+    config->speed_right_kd = rkd;
+    
+    config->integral_max = Integral_max;   // 积分限幅
+    config->output_max = Output_max;     // 输出限幅 (PWM)
+
 }
 
 /**
