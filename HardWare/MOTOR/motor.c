@@ -107,3 +107,189 @@ void straight_error_get(PIDController *PID)
     PID->error = (left + right) / 2 - 94;
 }
 */
+void pid_init(PIDController* pid, float kp, float ki, float kd, float kff) {
+    pid->kp = kp;
+    pid->ki = ki;
+    pid->kd = kd;
+	pid->kff = kff;
+	pid->ahead=0;
+    pid->error = 0.0;
+    pid->last_error = 0.0;
+    pid->integral = 0.0;
+    pid->derivative = 0.0;
+    pid->output = 0.0;
+    pid->integral_limit = 300.0;
+    pid->output_limit = 300.0;
+}
+//pid计算 setpoint希望是0 feedback时摄像头输出的偏差值
+float pid_calculate(PIDController* pid) {
+    // 计算误差
+    //pid->error = setpoint - feedback;
+    
+    // 计算微分项
+    pid->derivative = pid->error - pid->last_error;
+    
+    //error平滑
+//    if(pid->derivative>5.0)
+//    	pid->error=pid->last_error+5.0;
+//    else if(pid->derivative<-5.0)
+//    	pid->error=pid->last_error-5.0;
+
+    // 计算积分项
+    pid->integral += pid->error;
+    pid->integral = (pid->integral > pid->integral_limit) ? pid->integral_limit : ((pid->integral < -pid->integral_limit) ? -pid->integral_limit : pid->integral);
+
+
+
+    // 计算输出
+    float output = pid->kp * pid->error + 
+                  pid->ki * pid->integral + 
+                  pid->kd * pid->derivative;
+    pid->output = (output > pid->output_limit) ? pid->output_limit : ((output < -pid->output_limit) ? -pid->output_limit : output);
+    // 保存上次误差
+    pid->last_error = pid->error;
+    
+    return pid->output;
+}
+//内环pid计算
+float pid_speed_calculate(PIDController* pid,Motor *motor)
+{
+	// 计算误差
+    pid->error = motor->target_speed - motor->speed;
+    
+    // 计算微分项
+    pid->derivative = pid->error - pid->last_error;
+    
+    //error平滑
+//    if(pid->derivative>5.0)
+//    	pid->error=pid->last_error+5.0;
+//    else if(pid->derivative<-5.0)
+//    	pid->error=pid->last_error-5.0;
+
+    // 计算积分项
+    pid->integral += pid->error;
+    pid->integral = (pid->integral > pid->integral_limit) ? pid->integral_limit : ((pid->integral < -pid->integral_limit) ? -pid->integral_limit : pid->integral);
+
+
+
+    // 计算输出
+    float output = pid->kp * pid->error + 
+                  pid->ki * pid->integral + 
+                  pid->kd * pid->derivative;
+    pid->output = (output > pid->output_limit) ? pid->output_limit : ((output < -pid->output_limit) ? -pid->output_limit : output);
+    // 保存上次误差
+    pid->last_error = pid->error;
+    
+    return pid->output;
+}
+//前馈函数
+float PID_pre_calculate(PIDController *pid)
+{
+	return pid->kff*pid->ahead;
+}
+//循迹
+void run_follow(PIDController* pid,Motor *motor_left,Motor *motor_right)//串级循迹
+{
+	motor_run(&leftmotor,tgtspd+pid_speed_calculate(pid,motor_left));
+	motor_run(&rightmotor,tgtspd+pid_speed_calculate(pid,motor_right));
+}
+
+void run_follow_v0(PIDController* pid)//开环循迹
+{
+	motor_run(&leftmotor,tgtspd + pid_calculate(pid) - (PID_pre_calculate(pid)/2));
+	motor_run(&rightmotor,tgtspd + pid_calculate(pid) + (PID_pre_calculate(pid)/2));
+}
+//图像到误差转换
+//void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta)
+//{
+//    float sum=0.0,temp=0.0; // 平均值，可后加加权
+//	
+//	
+//	//直道
+//	if(watch->Straight_flag==1)
+//	{
+//		uint16_t length=0;
+//	
+//    for(uint8_t i=1;i<30;i++)
+//    {
+//		if(lineinfo[i].mid!=0)
+//			length++;
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/length)*weight_dw;
+//	length=0;
+//	temp=0.0;
+//	for(uint8_t i=30;i<60;i++)
+//    {
+//	   if(lineinfo[i].mid!=0)
+//	   length++;
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/length)*weight_md;
+//	temp=0.0;
+//	length=0;
+//	for(uint8_t i=60;i<120;i++)
+//    {
+//	   if(lineinfo[i].mid!=0)
+//	   length++;
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/(float)length)*weight_up;
+//    PID->error = sum- (94.0+derta);
+//	
+//    }
+//	//弯道
+//	
+//	else
+//	{
+//    //用原始中线计算误差
+//	int16_t top=watch->LastLine;
+//	int16_t middle=top-5;
+//	int16_t bottom=0;
+//	    if(top==0||middle==0)
+//    {
+//        PID->error=0;
+//        return;
+//    }
+//    for(int16_t i=bottom;i<middle;i++)
+//    {
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=((temp/middle)-94.0f)*weight_curve_up;
+//	temp=0.0;
+//	for(int16_t i=middle;i<=top;i++)
+//    {
+//       temp+=((float)lineinfo[i].mid);
+//    }
+//	sum+=(temp/5.0-94.0f)*weight_curve_down;
+//	sum=sum*110.0f/(float)top;
+//    PID->error = sum- derta;
+//	}
+//    
+//	/*
+//    //用预测中线计算误差
+//    int16_t top=watch->PredictTopMidline;
+//	int16_t middle=2*(top/3);
+//	int16_t bottom=0;
+//	    if(top==0||middle==0)
+//    {
+//        PID->error=0;
+//        return;
+//    }
+
+//    for(int16_t i=bottom;i<middle;i++)
+//    {
+//       temp+=((float)lineinfo[i].midpredict);
+//    }
+//	sum+=(temp/middle)*weight_curve_down;
+//	temp=0.0;
+//	for(int16_t i=middle;i<=top;i++)
+//    {
+//       temp+=((float)lineinfo[i].midpredict);
+//    }
+//	sum+=(temp/(top-middle))*weight_curve_up;
+//	sum=sum*(110.0/(float)top);
+//    PID->error = sum- (94.0+derta);
+//	}
+//	*/
+//}
