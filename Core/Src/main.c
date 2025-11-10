@@ -142,9 +142,9 @@ int main(void)
 	ICM42688P_Init();
 	motor_init();
 	TR_driver_init();
-	TOF_Init();
-	TOF_SetOutputMode(0);
-	TOF_SetTriggerMode(0);
+//	TOF_Init();
+//	TOF_SetOutputMode(0);
+//	TOF_SetTriggerMode(0);
   /*----------------------------控制初始化--------------------------------------*/
   control_init_cascade_pid_config(&cascade_pid_config,
                                   5.0f, 0.0f, 0.0f,   // 左轮PID参数
@@ -176,16 +176,16 @@ int main(void)
 			// 大津法全局二值化
 			//Global_Binarization();
 			// 自适应阈值二值化
-			//Adaptive_Binarization(119, 5); 
+			Adaptive_Binarization(119, 5); 
 			// Sauvola自适应二值化
-			Sauvola_Binarization(119, 0.5f, 32767.0f);
+			//Sauvola_Binarization(119, 0.5f, 32767.0f);
 
 			// wifi图传
 			TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
 
 			// 显示摄像头图像
 			//显示原图像
-			//show_ov2640_image_from_ptr_array(0, 0, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
+			show_ov2640_image_from_ptr_array(0, 120, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
 			//显示二值化扫线图
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
 			//LCD_DisplayNumber(250, 250, 1, 3); // 显示当前帧率
@@ -194,6 +194,10 @@ int main(void)
 			
 		}
     /*---------------------------以下为控制区域--------------------------------*/
+		//control_execute(100);
+		
+		motor_run(&leftmotor,control.left_target_speed);
+		motor_run(&rightmotor,control.right_target_speed);
 //	/*---------------imutest-----------------*/
 //	  //ICM42688P_ReadIMUData(&imu_data);
 //	  LCD_DisplayDecimals(50,200,imu_data.gyro_z,3,2);
@@ -211,7 +215,7 @@ int main(void)
 //	//5.wifi
 //		TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
     //tof test
-		LCD_DisplayDecimals(200, 200, watch.Red_obstacle_flag, 10,0);
+		//LCD_DisplayDecimals(200, 200, watch.Red_obstacle_flag, 10,0);
   }
   /* USER CODE END 3 */
 }

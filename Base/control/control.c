@@ -65,7 +65,7 @@ float cam_err_calculation(void)
     {
         // 使用逆透视坐标判断是否跳过过近的行
         // 原逻辑: 0.625 * (persp_ly + persp_ry) < forward_near
-        if (0.625f * ((int)persp_ly[y] + (int)persp_ry[y]) < cam->forward_near)
+        if (/*0.625f * ((int)persp_ly[y] + (int)persp_ry[y]) < cam->forward_near*/0)
         {
             continue;
         }
@@ -77,15 +77,18 @@ float cam_err_calculation(void)
         int angel_right = 0;
         
         // 避免除零
-        int denom_left = (int)persp_ly[y] - (int)params->camwf;
-        int denom_right = (int)persp_ry[y] - (int)params->camwf;
+//        int denom_left = (int)persp_ly[y] - (int)params->camwf;
+//        int denom_right = (int)persp_ry[y] - (int)params->camwf;
+				
+				int denom_left = y - (int)params->camwf;
+        int denom_right = y - (int)params->camwf;
         
         if (denom_left != 0) {
-            angel_left = 125 * ((int)persp_lx[y] - (int)params->camwl) / denom_left;
+            angel_left = 125 * ((int)l_border[y] - (int)params->camwl) / denom_left;
         }
         
         if (denom_right != 0) {
-            angel_right = 125 * ((int)persp_rx[y] - (int)params->camwr) / denom_right;
+            angel_right = 125 * ((int)r_border[y] - (int)params->camwr) / denom_right;
         }
         // ========== 原版算法结束 ==========
         
@@ -134,8 +137,8 @@ float cam_err_calculation(void)
         // 终止条件1:左斜率大于右斜率(某行已越过垂直线)
         // 终止条件2:该行太远(基于逆透视坐标判断)
         // 原逻辑: 0.4 * (persp_ly + persp_ry) > forward_far
-        if (AngleLeft > AngleRight || 
-            0.4f * ((int)persp_ly[y] + (int)persp_ry[y]) > cam->forward_far)
+        if (/*AngleLeft > AngleRight || 
+            0.4f * ((int)persp_ly[y] + (int)persp_ry[y]) > cam->forward_far*/0)
         {
             break;
         }

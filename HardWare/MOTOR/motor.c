@@ -16,7 +16,7 @@ void motor_init(void)
 {
     // 初始化电机控制引脚
     HAL_GPIO_WritePin(PH_LMOTOR_GPIO_Port, PH_LMOTOR_Pin, GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(PH_RMOTOR_GPIO_Port, PH_RMOTOR_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(PH_RMOTOR_GPIO_Port, PH_RMOTOR_Pin, GPIO_PIN_RESET);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
     motor_stop();
