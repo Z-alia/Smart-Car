@@ -174,11 +174,11 @@ int main(void)
 			DCMI_FrameState = 0;		// 清零标志位
 			
 			// 大津法全局二值化
-			//Global_Binarization();
+			Global_Binarization();
 			// 自适应阈值二值化
-			Adaptive_Binarization(119, 5); 
+			//Adaptive_Binarization(119, 5); 
 			// Sauvola自适应二值化
-			//Sauvola_Binarization(119, 0.5f, 32767.0f);
+			//Sauvola_Binarization(99, 0.5f, 32767.0f);
 
 			// wifi图传
 			TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
