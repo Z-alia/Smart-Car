@@ -4,6 +4,7 @@
 #include <math.h>   // fabsf
 #include "Element_recognition.h"
 #include "Binarization.h"
+#include "image.h"
 //本工程的PWM分辨率为1000
 #define tgtspd 100
 #define TL_tgtspd 100
@@ -33,14 +34,14 @@ void motor_run(Motor *motor_ptr, int16_t speed)
         if(speed >= 0)
         {
             motor_ptr->dir = 1; // 正转
-            HAL_GPIO_WritePin(PH_LMOTOR_GPIO_Port, PH_LMOTOR_Pin, GPIO_PIN_RESET);
+            HAL_GPIO_WritePin(PH_LMOTOR_GPIO_Port, PH_LMOTOR_Pin, GPIO_PIN_SET);
             __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, speed);
         }
         else if(speed < 0)
         {
             motor_ptr->dir = 0; // 反转
             speed = -speed;
-            HAL_GPIO_WritePin(PH_LMOTOR_GPIO_Port, PH_LMOTOR_Pin, GPIO_PIN_SET);
+            HAL_GPIO_WritePin(PH_LMOTOR_GPIO_Port, PH_LMOTOR_Pin, GPIO_PIN_RESET);
             __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, speed);
         }
     }
@@ -199,72 +200,74 @@ void run_follow_v0(PIDController* pid)//开环循迹
 	motor_run(&leftmotor,tgtspd + pid_calculate(pid) - (PID_pre_calculate(pid)/2));
 	motor_run(&rightmotor,tgtspd + pid_calculate(pid) + (PID_pre_calculate(pid)/2));
 }
-//图像到误差转换
-//void straight_error_get(PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta)
+////图像到误差转换
+//float straight_error_get(void
+////	PIDController *PID,struct lineinfo_s lineinfo[],struct watch_o *watch,float derta
+//		)
 //{
 //    float sum=0.0,temp=0.0; // 平均值，可后加加权
 //	
 //	
-//	//直道
-//	if(watch->Straight_flag==1)
-//	{
-//		uint16_t length=0;
-//	
-//    for(uint8_t i=1;i<30;i++)
-//    {
-//		if(lineinfo[i].mid!=0)
-//			length++;
-//       temp+=((float)lineinfo[i].mid);
-//    }
-//	sum+=(temp/length)*weight_dw;
-//	length=0;
-//	temp=0.0;
-//	for(uint8_t i=30;i<60;i++)
-//    {
-//	   if(lineinfo[i].mid!=0)
-//	   length++;
-//       temp+=((float)lineinfo[i].mid);
-//    }
-//	sum+=(temp/length)*weight_md;
-//	temp=0.0;
-//	length=0;
-//	for(uint8_t i=60;i<120;i++)
-//    {
-//	   if(lineinfo[i].mid!=0)
-//	   length++;
-//       temp+=((float)lineinfo[i].mid);
-//    }
-//	sum+=(temp/(float)length)*weight_up;
-//    PID->error = sum- (94.0+derta);
-//	
-//    }
+////	//直道
+////	if(watch->Straight_flag==1)
+////	{
+////		uint16_t length=0;
+////	
+////    for(uint8_t i=1;i<30;i++)
+////    {
+////		if(lineinfo[i].mid!=0)
+////			length++;
+////       temp+=((float)lineinfo[i].mid);
+////    }
+////	sum+=(temp/length)*weight_dw;
+////	length=0;
+////	temp=0.0;
+////	for(uint8_t i=30;i<60;i++)
+////    {
+////	   if(lineinfo[i].mid!=0)
+////	   length++;
+////       temp+=((float)lineinfo[i].mid);
+////    }
+////	sum+=(temp/length)*weight_md;
+////	temp=0.0;
+////	length=0;
+////	for(uint8_t i=60;i<120;i++)
+////    {
+////	   if(lineinfo[i].mid!=0)
+////	   length++;
+////       temp+=((float)lineinfo[i].mid);
+////    }
+////	sum+=(temp/(float)length)*weight_up;
+////    PID->error = sum- (94.0+derta);
+////	
+////    }
 //	//弯道
 //	
-//	else
-//	{
+////	else
+////	{
 //    //用原始中线计算误差
-//	int16_t top=watch->LastLine;
-//	int16_t middle=top-5;
-//	int16_t bottom=0;
-//	    if(top==0||middle==0)
-//    {
-//        PID->error=0;
-//        return;
-//    }
-//    for(int16_t i=bottom;i<middle;i++)
-//    {
-//       temp+=((float)lineinfo[i].mid);
-//    }
-//	sum+=((temp/middle)-94.0f)*weight_curve_up;
-//	temp=0.0;
-//	for(int16_t i=middle;i<=top;i++)
-//    {
-//       temp+=((float)lineinfo[i].mid);
-//    }
-//	sum+=(temp/5.0-94.0f)*weight_curve_down;
-//	sum=sum*110.0f/(float)top;
-//    PID->error = sum- derta;
-//	}
+////	int16_t top=watch->LastLine;
+////	int16_t middle=top-5;
+////	int16_t bottom=0;
+////	    if(top==0||middle==0)
+////    {
+////        PID->error=0;
+////        return;
+////    }
+////    for(int16_t i=bottom;i<middle;i++)
+////    {
+////       temp+=((float)lineinfo[i].mid);
+////    }
+////	sum+=((temp/middle)-94.0f)*weight_curve_up;
+////	temp=0.0;
+////	for(int16_t i=middle;i<=top;i++)
+////    {
+////       temp+=((float)lineinfo[i].mid);
+////    }
+////	sum+=(temp/5.0-94.0f)*weight_curve_down;
+////	sum=sum*110.0f/(float)top;
+////    PID->error = sum- derta;
+////	}
 //    
 //	/*
 //    //用预测中线计算误差
@@ -292,4 +295,32 @@ void run_follow_v0(PIDController* pid)//开环循迹
 //    PID->error = sum- (94.0+derta);
 //	}
 //	*/
+//	uint8_t length=0;
+//	for(uint8_t i=1;i<30;i++)
+//    {
+//		if(center_line[i]!=0)
+//		length++;
+//       temp+=center_line[i];
+//		
+//    }
+//	sum+=(temp/length)*weight_dw;
+//	length=0;
+//	temp=0.0;
+//	for(uint8_t i=30;i<60;i++)
+//    {
+//	   if(center_line[i]!=0)
+//	   length++;
+//       temp=center_line[i];
+//    }
+//	sum+=(temp/length)*weight_md;
+//	temp=0.0;
+//	length=0;
+//	for(uint8_t i=60;i<120;i++)
+//    {
+//	    if(center_line[i]!=0)
+//	   length++;
+//       temp=center_line[i];
+//    }
+//	sum+=(temp/(float)length)*weight_up;
+//    return sum- (94.0);
 //}

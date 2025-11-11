@@ -33,4 +33,5 @@ base_project/motor.o: ..\HardWare\MOTOR\motor.c ..\HardWare\MOTOR\motor.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\Core\Inc\tim.h ..\camera_process\Element_recognition.h \
-  ..\Base\type_def.h ..\camera_process\Binarization.h
+  ..\Base\type_def.h ..\camera_process\Binarization.h \
+  ..\camera_process\image.h ..\Base\control\control.h

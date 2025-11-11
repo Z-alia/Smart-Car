@@ -46,6 +46,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+PIDController PID_image;
+PIDController PID_speed;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -146,12 +148,12 @@ int main(void)
 //	TOF_SetOutputMode(0);
 //	TOF_SetTriggerMode(0);
   /*----------------------------控制初始化--------------------------------------*/
-  control_init_cascade_pid_config(&cascade_pid_config,
+	control_init_cascade_pid_config(&cascade_pid_config,
                                   5.0f, 0.0f, 0.0f,   // 左轮PID参数
                                   5.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
-  control_init(CONTROL_SCHEME_CASCADE_PID);//选择控制模式
-
-
+	control_init(CONTROL_SCHEME_CASCADE_PID);//选择控制模式
+//	pid_init(&PID_image,1.0,0,0,0);
+//	pid_init(&PID_speed,1.0,0,0,0);
 
 	// 启动编码器模式（不使用中断，仅计数）
     HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
@@ -159,6 +161,7 @@ int main(void)
 
     // 启动 TIM15 中断
     HAL_TIM_Base_Start_IT(&htim15);
+	HAL_TIM_Base_Start_IT(&htim16);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -181,20 +184,23 @@ int main(void)
 			//Sauvola_Binarization(99, 0.5f, 32767.0f);
 
 			// wifi图传
-			TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
+			//TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
 
 			// 显示摄像头图像
 			//显示原图像
 			show_ov2640_image_from_ptr_array(0, 120, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
 			//显示二值化扫线图
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
-			//LCD_DisplayNumber(250, 250, 1, 3); // 显示当前帧率
+			
 			    
 			image_process();
 			
 		}
+		LCD_DisplayNumber(250, 250, control.left_speed, 3); 
+		LCD_DisplayNumber(250, 220, control.right_speed, 3); 
+		LCD_DisplayDecimals(220,150,straight_error_get(),3,1);
     /*---------------------------以下为控制区域--------------------------------*/
-		//control_execute(100);
+		control_execute(0.5);
 		
 		motor_run(&leftmotor,control.left_target_speed);
 		motor_run(&rightmotor,control.right_target_speed);
@@ -211,7 +217,8 @@ int main(void)
 //		LCD_DisplayDecimals(150, 200, control.right_speed, 3,1);
 		
 //	//4.电机
-		//motor_run(&rightmotor,200);
+//		motor_run(&leftmotor,100);
+//		motor_run(&rightmotor,100);
 //	//5.wifi
 //		TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
     //tof test
@@ -335,17 +342,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   // 检查是否是TIM15的更新事件中断
   if (htim->Instance == TIM15)
   {
-    // tim15为100ms中断一次
-    //进行编码器积分
+    //进行陀螺仪数据收集和积分
+    ICM42688P_ReadIMUData(&imu_data);
+    angal_integeral(imu_data.gyro_z);
+	//watch.Red_obstacle_flag=TOF_ReadDistanceFiltered();
+  }
+  if (htim->Instance == TIM16)
+  {
+	  //10ms
+	  //进行编码器积分
   control.lencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim2);//左编码器计数
   control.rencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim5);//右编码器计数
     distant_integeral(get_speed());
     control.lencoder_count_last = control.lencoder_count;
     control.rencoder_count_last = control.rencoder_count;
-    //进行陀螺仪数据收集和积分
-    ICM42688P_ReadIMUData(&imu_data);
-    angal_integeral(imu_data.gyro_z);
-	watch.Red_obstacle_flag=TOF_ReadDistanceFiltered();
   }
 }
 /* USER CODE END 4 */

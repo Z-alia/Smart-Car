@@ -18,6 +18,10 @@ extern "C" {
 #define Encoder_PPR 256.0f*4.0f //编码器每转脉冲数 256线 四倍频
 #define IMAGE_H 120  // 图像高度
 #define IMAGE_W 188  // 图像宽度
+//获取误差
+#define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
+#define weight_md 0.45
+#define weight_dw 0.40
 
 //车身状态结构体(整合编码器和电机状态)
 typedef struct
@@ -295,7 +299,7 @@ void cam_err_init(int near_line, int far_line, int forward_near, int forward_far
 // 计算图像误差(直接使用image模块的l_border/r_border数据)
 // 返回:横向偏差误差,范围约[-200, 200]
 float cam_err_calculation(void);
-
+float straight_error_get(void);
 // ==================== 完整控制链路接口 ====================
 
 /**

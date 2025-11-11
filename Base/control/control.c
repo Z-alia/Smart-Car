@@ -8,6 +8,7 @@
 #include <math.h>
 #include <string.h>
 #include "image.h"
+#include "motor.h"
 /*-----------------工具函数---------------------*/
 int my_abs_c(int value)
 {
@@ -23,7 +24,38 @@ control_t control = {0};
 CamErrData g_cam_err_data = {0};
 
 // ==================== 摄像头误差计算实现(直接使用image数据) ====================
-
+float straight_error_get(void)
+{
+	float sum=0.0,temp=0.0; // 平均值，可后加加权
+	uint8_t length=0;
+	for(uint8_t i=1;i<30;i++)
+    {
+		if(center_line[i]!=0)
+		length++;
+       temp+=center_line[i];
+		
+    }
+	sum+=(temp/length)*weight_dw;
+	length=0;
+	temp=0.0;
+	for(uint8_t i=30;i<60;i++)
+    {
+	   if(center_line[i]!=0)
+	   length++;
+       temp+=center_line[i];
+    }
+	sum+=(temp/length)*weight_md;
+	temp=0.0;
+	length=0;
+	for(uint8_t i=60;i<120;i++)
+    {
+	    if(center_line[i]!=0)
+	   length++;
+       temp+=center_line[i];
+    }
+	sum+=(temp/(float)length)*weight_up;
+    return sum- (94.0);
+}
 /**
  * @brief 摄像头误差计算函数(完全恢复原版算法)
  * @return 横向偏差误差值(带非线性增益)
@@ -415,8 +447,8 @@ static void cascade_pid_control(float v_forward,
 {
     // 外环:图像误差 → 差速目标
     // 调用cam_err_calculation()获取误差(仿照原逻辑)
-    float err = cam_err_calculation();
-    
+    //float err = cam_err_calculation();
+    float err = straight_error_get();
     // 【可选】非线性增益处理(仿照cam_err_calculation的二次项)
     // output = (1 + K·err²)·err, 小误差线性,大误差增强
     float err_processed = err;
@@ -434,7 +466,7 @@ static void cascade_pid_control(float v_forward,
     float err_to_omega = g_control.cascade_diff_params.speed_ratio; // 误差→角速度增益
     
     // 角速度 = 误差增益 × 归一化误差
-    float omega = err_to_omega * (err_processed / 1000.0f);
+    float omega = err_to_omega * (err_processed );
     
     // 差速 = 角速度 × 半轮距 (根据运动学: vL=v-ω·L, vR=v+ω·L)
     float speed_diff = omega * half_track;
