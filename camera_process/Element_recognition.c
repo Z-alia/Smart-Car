@@ -24,37 +24,7 @@ int abs(int value)
 */
 void find_angle_left_down(int*angle_x,int*angle_y)
 {
-    /*
-    //生长方向
-    int x=*angle_x, y=*angle_y;
-    while(Grayscale[119-y][x]!=0&&y<110)
-    {
-        y++;
-    }
-    while(Grayscale[119-y][x+1]!=255&&x<187)
-    {
-        x++;
-    }
-    while(y>40)
-    {
-
-        if(dir_l[y]==4&&dir_l[y-1]==5)//向上
-        {
-            break;
-        }
-        else if(dir_l[y]==4)
-        {
-            y--;
-        }
-        else if(dir_l[y]==5)//右上
-        {
-            y++;
-        }
-        
-    }
-    *angle_x=x;
-    *angle_y=y;
-    */
+    
     // 安全实现：严格先判范围再访问像素，去除魔法数，使用 image_w/image_h
     int x = *angle_x;
     int y = *angle_y;

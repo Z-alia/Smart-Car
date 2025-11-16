@@ -28,6 +28,7 @@ typedef struct {
     float prev_error;   // 上次误差(用于微分)
     float integral_max; // 积分限幅
     float output_max;   // 输出限幅
+    float error_threshold; // 积分分离阈值(误差大于此值时只用PD控制)
 } PID_Controller;
 
 // ==================== 串级PID控制器结构体 ====================
@@ -56,6 +57,9 @@ typedef struct {
     float vR_target_last;   // 右轮上次目标速度(用于渐变限制)
     float pwm_L;            // 左轮PWM输出
     float pwm_R;            // 右轮PWM输出
+    
+    // 前馈补偿参数 (上坡/摩擦力对抗)
+    float feedforward_pwm;  // 前馈基准PWM (建议10~50, 对抗重力和摩擦)
     
 } CascadePID_Controller;
 
@@ -182,6 +186,32 @@ void cascade_pid_set_speed_params(float kp, float ki, float kd);
  * @param max_diff_speed 最大差速(m/s), 建议0.05~0.2
  */
 void cascade_pid_set_limits(float max_omega, float max_diff_speed);
+
+/**
+ * @brief 设置前馈补偿PWM值 (组合方案核心参数)
+ * @param feedforward_pwm 基准PWM值, 建议10~50
+ * @note 作用: 对抗重力和摩擦力, 提高上坡能力
+ * @note 调试方法:
+ *       - 上坡无力: 逐步增大 (25 -> 30 -> 35)
+ *       - 平路过快: 逐步减小 (25 -> 20 -> 15)
+ *       - 默认值: 25.0f
+ */
+void cascade_pid_set_feedforward(float feedforward_pwm);
+
+/**
+ * @brief 获取当前前馈补偿值
+ * @return 当前的前馈PWM值
+ */
+float cascade_pid_get_feedforward(void);
+
+/**
+ * @brief 设置速度环积分分离阈值
+ * @param error_threshold 误差阈值(m/s), 建议0.05~0.2
+ * @note 误差 > 阈值时只用PD控制 (快速响应)
+ * @note 误差 <= 阈值时用完整PID (精确控制)
+ * @note 默认值: 0.1 m/s
+ */
+void cascade_pid_set_integral_separation_threshold(float error_threshold);
 
 /**
  * @brief 获取当前控制器状态(调试用)

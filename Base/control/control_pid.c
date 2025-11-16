@@ -38,8 +38,18 @@ static float pid_calculate(PID_Controller* pid, float error)
     float derivative = error - pid->prev_error;
     pid->prev_error = error;
     
-    // 计算PID输出(未限幅)
-    float output_unlimited = pid->kp * error + pid->ki * pid->integral + pid->kd * derivative;
+    // 积分分离: 误差大时只用PD控制，误差小时才加入积分
+    // 优点: 大误差快速响应，小误差精确控制
+    float abs_error = (error >= 0) ? error : -error;
+    float output_unlimited;
+    
+    if (abs_error > pid->error_threshold) {
+        // 误差大: 只用PD控制 (快速响应)
+        output_unlimited = pid->kp * error + pid->kd * derivative;
+    } else {
+        // 误差小: 完整PID控制 (精确消除静差)
+        output_unlimited = pid->kp * error + pid->ki * pid->integral + pid->kd * derivative;
+    }
     
     // 输出限幅
     float output = clamp(output_unlimited, -pid->output_max, pid->output_max);
@@ -70,7 +80,8 @@ static void pid_reset(PID_Controller* pid)
  */
 static void pid_init(PID_Controller* pid, 
                      float kp, float ki, float kd,
-                     float integral_max, float output_max)
+                     float integral_max, float output_max,
+                     float error_threshold)
 {
     if (!pid) return;
     pid->kp = kp;
@@ -80,6 +91,7 @@ static void pid_init(PID_Controller* pid,
     pid->prev_error = 0.0f;
     pid->integral_max = integral_max;
     pid->output_max = output_max;
+    pid->error_threshold = error_threshold;
 }
 
 // ==================== 对外接口实现 ====================
@@ -98,6 +110,9 @@ void cascade_pid_init(float half_track,
     g_cascade_pid.max_omega = 15.0f;        // 最大角速度15 rad/s (约860°/s) - 保留用于监控
     g_cascade_pid.max_diff_speed = 2.0f;    // 最大差速2.0 m/s (允许较大转弯)
     
+    // 前馈补偿参数 (默认25, 可通过接口调节)
+    g_cascade_pid.feedforward_pwm = 25.0f;  // 对抗重力和摩擦力的基准PWM
+    
     // 初始化图像环PID
     // 图像误差范围约±100(像素偏差), 输出为差速(m/s)
     pid_init(&g_cascade_pid.image_pid,
@@ -105,25 +120,28 @@ void cascade_pid_init(float half_track,
              image_ki,   // 建议0.0~0.001
              image_kd,   // 建议0.0~0.005
              50.0f,      // 积分限幅
-             g_cascade_pid.max_diff_speed);  // 输出限幅=最大差速
+             g_cascade_pid.max_diff_speed,  // 输出限幅=最大差速
+             10.0f);     // 积分分离阈值(图像误差>10时只用PD)
     
     // 初始化左轮速度环PID
     // 速度误差范围约±2.0 m/s, 输出为PWM(±1000)
-    // 关键: 降低积分限幅防止饱和
+    // 关键: 降低积分限幅防止饱和, 设置积分分离阈值
     pid_init(&g_cascade_pid.left_speed_pid,
              speed_kp,   // 建议10~50
              speed_ki,   // 建议0.1~2.0
              speed_kd,   // 建议0.0~1.0
              50.0f,      // 积分限幅(降低防止饱和)
-             1000.0f);   // 输出限幅(PWM)
+             1000.0f,    // 输出限幅(PWM)
+             0.1f);      // 积分分离阈值(速度误差>0.1m/s时只用PD)
     
     // 初始化右轮速度环PID (参数与左轮相同)
     pid_init(&g_cascade_pid.right_speed_pid,
              speed_kp,
              speed_ki,
              speed_kd,
-             50.0f,      // 积分限幅(降低防止饱和)
-             1000.0f);
+             50.0f,      // 积分限幅
+             1000.0f,    // 输出限幅
+             0.1f);      // 积分分离阈值
 }
 
 /**
@@ -223,11 +241,16 @@ void cascade_pid_inner_loop(float vL_actual,
     // 正误差 (实际过慢) → 正PWM (加速)
     // 负误差 (实际过快) → 负PWM (减速/反转)
     float vL_error = g_cascade_pid.vL_target - vL_actual;
-    g_cascade_pid.pwm_L = pid_calculate(&g_cascade_pid.left_speed_pid, vL_error);
+    float pid_L = pid_calculate(&g_cascade_pid.left_speed_pid, vL_error);
     
     // 右轮速度环PID
     float vR_error = g_cascade_pid.vR_target - vR_actual;
-    g_cascade_pid.pwm_R = pid_calculate(&g_cascade_pid.right_speed_pid, vR_error);
+    float pid_R = pid_calculate(&g_cascade_pid.right_speed_pid, vR_error);
+    
+    // 前馈补偿 + PID修正 (组合方案核心)
+    // 基准PWM对抗重力/摩擦, PID修正误差
+    g_cascade_pid.pwm_L = g_cascade_pid.feedforward_pwm + pid_L;
+    g_cascade_pid.pwm_R = g_cascade_pid.feedforward_pwm + pid_R;
     
     // 直接输出PWM (带符号)
     // 正值 = 正转, 负值 = 反转
@@ -291,7 +314,32 @@ void cascade_pid_set_limits(float max_omega, float max_diff_speed)
 }
 
 /**
- * @brief 获取当前控制器状态
+ * @brief 设置前馈补偿PWM值
+ */
+void cascade_pid_set_feedforward(float feedforward_pwm)
+{
+    g_cascade_pid.feedforward_pwm = feedforward_pwm;
+}
+
+/**
+ * @brief 获取当前前馈补偿值
+ */
+float cascade_pid_get_feedforward(void)
+{
+    return g_cascade_pid.feedforward_pwm;
+}
+
+/**
+ * @brief 设置速度环积分分离阈值
+ */
+void cascade_pid_set_integral_separation_threshold(float error_threshold)
+{
+    g_cascade_pid.left_speed_pid.error_threshold = error_threshold;
+    g_cascade_pid.right_speed_pid.error_threshold = error_threshold;
+}
+
+/**
+ * @brief 获取控制器状态
  */
 CascadePID_Controller* cascade_pid_get_state(void)
 {
