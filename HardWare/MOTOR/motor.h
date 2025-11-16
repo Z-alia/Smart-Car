@@ -2,9 +2,9 @@
 #define __MOTOR_H
 #include "stdint.h"
 
-#define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
-#define weight_md 0.45
-#define weight_dw 0.40
+//#define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
+//#define weight_md 0.45
+//#define weight_dw 0.40
 #define weight_curve_up 1.00
 #define weight_curve_down 0.00
 // 单电机控制结构体

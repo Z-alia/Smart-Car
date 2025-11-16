@@ -40,6 +40,7 @@
 #include "ICM-42688P.h"
 #include "motor.h"
 #include "tof.h"
+#include "control_pid.h"
 //#include ""
 //#include "ICM42688P_Simple.h"
 /* USER CODE END Includes */
@@ -145,13 +146,12 @@ int main(void)
 	motor_init();
 	TR_driver_init();
 //	TOF_Init();
-//	TOF_SetOutputMode(0);
+//	TOF_SetOutputMode(1);
 //	TOF_SetTriggerMode(0);
   /*----------------------------控制初始化--------------------------------------*/
-	control_init_cascade_pid_config(&cascade_pid_config,
-                                  5.0f, 0.0f, 0.0f,   // 左轮PID参数
-                                  5.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
-	control_init(CONTROL_SCHEME_CASCADE_PID);//选择控制模式
+	cascade_pid_init(0.008f,
+                                  0.25f, 0.0f, 0.0f,   // 图像PID参数
+                                 50.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
 //	pid_init(&PID_image,1.0,0,0,0);
 //	pid_init(&PID_speed,1.0,0,0,0);
 
@@ -196,14 +196,15 @@ int main(void)
 			image_process();
 			
 		}
-		LCD_DisplayNumber(250, 250, control.left_speed, 3); 
-		LCD_DisplayNumber(250, 220, control.right_speed, 3); 
+		LCD_DisplayDecimals(220, 190, control.left_speed, 3,5); 
+		LCD_DisplayDecimals(220, 170, control.right_speed, 3,5); 
 		LCD_DisplayDecimals(220,150,straight_error_get(),3,1);
     /*---------------------------以下为控制区域--------------------------------*/
-		control_execute(0.5);
 		
-		motor_run(&leftmotor,control.left_target_speed);
-		motor_run(&rightmotor,control.right_target_speed);
+		
+		//电机控制调用
+//		motor_run(&leftmotor,control.left_target_speed);
+//		motor_run(&rightmotor,control.right_target_speed);
 //	/*---------------imutest-----------------*/
 //	  //ICM42688P_ReadIMUData(&imu_data);
 //	  LCD_DisplayDecimals(50,200,imu_data.gyro_z,3,2);
@@ -342,20 +343,38 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   // 检查是否是TIM15的更新事件中断
   if (htim->Instance == TIM15)
   {
+	//100ms
     //进行陀螺仪数据收集和积分
     ICM42688P_ReadIMUData(&imu_data);
     angal_integeral(imu_data.gyro_z);
 	//watch.Red_obstacle_flag=TOF_ReadDistanceFiltered();
+	 //图像环计算
+	 //cascade_pid_outer_loop(1.5f); //目标速度设定
   }
   if (htim->Instance == TIM16)
   {
 	  //10ms
 	  //进行编码器积分
-  control.lencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim2);//左编码器计数
-  control.rencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim5);//右编码器计数
+  control.lencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim5);//左编码器计数
+  control.rencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim2);//右编码器计数
     distant_integeral(get_speed());
     control.lencoder_count_last = control.lencoder_count;
     control.rencoder_count_last = control.rencoder_count;
+	  //速度环计算
+	  float pwm_L, pwm_R;
+    cascade_pid_control(2.5f,control.left_speed,control.right_speed,&pwm_L, &pwm_R);
+//    // 使用上次图像环计算的速度目标（只执行速度环PID）
+//    cascade_pid_inner_loop(control.left_speed,
+//                          control.right_speed,
+//                          &pwm_L, &pwm_R);
+    
+    // 输出到电机
+    control.left_target_speed = (int16_t)(pwm_L);
+    
+    control.right_target_speed = (int16_t)(pwm_R);
+    
+	  motor_run(&leftmotor,control.left_target_speed);
+		motor_run(&rightmotor,control.right_target_speed);
   }
 }
 /* USER CODE END 4 */

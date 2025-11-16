@@ -11,7 +11,7 @@ extern "C" {
 #define Radius 0.0034f //车轮半径，单位m
 #define Half_track 0.008f //半轮距，单位m
 #define Speed_ratio 10.0f //差速映射比例系数
-#define Max_diff_speed 1.5f //最大差速(m/s)
+#define Max_diff_speed 100.0f //最大差速(m/s)
 #define Smooth_alpha 0.20f //平滑系数 0..1
 #define Integral_max 100.0f //积分限幅
 #define Output_max 1000.0f //输出限幅 (PWM)
@@ -19,9 +19,9 @@ extern "C" {
 #define IMAGE_H 120  // 图像高度
 #define IMAGE_W 188  // 图像宽度
 //获取误差
-#define weight_up 0.15//下部为0-30 中部为30-60 上部为60-120
-#define weight_md 0.45
-#define weight_dw 0.40
+#define weight_up 0.05//下部为0-30 中部为30-60 上部为60-120
+#define weight_md 0.20
+#define weight_dw 0.75
 
 //车身状态结构体(整合编码器和电机状态)
 typedef struct

@@ -52,6 +52,7 @@
 "base_project\motor.o"
 "base_project\control.o"
 "base_project\integral.o"
+"base_project\control_pid.o"
 "base_project\tof.o"
 --strict --scatter "base_project\base_project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols

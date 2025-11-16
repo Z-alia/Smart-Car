@@ -1182,6 +1182,16 @@
               <FileType>5</FileType>
               <FilePath>..\Base\control\integral.h</FilePath>
             </File>
+            <File>
+              <FileName>control_pid.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Base\control\control_pid.c</FilePath>
+            </File>
+            <File>
+              <FileName>control_pid.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Base\control\control_pid.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
