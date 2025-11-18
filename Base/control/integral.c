@@ -62,7 +62,7 @@ void distant_integeral(float present_speed)  //路程积分
 {
     if(distance_integral.integeral_flag==1)
     {
-        distance_integral.integeral_data+=present_speed*0.1f;//100ms积分一次实际路程应为1/10速度
+        distance_integral.integeral_data+=present_speed;//10ms积分一次实际路程应为1/10速度,单位为cm
         if(distance_integral.integeral_data>distance_integral.integeral_Thres)
         {
             //distance_integral.integeral_data=0;

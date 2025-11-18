@@ -116,5 +116,63 @@ extern struct watch_o watch;
 #define image_h	120//图像高度
 #define image_w	188//图像宽度
 
+//环岛
+/*函数名称：void find_angle_left_down(int*angle_x,int*angle_y)
+功能说明：抓住左上第二角点
+*/
+void find_angle_left_down(int*angle_x,int*angle_y);
+/*函数名称：void left_ring_first_angle()
+功能说明：左环第一角点
+*/
+void left_ring_first_angle();
+/*函数名称：void right_ring_first_angle()
+左环二次确认函数
+*/
+void left_ring_confirm();
+
+/*函数名称：void left_ring_circular_arc()
+功能说明：左环上凸弧扫描函数
+*/
+void left_ring_circular_arc();
+
+/*函数名称：void left_ring_second_angle()
+功能说明：左环第二角点检测函数
+*/
+void left_ring_second_angle();
+
+/*函数名称：void left_ring_begin_turn()
+功能说明：左环开始转向状态机函数
+*/
+void left_ring_begin_turn();
+
+/*函数名称：left_ring_prepare_out()
+功能说明：小车角度积分完成，准备出环
+*/
+void left_ring_prepare_out();//第340帧
+
+/*函数名称：left_ring_out_angle()
+功能说明：检测出环时右角点位置
+*/
+void left_ring_out_angle();
+/*函数名称：left_ring_out_loop_turn()
+功能说明：出左环开始左转(进入圆环与直线交界处) outloop=1
+*/
+void left_ring_out_loop_turn();
+/*函数名称：left_ring_out_loop()
+功能说明：右侧为直线时直行     10.29 k=1  inloop=5
+*/
+void left_ring_out_loop();
+/*函数名称：left_ring_straight_out_angle()
+功能说明：检测出左环进入直线后左侧角点     
+*/
+void left_ring_straight_out_angle();
+/*函数名称：left_ring_complete_out()
+功能说明：检测完全出环     
+*/
+void left_ring_complete_out();
+
+/*-----------------补线--------------------*/
+void left_ring_linefix();
+
 
 #endif /* CODE_CAMERA_PROCESS_ELEMENT_RECOGNITION_H_ */

@@ -35,4 +35,4 @@ base_project/element_recognition.o: \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
   ..\Base\type_def.h ..\camera_process\image.h ..\Base\control\control.h \
-  ..\camera_process\Binarization.h
+  ..\camera_process\Binarization.h ..\Base\control\integral.h

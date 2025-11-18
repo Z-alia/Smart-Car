@@ -108,7 +108,7 @@ void cascade_pid_init(float half_track,
     // 运动学参数
     g_cascade_pid.half_track = half_track;
     g_cascade_pid.max_omega = 15.0f;        // 最大角速度15 rad/s (约860°/s) - 保留用于监控
-    g_cascade_pid.max_diff_speed = 2.0f;    // 最大差速2.0 m/s (允许较大转弯)
+    g_cascade_pid.max_diff_speed = 5.0f;    // 最大差速5.0 m/s (允许较大转弯)
     
     // 前馈补偿参数 (默认25, 可通过接口调节)
     g_cascade_pid.feedforward_pwm = 25.0f;  // 对抗重力和摩擦力的基准PWM

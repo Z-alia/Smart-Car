@@ -5,6 +5,7 @@
 #include "image.h"
 #include "morph_binary_bitpacked.h"
 #include "Binarization.h"
+#include "Element_recognition.h"
 
 // --- IMO 数组颜色映射说明 ---
 // imo 数组中的特定值在 GUI 中会被渲染成不同的颜色，用于可视化。
@@ -626,12 +627,12 @@ void draw_edge()
         int col = points_r[i][0];
         imo[row][col] = 2; // 右边界点标记为2
     }
-    // 显示中线
+    // 显示中线(补线)
     for (int row = 0; row < image_h; row++) {
 		// 这里y索引要颠倒 因为最终左、右、中线是从底部向上 而imo是从顶部向下
         imo[image_h-1-row][center_line[row]] = 3;
-		imo[image_h-1-row][l_border[row]] = 4;
-		imo[image_h-1-row][r_border[row]] = 5;
+		imo[image_h-1-row][watch.fl_border[row]] = 4;
+		imo[image_h-1-row][watch.fr_border[row]] = 5;
 
     }
 }
@@ -948,7 +949,7 @@ if (get_start_point(image_h - 3)||get_start_point(image_h - 5)||get_start_point(
     //求中线
 	for (i = Hightest; i < image_h; i++)
 	{
-		center_line[i] = (l_border[i] + r_border[i]) >> 1;//求中线
+		center_line[i] = (watch.fl_border[i] + watch.fr_border[i]) >> 1;//求中线
 	}
     //显示边线
 	draw_edge();

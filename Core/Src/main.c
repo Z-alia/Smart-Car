@@ -53,7 +53,7 @@ PIDController PID_speed;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+uint8_t receive_flag;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -151,7 +151,7 @@ int main(void)
   /*----------------------------控制初始化--------------------------------------*/
 	cascade_pid_init(0.008f,
                                   0.25f, 0.0f, 0.0f,   // 图像PID参数
-                                 50.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
+                                 100.0f, 0.0f, 40.0f); // 右轮PID参数 // PID参数可根据需要调整
 //	pid_init(&PID_image,1.0,0,0,0);
 //	pid_init(&PID_speed,1.0,0,0,0);
 
@@ -183,9 +183,6 @@ int main(void)
 			// Sauvola自适应二值化
 			//Sauvola_Binarization(99, 0.5f, 32767.0f);
 
-			// wifi图传
-			//TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
-
 			// 显示摄像头图像
 			//显示原图像
 			show_ov2640_image_from_ptr_array(0, 120, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
@@ -195,10 +192,45 @@ int main(void)
 			    
 			image_process();
 			
+			// wifi图传
+			//TR_Write_Image(120, 188, (unsigned char *)imo);
+			
 		}
 		LCD_DisplayDecimals(220, 190, control.left_speed, 3,5); 
 		LCD_DisplayDecimals(220, 170, control.right_speed, 3,5); 
 		LCD_DisplayDecimals(220,150,straight_error_get(),3,1);
+		LCD_DisplayDecimals(220,130,receive_flag,2,0);
+		
+		LCD_DisplayDecimals(200,20,watch.InLoop,1,0);
+		LCD_DisplayDecimals(200,40,watch.InLoopAngleL,1,0);
+		LCD_DisplayDecimals(200,60,watch.InLoopCirc,1,0);
+		LCD_DisplayDecimals(200,80,watch.InLoopAngle2_x,1,0);
+		LCD_DisplayDecimals(200,100,watch.InLoopAngle2_y,1,0);
+		
+		
+		
+		//日志回传
+		TR_Log_AddByte(watch.InLoop);
+		TR_Log_AddByte(watch.InLoopAngle2);
+		TR_Log_AddByte(watch.InLoopAngle2_x);
+		TR_Log_AddByte(watch.InLoopAngle2_y);
+		TR_Log_AddByte(watch.InLoopAngleL);
+		TR_Log_AddByte(watch.InLoopCirc);
+		TR_Send_Log();
+		TR_Log_Clear();
+	/*----------------------------图像测试-----------------------------*/
+		left_ring_first_angle();
+		left_ring_circular_arc();
+		left_ring_second_angle();
+		left_ring_begin_turn();
+		left_ring_prepare_out();
+		left_ring_out_angle();
+		left_ring_out_loop_turn();
+		left_ring_out_loop();
+		left_ring_straight_out_angle();
+		left_ring_complete_out();
+		
+		left_ring_linefix();
     /*---------------------------以下为控制区域--------------------------------*/
 		
 		
@@ -344,6 +376,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM15)
   {
 	//100ms
+	  if(watch.InLoop==2)
+		  distance_integral.integeral_flag=1;
+	  if(distance_integral.integeral_data>150)  
+	  {
+		  watch.InLoop=10;
+		  distance_integral.integeral_flag=0;
+	  }
+	//TR_Receive_Packet(&receive_flag,16,1);
     //进行陀螺仪数据收集和积分
     ICM42688P_ReadIMUData(&imu_data);
     angal_integeral(imu_data.gyro_z);
@@ -362,7 +402,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     control.rencoder_count_last = control.rencoder_count;
 	  //速度环计算
 	  float pwm_L, pwm_R;
-    cascade_pid_control(2.5f,control.left_speed,control.right_speed,&pwm_L, &pwm_R);
+    cascade_pid_control(2.0f,control.left_speed,control.right_speed,&pwm_L, &pwm_R);
 //    // 使用上次图像环计算的速度目标（只执行速度环PID）
 //    cascade_pid_inner_loop(control.left_speed,
 //                          control.right_speed,

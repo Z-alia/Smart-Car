@@ -70,6 +70,25 @@ void TR_Send_Log_Standard(void);                        // 发送日志(标准�
 void TR_Send_Log_Byte(uint8_t data);                   // 快速发送单字节
 void TR_Send_Log_String(const char *str);              // 快速发送字符串
 
+/* 函数声明 - 数据接收(使用HAL SPI) */
+void IR_Read_byte_4000(unsigned char *dat);            // 读取固定4000字节
+void IR_Read_byte(unsigned char *dat, unsigned short len);  // 读取指定长度数据
+unsigned short TR_Receive_Packet(unsigned char *out_buf, unsigned short max_len, unsigned long timeout_ms);  // 接收完整帧
+
+/* 函数声明 - 接收数据解析(从缓冲区按索引读取不同类型) */
+int8_t TR_Read_Uint8(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint8_t *out_value);
+int8_t TR_Read_Uint16(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint16_t *out_value);
+int8_t TR_Read_Uint32(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint32_t *out_value);
+int8_t TR_Read_Int8(const unsigned char *buf, unsigned short buf_len, unsigned short index, int8_t *out_value);
+int8_t TR_Read_Int16(const unsigned char *buf, unsigned short buf_len, unsigned short index, int16_t *out_value);
+int8_t TR_Read_Int32(const unsigned char *buf, unsigned short buf_len, unsigned short index, int32_t *out_value);
+int8_t TR_Read_Float(const unsigned char *buf, unsigned short buf_len, unsigned short index, float *out_value);
+int8_t TR_Read_Uint16_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint16_t *out_value);
+int8_t TR_Read_Uint32_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint32_t *out_value);
+int8_t TR_Read_Int16_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, int16_t *out_value);
+int8_t TR_Read_Int32_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, int32_t *out_value);
+int8_t TR_Read_Float_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, float *out_value);
+
 /* 延时函数声明 - 需要在tim.c中实现或使用HAL_Delay */
 void delay_us(uint32_t us);
 

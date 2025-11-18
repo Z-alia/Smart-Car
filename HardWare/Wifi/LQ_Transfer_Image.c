@@ -610,3 +610,420 @@ void TR_Send_Log_String(const char *str)
     TR_Log_AddString(str);
     TR_Send_Log();
 }
+
+/**
+ * ---------------------------------------------------------------------------
+ * 接收相关函数 (最小侵入实现，使用HAL SPI)
+ * ---------------------------------------------------------------------------
+ */
+
+/**
+ * @brief  从模块读取固定4000字节数据
+ * @param  dat: 目标缓冲区，需至少4000字节
+ * @note   与发送对称，实现分125次、每次32字节接收
+ */
+void IR_Read_byte_4000(unsigned char *dat)
+{
+    unsigned char buff[32];
+
+    TR_wait_startSign(200);  // 等待模块开始
+    TR_CS_L;
+
+    for(int fre = 0; fre < 125; fre++)
+    {
+        memset(buff, 0, sizeof(buff));
+        HAL_SPI_Receive(&TR_SPI, buff, 32, 100);
+        memcpy(&dat[32 * fre], buff, 32);
+        delay_us(53);
+    }
+
+    delay_us(50);
+    TR_CS_H;
+    TR_wait_endSign(200);
+}
+
+
+/**
+ * @brief  从模块读取指定长度的数据(小于等于4000)
+ * @param  dat: 目标缓冲区
+ * @param  len: 要读取的字节数
+ * @note   按32字节分包读取，不足32字节的部分会用0填充接收缓冲
+ */
+void IR_Read_byte(unsigned char *dat, unsigned short len)
+{
+    unsigned short i;
+    unsigned short fre = len / 32;   // 完整包数量
+    unsigned short rem = len % 32;   // 剩余字节数
+    unsigned char buff[32];
+
+    TR_wait_startSign(200);
+    TR_CS_L;
+
+    for(i = 0; i < fre; i++)
+    {
+        memset(buff, 0, sizeof(buff));
+        HAL_SPI_Receive(&TR_SPI, buff, 32, 100);
+        memcpy(&dat[32 * i], buff, 32);
+        delay_us(53);
+    }
+
+    if(rem != 0)
+    {
+        memset(buff, 0x00, 32);
+        HAL_SPI_Receive(&TR_SPI, buff, rem, 100);
+        memcpy(&dat[len - rem], buff, rem);
+    }
+
+    delay_us(50);
+    TR_CS_H;
+    TR_wait_endSign(200);
+}
+
+
+/**
+ * @brief  接收一帧数据，帧以FH开头，以FE结尾
+ * @param  out_buf: 输出缓冲区
+ * @param  max_len: 缓冲区最大长度
+ * @param  timeout_ms: 超时时间（毫秒）
+ * @return 实际接收的字节数，超时或出错返回0
+ *
+ * @note  该实现以最小侵入为原则：重复从模块读取32字节块，
+ *       按字节检查帧头(4字节)与帧尾(4字节)。该函数可能会阻塞，
+ *       直到接收到完整帧或超时。
+ */
+unsigned short TR_Receive_Packet(unsigned char *out_buf, unsigned short max_len, unsigned long timeout_ms)
+{
+    unsigned long start = HAL_GetTick();
+    unsigned int total = 0;
+    unsigned char chunk[32];
+    unsigned char window[8]; // 用于检查头尾
+    unsigned int i;
+    int found_header = 0;
+    unsigned int header_pos = 0;
+
+    if(out_buf == NULL || max_len == 0)
+        return 0;
+
+    memset(window, 0, sizeof(window));
+
+    while((HAL_GetTick() - start) < timeout_ms)
+    {
+        // 每次尝试读取32字节（或直到超时）
+        memset(chunk, 0, sizeof(chunk));
+        // 为避免长期阻塞，先判断模块是否有开始信号
+        if(TR_IO2 != GPIO_PIN_SET)
+        {
+            // 没有数据准备，短延时后重试
+            delay_us(500);
+            continue;
+        }
+
+        IR_Read_byte(chunk, 32);
+
+        for(i = 0; i < 32; i++)
+        {
+            // 滑动窗口维护最近8字节用于头尾检测
+            for(int k = 0; k < 7; k++)
+                window[k] = window[k+1];
+            window[7] = chunk[i];
+
+            if(!found_header)
+            {
+                // 检查是否出现帧头 FH[4]
+                if(window[4] == FH[0] && window[5] == FH[1] && window[6] == FH[2] && window[7] == FH[3])
+                {
+                    found_header = 1;
+                    // 将帧头也写入输出
+                    if(total + 4 <= max_len)
+                    {
+                        out_buf[total++] = FH[0];
+                        out_buf[total++] = FH[1];
+                        out_buf[total++] = FH[2];
+                        out_buf[total++] = FH[3];
+                    }
+                    else
+                    {
+                        return 0; // 空间不足
+                    }
+                }
+            }
+            else
+            {
+                // 已找到头，继续收集数据
+                if(total < max_len)
+                {
+                    out_buf[total++] = chunk[i];
+                }
+                else
+                {
+                    return 0; // 空间溢出
+                }
+
+                // 检查是否出现帧尾 FE[4]
+                if(total >= 4)
+                {
+                    unsigned int end_idx = total - 4;
+                    if(out_buf[end_idx] == FE[0] && out_buf[end_idx+1] == FE[1] && out_buf[end_idx+2] == FE[2] && out_buf[end_idx+3] == FE[3])
+                    {
+                        // 完整帧接收完成
+                        return (unsigned short)total;
+                    }
+                }
+            }
+        }
+
+        // 若未找到头，继续循环等待
+    }
+
+    // 超时未收到完整帧
+    return 0;
+}
+
+
+/**
+ * ---------------------------------------------------------------------------
+ * 接收数据解析函数 (从接收缓冲区读取不同数据类型)
+ * ---------------------------------------------------------------------------
+ */
+
+/**
+ * @brief  从接收缓冲区读取uint8_t
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 字节索引(从0开始)
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Uint8(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint8_t *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index >= buf_len)
+        return -1;
+    
+    *out_value = buf[index];
+    return 0;
+}
+
+/**
+ * @brief  从接收缓冲区读取uint16_t(小端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Uint16(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint16_t *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index + 1 >= buf_len)
+        return -1;
+    
+    *out_value = (uint16_t)buf[index] | ((uint16_t)buf[index + 1] << 8);
+    return 0;
+}
+
+/**
+ * @brief  从接收缓冲区读取uint32_t(小端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Uint32(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint32_t *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index + 3 >= buf_len)
+        return -1;
+    
+    *out_value = (uint32_t)buf[index] 
+               | ((uint32_t)buf[index + 1] << 8)
+               | ((uint32_t)buf[index + 2] << 16)
+               | ((uint32_t)buf[index + 3] << 24);
+    return 0;
+}
+
+/**
+ * @brief  从接收缓冲区读取int8_t
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Int8(const unsigned char *buf, unsigned short buf_len, unsigned short index, int8_t *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index >= buf_len)
+        return -1;
+    
+    *out_value = (int8_t)buf[index];
+    return 0;
+}
+
+/**
+ * @brief  从接收缓冲区读取int16_t(小端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Int16(const unsigned char *buf, unsigned short buf_len, unsigned short index, int16_t *out_value)
+{
+    uint16_t temp;
+    int8_t ret = TR_Read_Uint16(buf, buf_len, index, &temp);
+    if(ret == 0)
+        *out_value = (int16_t)temp;
+    return ret;
+}
+
+/**
+ * @brief  从接收缓冲区读取int32_t(小端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Int32(const unsigned char *buf, unsigned short buf_len, unsigned short index, int32_t *out_value)
+{
+    uint32_t temp;
+    int8_t ret = TR_Read_Uint32(buf, buf_len, index, &temp);
+    if(ret == 0)
+        *out_value = (int32_t)temp;
+    return ret;
+}
+
+/**
+ * @brief  从接收缓冲区读取float(小端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Float(const unsigned char *buf, unsigned short buf_len, unsigned short index, float *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index + 3 >= buf_len)
+        return -1;
+    
+    uint8_t *p = (uint8_t*)out_value;
+    for(int i = 0; i < 4; i++)
+    {
+        p[i] = buf[index + i];  // 小端序
+    }
+    return 0;
+}
+
+/**
+ * @brief  从接收缓冲区读取uint16_t(大端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Uint16_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint16_t *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index + 1 >= buf_len)
+        return -1;
+    
+    *out_value = ((uint16_t)buf[index] << 8) | (uint16_t)buf[index + 1];
+    return 0;
+}
+
+/**
+ * @brief  从接收缓冲区读取uint32_t(大端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Uint32_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, uint32_t *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index + 3 >= buf_len)
+        return -1;
+    
+    *out_value = ((uint32_t)buf[index] << 24)
+               | ((uint32_t)buf[index + 1] << 16)
+               | ((uint32_t)buf[index + 2] << 8)
+               | (uint32_t)buf[index + 3];
+    return 0;
+}
+
+/**
+ * @brief  从接收缓冲区读取int16_t(大端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Int16_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, int16_t *out_value)
+{
+    uint16_t temp;
+    int8_t ret = TR_Read_Uint16_BE(buf, buf_len, index, &temp);
+    if(ret == 0)
+        *out_value = (int16_t)temp;
+    return ret;
+}
+
+/**
+ * @brief  从接收缓冲区读取int32_t(大端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Int32_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, int32_t *out_value)
+{
+    uint32_t temp;
+    int8_t ret = TR_Read_Uint32_BE(buf, buf_len, index, &temp);
+    if(ret == 0)
+        *out_value = (int32_t)temp;
+    return ret;
+}
+
+/**
+ * @brief  从接收缓冲区读取float(大端序)
+ * @param  buf: 接收缓冲区指针
+ * @param  buf_len: 缓冲区长度
+ * @param  index: 起始字节索引
+ * @param  out_value: 输出值指针
+ * @retval 0-成功, -1-索引越界
+ */
+int8_t TR_Read_Float_BE(const unsigned char *buf, unsigned short buf_len, unsigned short index, float *out_value)
+{
+    if(buf == NULL || out_value == NULL)
+        return -1;
+    
+    if(index + 3 >= buf_len)
+        return -1;
+    
+    uint8_t *p = (uint8_t*)out_value;
+    for(int i = 0; i < 4; i++)
+    {
+        p[3 - i] = buf[index + i];  // 大端序转小端
+    }
+    return 0;
+}

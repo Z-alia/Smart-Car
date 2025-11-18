@@ -34,4 +34,4 @@ base_project/image.o: ..\camera_process\image.c ..\camera_process\image.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\Base\type_def.h
+  ..\Base\type_def.h ..\camera_process\Element_recognition.h

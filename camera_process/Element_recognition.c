@@ -3,10 +3,25 @@
 #include "Element_recognition.h"
 #include "image.h"
 #include "Binarization.h"
+#include "integral.h"
 //小车状态变量
 struct watch_o watch;
 
-#define loop_forward_far 100
+// 使用 global_image_buffer.h 中的全局数组
+// 显式初始化关键字段为 120，其余未列出字段默认置零
+struct watch_o watch = {
+	.InLoopAngle2 = 120,
+	.InLoopAngleL = 120,
+	.InLoopAngleR = 120,
+	.InLoopCirc = 120,
+	.OutLoopAngle1 = 120,
+	.OutLoopAngle2 = 120,
+	.InLoop=0, //10.28 outloop test tag
+	.OutLoop=0,
+	.zebra_flag=0,
+};
+
+#define loop_forward_far 80
 #define loop_forward_near 20
 #define forward_near 1 //我的数据
 //声明  
@@ -205,7 +220,7 @@ void left_ring_circular_arc()
 {
     if (watch.InLoop != 1&&watch.InLoop != 2)return;//在循环之前跳出，节省时间
     //beep(20);
-    for(int y=loop_forward_near;y<loop_forward_far;y++)//逐行扫描
+    for(int y= loop_forward_far;y>loop_forward_near;y--)//逐行扫描
     {
         if (y <watch.InLoopAngle2  
             &&(watch.InLoopAngleL<65)//去除了两个积分条件
@@ -241,7 +256,7 @@ void left_ring_second_angle()
     if(watch.InLoop != 1&&watch.InLoop != 2)return;//在循环之前跳出，节省时间
     for(int y=loop_forward_far;y>loop_forward_near;y--)//逐行扫描
     {
-        if (//watch.InLoopCirc<66&&
+        if (watch.InLoopCirc<66&&
             y<watch.InLoopAngle2
              &&watch.InLoopAngle2==120
              //&&get_integeral_state(&distance_integral)==2
@@ -542,7 +557,7 @@ void left_ring_linefix()
            }
         //对补线后的结果进行逆透视变换
         //persp_task(xl,xr,y);
-
+		//补线后结果另存
         watch.fl_border[y]=xl;
         watch.fr_border[y]=xr;
     }
