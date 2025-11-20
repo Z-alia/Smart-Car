@@ -38,7 +38,7 @@ extern PIDController PID_speed;
 void motor_init(void);
 
 // 控制电机运行 (speed: -1000 to 1000)
-void motor_run(Motor *motor_ptr, int16_t speed);
+void motor_run(Motor *motor_ptr, int16_t speed,uint8_t v);
 
 //左转
 void motor_turnleft(void);

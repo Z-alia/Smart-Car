@@ -946,10 +946,18 @@ if (get_start_point(image_h - 3)||get_start_point(image_h - 5)||get_start_point(
 	//straight_detect(l_border, r_border, last_left_lost_down, last_right_lost_down, last_left_lost_up-3, last_right_lost_up-3);//直线检测 这里去掉顶部三行 因为有时左右线在右侧相交 左border会异常
 	//firstcorner_detect(data_stastics_l, data_stastics_r, dir_l, dir_r, points_l, points_r);
 }
-    //求中线
+    //求中线 如果在环岛再用补线
+if(watch.InLoop!=11)
+{
 	for (i = Hightest; i < image_h; i++)
 	{
 		center_line[i] = (watch.fl_border[i] + watch.fr_border[i]) >> 1;//求中线
+	}
+}
+else
+	for (i = Hightest; i < image_h; i++)
+	{
+		center_line[i] = (l_border[i] + r_border[i]) >> 1;//求中线
 	}
     //显示边线
 	draw_edge();

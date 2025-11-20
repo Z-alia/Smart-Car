@@ -53,7 +53,9 @@ PIDController PID_speed;
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-uint8_t receive_flag;
+uint8_t receive_flag,v=5;
+float speed =3.0f;
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -151,7 +153,7 @@ int main(void)
   /*----------------------------控制初始化--------------------------------------*/
 	cascade_pid_init(0.008f,
                                   0.25f, 0.0f, 0.0f,   // 图像PID参数
-                                 100.0f, 0.0f, 40.0f); // 右轮PID参数 // PID参数可根据需要调整
+                                 20.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
 //	pid_init(&PID_image,1.0,0,0,0);
 //	pid_init(&PID_speed,1.0,0,0,0);
 
@@ -171,6 +173,57 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  /*-----------------------------状态机-----------------------------------------*/
+	  if(watch.InLoop==2)
+	  {
+//		  speed =2.0f;
+//		  v=5;
+//		  cascade_pid_init(0.008f,
+//                                  0.25f, 0.0f, 0.0f,   // 图像PID参数
+//                                 20.0f, 0.0f, 0.0f);
+		  distance_integral.integeral_flag=1;
+		  if(distance_integral.integeral_data>300)//150  
+		  {
+			  watch.InLoop=10;
+			  clear_distant_integeral();
+			  //distance_integral.integeral_flag=0;
+		  }
+	}
+	  if(watch.InLoop==10)
+	  {
+		 distance_integral.integeral_flag=1;
+		  if(distance_integral.integeral_data>400)//150  
+		  {
+			  watch.InLoop=4;
+			  clear_distant_integeral();
+			  //distance_integral.integeral_flag=0;
+		  } 
+	  }
+	  if(watch.InLoop==4)
+	  {
+		 distance_integral.integeral_flag=1;
+		  if(distance_integral.integeral_data>300)//150  
+		  {
+			  watch.InLoop=11;
+			  speed=3.5f;
+			  v=5;
+			  cascade_pid_init(0.008f,
+                                  0.35f, 0.0f, 0.0f,   // 图像PID参数
+                                 15.0f, 0.0f, 0.0f);
+			  clear_distant_integeral();
+			  //distance_integral.integeral_flag=0;
+		  } 
+	  }
+//	  if(watch.InLoop==5)
+//	  {
+//		 distance_integral.integeral_flag=1;
+//		  if(distance_integral.integeral_data>100)//150  
+//		  {
+//			  watch.InLoop=13;
+//			  clear_distant_integeral();
+//			  //distance_integral.integeral_flag=0;
+//		  } 
+//	  }
 		/*---------------------------以下为图像区域--------------------------------*/
 	if (DCMI_FrameState == 1)	// 采集到了一帧图像
 		{
@@ -219,6 +272,8 @@ int main(void)
 		TR_Send_Log();
 		TR_Log_Clear();
 	/*----------------------------图像测试-----------------------------*/
+	if(watch.InLoop!=5&&watch.InLoop!=11)
+	{
 		left_ring_first_angle();
 		left_ring_circular_arc();
 		left_ring_second_angle();
@@ -226,11 +281,12 @@ int main(void)
 		left_ring_prepare_out();
 		left_ring_out_angle();
 		left_ring_out_loop_turn();
-		left_ring_out_loop();
-		left_ring_straight_out_angle();
-		left_ring_complete_out();
-		
+//		left_ring_out_loop();
+//		left_ring_straight_out_angle();
+		//left_ring_complete_out();
+	}
 		left_ring_linefix();
+	
     /*---------------------------以下为控制区域--------------------------------*/
 		
 		
@@ -376,20 +432,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM15)
   {
 	//100ms
-	  if(watch.InLoop==2)
-		  distance_integral.integeral_flag=1;
-	  if(distance_integral.integeral_data>150)  
-	  {
-		  watch.InLoop=10;
-		  distance_integral.integeral_flag=0;
-	  }
+	  
 	//TR_Receive_Packet(&receive_flag,16,1);
     //进行陀螺仪数据收集和积分
     ICM42688P_ReadIMUData(&imu_data);
     angal_integeral(imu_data.gyro_z);
 	//watch.Red_obstacle_flag=TOF_ReadDistanceFiltered();
 	 //图像环计算
-	 //cascade_pid_outer_loop(1.5f); //目标速度设定
+	 cascade_pid_outer_loop(speed); //目标速度设定
   }
   if (htim->Instance == TIM16)
   {
@@ -402,19 +452,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     control.rencoder_count_last = control.rencoder_count;
 	  //速度环计算
 	  float pwm_L, pwm_R;
-    cascade_pid_control(2.0f,control.left_speed,control.right_speed,&pwm_L, &pwm_R);
+    //cascade_pid_control(speed,control.left_speed,control.right_speed,&pwm_L, &pwm_R);
 //    // 使用上次图像环计算的速度目标（只执行速度环PID）
-//    cascade_pid_inner_loop(control.left_speed,
-//                          control.right_speed,
-//                          &pwm_L, &pwm_R);
+    cascade_pid_inner_loop(control.left_speed,
+                          control.right_speed,
+                          &pwm_L, &pwm_R);
     
     // 输出到电机
     control.left_target_speed = (int16_t)(pwm_L);
     
     control.right_target_speed = (int16_t)(pwm_R);
     
-	  motor_run(&leftmotor,control.left_target_speed);
-		motor_run(&rightmotor,control.right_target_speed);
+	  motor_run(&leftmotor,control.left_target_speed,v);
+		motor_run(&rightmotor,control.right_target_speed,v);
   }
 }
 /* USER CODE END 4 */

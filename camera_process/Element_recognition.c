@@ -493,9 +493,12 @@ void left_ring_linefix()
     {
         xl = l_border[y];
         xr = r_border[y];
-        if (watch.InLoop == 1 && watch.InLoopAngleL < watch.InLoopCirc
+        if (watch.InLoop == 9 
+			//&& watch.InLoopAngleL < watch.InLoopCirc
               && watch.zebra_flag == 0
-              && y < 81 && watch.InLoopAngle2 == 120)
+              && y < 81 
+		//&& watch.InLoopAngle2 == 120
+		)
            {// 先拉一道实现封住出口,由于左边丢线右边不丢线,故以右边为参考补左边线
               slopeL=(float)(r_border[2]-r_border[80])/80;//x=k*y
               watch.top_x=r_border[0]-118*slopeL;
@@ -530,7 +533,7 @@ void left_ring_linefix()
            }
            // 出左环直行
            else if (watch.InLoop == 5
-                   &&watch.OutLoopAngle2==120
+                   //&&watch.OutLoopAngle2==120
                    &&watch.zebra_flag == 0)
            {// 封住入环口,补线思路是从角点向下拉线到near右边沿减145的地方
                // xl = lineinfo[y].right - 132 + y;
@@ -542,8 +545,8 @@ void left_ring_linefix()
     //            xl = lineinfo[100].left+(y-100)*slopeL;
            }
            else if (watch.InLoop == 5
-                   &&watch.OutLoopAngle2!=120
-                   &&y < watch.OutLoopAngle2
+                   //&&watch.OutLoopAngle2!=120
+                   //&&y < watch.OutLoopAngle2
                    && watch.zebra_flag == 0)
            {// 封住入环口，基本跟上面一样，为了鲁棒大圆环
                // xl = lineinfo[y].right - 132 + y;
