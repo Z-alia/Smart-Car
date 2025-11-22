@@ -33,5 +33,5 @@ base_project/tof_uart_driver.o: ..\HardWare\TOF_UART\tof_uart_driver.c \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\HardWare\TOF_UART\uart_tpm.h ..\Core\Inc\usart.h \
-  ..\HardWare\TOF_UART\tof_timer.h
+  ..\HardWare\TOF_UART\uart_tpm.h ..\HardWare\TOF_UART\tof_timer.h \
+  ..\HardWare\TOF_UART\tof_cfg.h ..\Core\Inc\usart.h

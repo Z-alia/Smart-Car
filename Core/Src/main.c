@@ -240,9 +240,9 @@ int main(void)
 
 			// 显示摄像头图像
 			//显示原图像
-			show_ov2640_image_from_ptr_array(0, 120, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
+			//show_ov2640_image_from_ptr_array(0, 120, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
 			//显示二值化扫线图
-			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
+			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
 			
 			    
 			image_process();
@@ -251,16 +251,58 @@ int main(void)
 			//TR_Write_Image(120, 188, (unsigned char *)imo);
 			
 		}
+		/*
 		LCD_DisplayDecimals(220, 190, control.left_speed, 3,5); 
 		LCD_DisplayDecimals(220, 170, control.right_speed, 3,5); 
 		LCD_DisplayDecimals(220,150,straight_error_get(),3,1);
 		LCD_DisplayDecimals(220,130,receive_flag,2,0);
 		
-		LCD_DisplayDecimals(200,20,watch.InLoop,1,0);
+		//LCD_DisplayDecimals(200,20,watch.InLoop,1,0);
 		LCD_DisplayDecimals(200,40,watch.InLoopAngleL,1,0);
 		LCD_DisplayDecimals(200,60,watch.InLoopCirc,1,0);
 		LCD_DisplayDecimals(200,80,watch.InLoopAngle2_x,1,0);
 		LCD_DisplayDecimals(200,100,watch.InLoopAngle2_y,1,0);
+    LCD_DisplayDecimals(200, 200, TOF_UART_GetDistance(), 5, 0);
+    */
+    // TOF Debug - 全屏显示
+    LCD_DisplayString(10, 20, "TX:");
+    LCD_DisplayNumber(50, 20, g_tof_debug.tx_cnt, 5);
+    
+    LCD_DisplayString(150, 20, "RX:");
+    LCD_DisplayNumber(190, 20, g_tof_debug.rx_isr_cnt, 5);
+    
+    LCD_DisplayString(10, 50, "Valid:");
+    LCD_DisplayNumber(80, 50, g_tof_debug.valid_frame_cnt, 5);
+    
+    LCD_DisplayString(150, 50, "Dis:");
+    LCD_DisplayNumber(220, 50, TOF_UART_GetDistance(), 5);
+    
+    // 发送的数据
+    LCD_DisplayString(10, 80, "Sent:");
+    for(uint8_t i = 0; i < 6 && i < g_tof_debug.sent_len; i++)
+    {
+        LCD_DisplayNumber(10 + i*40, 100, g_tof_debug.sent_data[i], 3);
+    }
+    
+    // 接收的原始数据
+    LCD_DisplayString(10, 130, "Recv:");
+    for(uint8_t i = 0; i < 7 && i < g_tof_debug.raw_len; i++)
+    {
+        LCD_DisplayNumber(10 + i*40, 150, g_tof_debug.raw_data[i], 3);
+    }
+    
+    // 详细状态
+    LCD_DisplayString(10, 160, "UInit:");
+    LCD_DisplayNumber(80, 160, g_tof_debug.uart_init_ok, 1);
+    
+    LCD_DisplayString(150, 160, "Timeout:");
+    LCD_DisplayNumber(220, 160, g_tof_debug.rx_timeout_cnt, 4);
+    
+    LCD_DisplayString(10, 190, "CRCErr:");
+    LCD_DisplayNumber(80, 190, g_tof_debug.crc_err_cnt, 5);
+    
+    LCD_DisplayString(150, 190, "TXErr:");
+    LCD_DisplayNumber(220, 190, g_tof_debug.tx_hal_err, 3);
 		
 		
 		
@@ -314,6 +356,7 @@ int main(void)
 //		TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
     //tof test
 		//LCD_DisplayDecimals(200, 200, watch.Red_obstacle_flag, 10,0);
+
   }
   /* USER CODE END 3 */
 }
@@ -403,6 +446,11 @@ void PeriphCommonClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    TOF_UART_RxCpltCallback(huart);
+}
+
 //	配置MPU
 //
 void MPU_Config(void)
@@ -470,10 +518,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 }
 /* USER CODE END 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-    TOF_UART_RxCpltCallback(huart);
-}
 
 /**
   * @brief  This function is executed in case of error occurrence.

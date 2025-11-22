@@ -26,7 +26,7 @@
 #define TOF_READ_PERIOD_MS  100
 
 // Modbus 协议相关
-#define TOF_DEV_ADDR        0x00    // 设备地址 (0x00 为广播，或根据实际设置修改)
+#define TOF_DEV_ADDR        0x01    // 设备地址 (通常默认为 0x01，0x00 为广播地址不支持读取)
 #define TOF_REG_ADDR        0x0010  // 距离寄存器地址
 
 #endif // __TOF_CFG_H_

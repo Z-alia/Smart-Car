@@ -209,6 +209,7 @@ NVIC.TIM16_IRQn=true\:0\:0\:false\:false\:true\:true\:true\:true
 NVIC.TIM3_IRQn=true\:12\:0\:true\:false\:true\:true\:true\:true
 NVIC.TIM6_DAC_IRQn=true\:7\:0\:true\:false\:true\:true\:true\:true
 NVIC.TIM7_IRQn=true\:8\:0\:true\:false\:true\:true\:true\:true
+NVIC.UART4_IRQn=true\:0\:0\:false\:false\:true\:true\:true\:true
 NVIC.UsageFault_IRQn=true\:0\:0\:false\:false\:true\:false\:false\:false
 PA0.GPIOParameters=GPIO_Speed
 PA0.GPIO_Speed=GPIO_SPEED_FREQ_VERY_HIGH

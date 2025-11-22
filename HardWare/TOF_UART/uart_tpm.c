@@ -2,6 +2,7 @@
 #include "string.h"
 #include "tof_public.h"
 #include "tof_timer.h"
+#include "tof_uart_driver.h" // For g_tof_debug
 
 static UART_TPM_CONFIG uartTpmConfig = {0};
 
@@ -50,6 +51,7 @@ void uart_tpm_main(void)
 			rxLen = uart_read_isr(i, uartTpmConfig.p_buff, uartTpmConfig.buffLen);
 			if(rxLen > 2)
 			{
+                g_tof_debug.frame_process_cnt++;
 				crc16 = uartTpmConfig.p_buff[rxLen-1];
 				crc16 <<= 8;
 				crc16 |= uartTpmConfig.p_buff[rxLen-2];
@@ -60,6 +62,10 @@ void uart_tpm_main(void)
 						uartTpmConfig.p_aspConfig[i].pfun_recvCallback(uartTpmConfig.p_buff, rxLen-2);
 					}
 				}
+                else
+                {
+                    g_tof_debug.crc_err_cnt++;
+                }
 			}
 			uartTpmConfig.p_aspConfig[i].lastRxTimestamp = tim_get_count();
 		}
