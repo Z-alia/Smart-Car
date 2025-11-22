@@ -912,6 +912,96 @@ growth_array arr = {
 
 */
 
+/** 
+* @brief 计算边界拟合方差（最小二乘法）
+* @param begin					输入起点
+* @param end					输入终点
+* @param border				输入需要计算的边界数组首地址
+*  @see CTest		float variance = calculate_border_variance(start, end, border);
+* @return 返回拟合方差值，值越小说明边界越接近直线
+*     -<em>-1.0f</em> 计算失败（参数错误或数据点不足）
+*     -<em>>=0</em> 拟合方差值
+* @note 方差表示边界点与拟合直线的平均偏离程度，可用于判断直线质量
+*/
+float calculate_border_variance(uint8_t begin, uint8_t end, uint8_t *border)
+{
+	float xsum = 0, ysum = 0, xysum = 0, x2sum = 0;
+	uint16_t i;
+	uint16_t num = 0;
+	float x_average, y_average;
+	float slope, intercept;
+	static float slope_last = 0.0f;
+	
+	// 参数检查
+	if (end <= begin || border == NULL) {
+		return -1.0f;
+	}
+	
+	// 累加计算
+	for (i = begin; i < end; i++)
+	{
+		xsum += i;
+		ysum += border[i];
+		xysum += i * border[i];
+		x2sum += i * i;
+		num++;
+	}
+	
+	// 检查数据点数量
+	if (num == 0) {
+		return -1.0f;
+	}
+	
+	// 计算平均值
+	x_average = xsum / num;
+	y_average = ysum / num;
+	
+	// 计算斜率（最小二乘法）
+	float denominator = num * x2sum - xsum * xsum;
+	if (denominator != 0) {
+		slope = (num * xysum - xsum * ysum) / denominator;
+		slope_last = slope;
+	} else {
+		// 除数为零时使用上次结果
+		slope = slope_last;
+	}
+	
+	// 计算截距
+	intercept = y_average - slope * x_average;
+	
+	// 计算方差（拟合残差的平方和除以样本数）
+	float variance = 0;
+	for (i = begin; i < end; i++)
+	{
+		float fitted_y = slope * i + intercept;
+		float residual = border[i] - fitted_y;
+		variance += residual * residual;
+	}
+	variance /= num;
+	
+	return variance;
+}
+
+
+//直线检测函数
+uint8_t left_straight=0,right_straight=0,straight=0;
+void straight_detect(uint8_t *l, uint8_t *r,uint16_t start_l,uint16_t start_r,uint16_t end_l,uint16_t end_r)
+{
+	// 先清零
+	right_straight=0;
+	left_straight=0;
+	straight=0;
+	float left_variance = calculate_border_variance(start_l, end_l, l);
+	float right_variance = calculate_border_variance(start_r, end_r, r);
+	log_add_float("left_variance", left_variance, -1);
+	log_add_float("right_variance", right_variance, -1);
+
+	// 这里留了一个不那么严格的直线判断标准 值为2
+	left_straight = (left_variance < 10.0f)?1u:(left_variance < 50.0f?2u:0u);
+	right_straight = (right_variance < 10.0f)?1u:(right_variance < 50.0f?2u:0u);
+	straight = left_straight && right_straight;
+}
+
 
 /*
 函数名称：void image_process(void)
