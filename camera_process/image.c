@@ -455,7 +455,7 @@ void get_left(uint16_t total_L)
 		}
 	}
 	//从上往下找丢线
-	for(int8_t row=image_h-1;row>=0;row--){
+	for(int8_t row=image_h-1;row>0;row--){
 		if(left_lost[row]==1&&left_lost[row-1]==0/*&&left_lost[row-2]==0*/)
 		{
 			last_left_lost_up=row;
