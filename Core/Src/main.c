@@ -39,8 +39,8 @@
 #include "control.h"
 #include "ICM-42688P.h"
 #include "motor.h"
-#include "tof.h"
 #include "control_pid.h"
+#include "../../HardWare/TOF_UART/tof_uart_driver.h"
 //#include ""
 //#include "ICM42688P_Simple.h"
 /* USER CODE END Includes */
@@ -147,6 +147,7 @@ int main(void)
 	ICM42688P_Init();
 	motor_init();
 	TR_driver_init();
+    TOF_UART_Driver_Init();
 //	TOF_Init();
 //	TOF_SetOutputMode(1);
 //	TOF_SetTriggerMode(0);
@@ -170,6 +171,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    TOF_UART_Driver_Task();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -468,6 +470,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 }
 /* USER CODE END 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    TOF_UART_RxCpltCallback(huart);
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

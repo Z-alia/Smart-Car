@@ -53,7 +53,10 @@
 "base_project\control.o"
 "base_project\integral.o"
 "base_project\control_pid.o"
-"base_project\tof.o"
+"base_project\tof_uart_driver.o"
+"base_project\uart_tpm.o"
+"base_project\tof_public.o"
+"base_project\tof_timer.o"
 --strict --scatter "base_project\base_project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

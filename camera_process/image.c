@@ -993,8 +993,8 @@ void straight_detect(uint8_t *l, uint8_t *r,uint16_t start_l,uint16_t start_r,ui
 	straight=0;
 	float left_variance = calculate_border_variance(start_l, end_l, l);
 	float right_variance = calculate_border_variance(start_r, end_r, r);
-	log_add_float("left_variance", left_variance, -1);
-	log_add_float("right_variance", right_variance, -1);
+	// log_add_float("left_variance", left_variance, -1);
+	// log_add_float("right_variance", right_variance, -1);
 
 	// 这里留了一个不那么严格的直线判断标准 值为2
 	left_straight = (left_variance < 10.0f)?1u:(left_variance < 50.0f?2u:0u);

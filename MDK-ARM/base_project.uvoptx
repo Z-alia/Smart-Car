@@ -1135,7 +1135,7 @@
   </Group>
 
   <Group>
-    <GroupName>TOF</GroupName>
+    <GroupName>TOF_UART</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -1147,20 +1147,44 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\HardWare\TOF\tof.c</PathWithFileName>
-      <FilenameWithoutPath>tof.c</FilenameWithoutPath>
+      <PathWithFileName>..\HardWare\TOF_UART\tof_uart_driver.c</PathWithFileName>
+      <FilenameWithoutPath>tof_uart_driver.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>14</GroupNumber>
       <FileNumber>70</FileNumber>
-      <FileType>5</FileType>
+      <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\HardWare\TOF\tof.h</PathWithFileName>
-      <FilenameWithoutPath>tof.h</FilenameWithoutPath>
+      <PathWithFileName>..\HardWare\TOF_UART\uart_tpm.c</PathWithFileName>
+      <FilenameWithoutPath>uart_tpm.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>71</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\HardWare\TOF_UART\tof_public.c</PathWithFileName>
+      <FilenameWithoutPath>tof_public.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>14</GroupNumber>
+      <FileNumber>72</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\HardWare\TOF_UART\tof_timer.c</PathWithFileName>
+      <FilenameWithoutPath>tof_timer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
