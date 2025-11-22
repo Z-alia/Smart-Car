@@ -9,6 +9,7 @@
 #endif
 #endif
 
+
 // 计算每行尾部有效位掩码：用于清除行尾（不足 32 位）的高位，防止脏位参与计算
 static inline uint32_t last_word_mask(int width) {
     int rem = width & 31;
@@ -161,7 +162,8 @@ void erode3x3_bitpacked(const uint32_t* RESTRICT src_bits, uint32_t* RESTRICT ds
         }
 
         // 清边界一圈像素：行 0/行 h-1 整行清零；中间行清最左/最右 1 列
-        clear_borders_bitpacked_row(out, width, wpw, (y == 0 || y == height - 1));
+        // 注释掉边界清除，避免产生黑框
+        // clear_borders_bitpacked_row(out, width, wpw, (y == 0 || y == height - 1));
     }
 }
 
@@ -206,12 +208,13 @@ void dilate3x3_bitpacked(const uint32_t* RESTRICT src_bits, uint32_t* RESTRICT d
             out[i] = res;
         }
 
-        clear_borders_bitpacked_row(out, width, wpw, (y == 0 || y == height - 1));
+        // 注释掉边界清除，避免产生黑框
+        // clear_borders_bitpacked_row(out, width, wpw, (y == 0 || y == height - 1));
     }
 }
 
 // 二值内部梯度：output = clean & ~erode(clean)
-// 注：若想要“标准梯度（约两像素宽）”，可改为 output = dilate(clean) & ~erode(clean)。
+// 注：若想要"标准梯度（约两像素宽）"，可改为 output = dilate(clean) & ~erode(clean)。
 void internal_gradient_bitpacked(const uint32_t* RESTRICT clean_bits, const uint32_t* RESTRICT eroded_bits,
                                  uint32_t* RESTRICT output_bits, int width, int height) {
     int n = total_words(width, height);
@@ -219,10 +222,13 @@ void internal_gradient_bitpacked(const uint32_t* RESTRICT clean_bits, const uint
         output_bits[i] = clean_bits[i] & ~eroded_bits[i];
     }
     // 与形态学保持一致，清边界一圈
+    // 注释掉边界清除，避免产生黑框
+    /*
     int wpw = words_per_row(width);
     for (int y = 0; y < height; y++) {
         clear_borders_bitpacked_row(output_bits + (size_t)y * wpw, width, wpw, (y == 0 || y == height - 1));
     }
+    */
 }
 
 // 高层流水线0：闭运算
@@ -240,6 +246,7 @@ void open_close_bitpacked(const uint32_t* RESTRICT src_bits,
                           uint32_t* RESTRICT tmp1_bits,
                           uint32_t* RESTRICT out_bits,
                           int width, int height) {
+    
     // 开运算：先腐蚀（去小噪点）再膨胀（恢复主体形状）
     erode3x3_bitpacked(src_bits, tmp1_bits, width, height);
     dilate3x3_bitpacked(tmp1_bits, out_bits, width, height); // out_bits 存开运算结果
@@ -247,6 +254,7 @@ void open_close_bitpacked(const uint32_t* RESTRICT src_bits,
     // 闭运算：先膨胀（填小孔/断裂）再腐蚀（恢复边界）
     dilate3x3_bitpacked(out_bits, tmp1_bits, width, height);
     erode3x3_bitpacked(tmp1_bits, out_bits, width, height); // out_bits 存最终干净图像
+    
 }
 
 // 高层流水线2：开运算 -> 闭运算 -> 内部梯度（最终得到单像素边缘）
@@ -256,10 +264,10 @@ void precise_edge_detection_bitpacked(const uint32_t* RESTRICT src_bits,
                                       int width, int height) {
     // 开运算：先腐蚀（去小噪点）再膨胀（恢复主体形状）
     erode3x3_bitpacked(src_bits, tmp1_bits, width, height);
-    dilate3x3_bitpacked(tmp1_bits, src_bits, width, height);
+    dilate3x3_bitpacked(tmp1_bits, out_bits, width, height);
 
     // 闭运算：先膨胀（填小孔/断裂）再腐蚀（恢复边界）
-    dilate3x3_bitpacked(src_bits, tmp1_bits, width, height);
+    dilate3x3_bitpacked(out_bits, tmp1_bits, width, height);
     erode3x3_bitpacked(tmp1_bits, out_bits, width, height); // out_bits 变为“干净图像”
 
     // 内部梯度：clean - erode(clean)（二值下等价 AND NOT）
