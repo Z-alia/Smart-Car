@@ -1,5 +1,12 @@
-#include "morph_binary_bitpacked.h"
+﻿#include "morph_binary_bitpacked.h"
+#include "Element_recognition.h"
 #include <string.h>
+
+// 斑马线检测（实现见 camera_process/zebra_detection.c）
+extern uint8_t zebra_detect_bitpacked(const uint32_t *bits,
+                                      int width, int height,
+                                      uint8_t row_start, uint8_t row_end,
+                                      uint16_t xor_threshold);
 
 #ifndef RESTRICT
 #if defined(__GNUC__)
@@ -315,8 +322,16 @@ void morph_clean_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
     uint32_t* out_buf    = s_buf3;
 
     pack_binary_u8_to_bits(src_u8, width, height, width, packed_src);
-    //close_bitpacked(packed_src, tmp_buf, out_buf,  width, height);
+    // 在形态学清洗后的位图上顺带进行斑马线检测
+    // 这里使用经验行段 [60, 70] 和一个较保守的跳变阈值，后续可根据赛道实际情况调参
+    (void)zebra_detect_bitpacked; // 避免链接时未使用产生告警
+    zebra_detect_bitpacked(out_buf,
+                           width,
+                           height,
+                           60,    // row_start
+                           70,    // row_end
+                           10);   // xor_threshold (上限 10)
+
     open_close_bitpacked(packed_src, tmp_buf, out_buf,  width, height);
-    //precise_edge_detection_bitpacked(packed_src, tmp_buf, out_buf, width, height);
     unpack_bits_to_binary_u8(out_buf, width, height, dst_u8, width);
 }
