@@ -240,9 +240,9 @@ int main(void)
 
 			// 显示摄像头图像
 			//显示原图像
-			//show_ov2640_image_from_ptr_array(0, 120, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
+			show_ov2640_image_from_ptr_array(0, 120, mt9v03x_image, Display_Width, Display_Height, Display_Width, Display_Height, 0);
 			//显示二值化扫线图
-			//show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
+			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
 			
 			    
 			image_process();
@@ -262,9 +262,10 @@ int main(void)
 		LCD_DisplayDecimals(200,60,watch.InLoopCirc,1,0);
 		LCD_DisplayDecimals(200,80,watch.InLoopAngle2_x,1,0);
 		LCD_DisplayDecimals(200,100,watch.InLoopAngle2_y,1,0);
-    LCD_DisplayDecimals(200, 200, TOF_UART_GetDistance(), 5, 0);
-    */
-    // TOF Debug - 全屏显示
+		*/
+        LCD_DisplayDecimals(200, 220, watch.zebra_flag, 1, 0);
+    
+    /* TOF Debug - 全屏显示
     LCD_DisplayString(10, 20, "TX:");
     LCD_DisplayNumber(50, 20, g_tof_debug.tx_cnt, 5);
     
@@ -303,7 +304,7 @@ int main(void)
     
     LCD_DisplayString(150, 190, "TXErr:");
     LCD_DisplayNumber(220, 190, g_tof_debug.tx_hal_err, 3);
-		
+		*/
 		
 		
 		//日志回传

@@ -753,6 +753,11 @@
               <FileType>1</FileType>
               <FilePath>..\camera_process\morph_binary_bitpacked.c</FilePath>
             </File>
+            <File>
+              <FileName>zebra_detection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\camera_process\zebra_detection.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

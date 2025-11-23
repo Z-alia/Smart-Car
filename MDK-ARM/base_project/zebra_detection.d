@@ -1,6 +1,4 @@
-base_project/morph_binary_bitpacked.o: \
-  ..\camera_process\morph_binary_bitpacked.c \
-  ..\camera_process\morph_binary_bitpacked.h \
+base_project/zebra_detection.o: ..\camera_process\zebra_detection.c \
   ..\camera_process\Element_recognition.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
