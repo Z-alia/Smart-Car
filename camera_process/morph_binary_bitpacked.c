@@ -324,7 +324,6 @@ void morph_clean_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
     pack_binary_u8_to_bits(src_u8, width, height, width, packed_src);
     // 在形态学清洗后的位图上顺带进行斑马线检测
     // 这里使用经验行段 [60, 70] 和一个较保守的跳变阈值，后续可根据赛道实际情况调参
-    (void)zebra_detect_bitpacked; // 避免链接时未使用产生告警
     zebra_detect_bitpacked(out_buf,
                            width,
                            height,
