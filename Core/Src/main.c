@@ -68,7 +68,7 @@
 
 // ==================== 控制相关变量 ====================
 float v_forward = 100.0f;           // 前进速度(m/s)
-float left_target_speed = 0.0f;   // 左轮目标速度
+float left_target_speed = 0;   // 左轮目标速度
 float right_target_speed = 0.0f;  // 右轮目标速度
 
 // ==================== 编码器相关变量 ====================
@@ -153,14 +153,13 @@ int main(void)
   MX_TIM15_Init();
   MX_TIM16_Init();
   MX_TIM4_Init();
-  MX_I2C1_Init();
   MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
 	// ==================== 硬件初始化 ====================
 	OV2640_Init();	// 初始化OV2640摄像头
 	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// 启动DMA传输(连续模式)
 	LCD_Init();  // 显示屏初始化
-	
+	motor_init();
 	// 初始化ICM42688陀螺仪
 	if(ICM42688P_Init() == 0)
 	{
@@ -196,16 +195,18 @@ int main(void)
 	 */
 	
 	// 启动编码器定时器
-	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);  // 左编码器(TIM2)
-	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);  // 右编码器(TIM3)
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+    HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 	
 	// 启动控制周期定时器(20ms) - 注意:不要修改定时器配置,只启动中断
 	// TIM6配置: Prescaler和Period需要在CubeMX中配置为20ms中断
-	HAL_TIM_Base_Start_IT(&htim6);  // 启动TIM6中断(20ms周期)
+	HAL_TIM_Base_Start_IT(&htim15);
+	HAL_TIM_Base_Start_IT(&htim16);
+	HAL_TIM_Base_Start_IT(&htim17);  // 启动TIM6中断(20ms周期)
 	
 	// 启动系统滴答定时器(1ms) - 注意:不要修改定时器配置
 	// TIM7配置: Prescaler和Period需要在CubeMX中配置为1ms中断
-	HAL_TIM_Base_Start_IT(&htim7);  // 启动TIM7中断(1ms系统时钟)
+	//HAL_TIM_Base_Start_IT(&htim7);  // 启动TIM7中断(1ms系统时钟)
 	
 	/* 
 	 * 定时器配置警告:
@@ -221,6 +222,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		LCD_DisplayDecimals(220, 190, g_open_loop_pid_state.left_target, 3,5); 
+		LCD_DisplayDecimals(220, 170, g_open_loop_pid_state.left_target, 3,5); 
+		LCD_DisplayDecimals(220,150,g_open_loop_pid_state.error,3,1);
 	  	if (DCMI_FrameState == 1)	// 采集到新一帧图像
 		{
 			DCMI_FrameState = 0;		// 清除标志位
@@ -264,7 +268,7 @@ int main(void)
 			
 			/* 显示摄像头图像 */
 			// 显示原图像:
-			// show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
+			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
 			
 			// 显示二值化+扫线图:
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
@@ -372,7 +376,7 @@ void PeriphCommonClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	// ==================== TIM6: 20ms控制周期 ====================
-	if (htim->Instance == TIM6)
+	if (htim->Instance == TIM17)
 	{
 		control_timer_flag = 1;  // 设置控制标志
 		
@@ -421,11 +425,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	}
 	
 	// ==================== TIM7: 1ms系统滴答 ====================
-	else if (htim->Instance == TIM7)
-	{
-		system_tick++;
-		mycar.RUNTIME = system_tick;  // 更新系统运行时间(ms)
-	}
+//	else if (htim->Instance == TIM7)
+//	{
+//		system_tick++;
+//		mycar.RUNTIME = system_tick;  // 更新系统运行时间(ms)
+//	}
 }
 
 //	配置MPU

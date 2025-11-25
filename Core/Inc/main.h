@@ -83,6 +83,8 @@ void Error_Handler(void);
 #define SCCB_SCL_GPIO_Port GPIOD
 #define SCCB_SDA_Pin GPIO_PIN_7
 #define SCCB_SDA_GPIO_Port GPIOD
+#define HCSR04_TRIG_Pin GPIO_PIN_9
+#define HCSR04_TRIG_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
