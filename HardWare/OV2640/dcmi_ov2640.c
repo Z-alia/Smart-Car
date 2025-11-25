@@ -68,7 +68,15 @@ int8_t OV2640_Init(void)
 	uint16_t	Device_ID;		// 定义变量存储器件ID
 	
 	SCCB_GPIO_Config();		               // SCCB引脚初始化
+	
+	// 增加延时，确保GPIO配置生效
+	HAL_Delay(10);
+	
 	OV2640_Reset();	                     // 执行软件复位
+	
+	// 复位后增加更长的延时
+	HAL_Delay(50);
+	
 	Device_ID = OV2640_ReadID();		      // 读取器件ID
 	
    // 初始化两套行指针表
@@ -272,19 +280,19 @@ int8_t OV2640_DCMI_Crop(uint16_t Displey_XSize,uint16_t Displey_YSize,uint16_t S
 *****************************************************************************************************************************************/
 void OV2640_Reset(void)
 {
-	OV2640_Delay(5);  // 等待模块上电稳定，最少5ms，然后拉低PWDN  	
+	OV2640_Delay(10);  // 等待模块上电稳定，增加到10ms以提高稳定性
 	
 	OV2640_PWDN_OFF;  // PWDN 引脚输出低电平，不开启掉电模式，摄像头正常工作，此时摄像头模块的白色LED会点亮
   
 // 根据OV2640的上电时序，硬件复位的持续时间要>=3ms，反客的OV2640采用硬件RC复位，持续时间大概在6ms左右
 // 因此加入延时，等待硬件复位完成并稳定下来
-	OV2640_Delay(5);    
+	OV2640_Delay(20);  // 增加到20ms，确保硬件复位完全稳定
 	
 	SCCB_WriteReg( OV2640_SEL_Registers, OV2640_SEL_SENSOR);   // 选择 SENSOR 寄存器组
 	SCCB_WriteReg( OV2640_SENSOR_COM7, 0x80);                  // 启动软件复位
 
 // 根据OV2640的软件复位时序，软件复位执行后，要>=2ms方可执行SCCB配置，此处采用保守一点的参数，延时10ms
-	OV2640_Delay(10);    
+	OV2640_Delay(50);  // 增加到50ms，确保软件复位完全完成
 }
 
 /***************************************************************************************************************************************
@@ -707,6 +715,7 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 
    // 通过当前目标寄存器（CT 位）判断刚完成的是哪一块缓冲：
    // CT=0 表示当前目标是 Mem0（正在写 A），刚完成的是 B；CT=1 则相反。
+   // HAL 在 H7 上将 DMA_HandleTypeDef.Instance 定义为 void*，需要转换为 DMA_Stream_TypeDef 才能访问寄存器
    uint32_t ct = ((((DMA_Stream_TypeDef *)(hdcmi->DMA_Handle->Instance))->CR & DMA_SxCR_CT) ? 1U : 0U);
    uint32_t done_buf_addr = (ct == 0U) ? (uint32_t)Camera_Buffer_2 : (uint32_t)Camera_Buffer;
 

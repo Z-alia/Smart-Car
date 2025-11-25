@@ -20,8 +20,11 @@
 #include "main.h"
 #include "dcmi.h"
 #include "dma.h"
-#include "memorymap.h"
+#include "i2c.h"
+#include "quadspi.h"
 #include "spi.h"
+#include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -31,79 +34,15 @@
 #include "scan_line.h"
 #include "Binarization.h"
 #include "Element_recognition.h"
+#include "system_config.h"        // Á≥ªÁªüÈÖçÁΩÆ
+#include "open_loop_pid.h"        // ÂºÄÁéØPIDÊéßÂà∂
+#include "integral.h"             // ÁßØÂàÜÂô®
+#include "ICM-42688P.h"           // ICM42688ÈôÄËû∫‰ª™
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
-//=======================CubeMXπŸ∑Ω◊¢ Õ≤ª“™…æ£°£°£°£°£°£°£°=======================================
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -119,11 +58,34 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+// ==================== ÂÖ®Â±ÄÁªìÊûÑ‰ΩìÂèòÈáè ====================
+//setpara_struct setpara;           // ÂèÇÊï∞ÈÖçÁΩÆ
+//mycar_struct mycar;               // Â∞èËΩ¶Áä∂ÊÄÅ
+//imu_struct imu;                   // IMUÊï∞ÊçÆ
+//watch_o watch;               // ËßÜËßâÁõëÊéß
+//vofa_struct vofa;                 // VOFAË∞ÉËØïÊï∞ÊçÆ
+//uint16_t dl1b_distance_mm = 9999; // ÊøÄÂÖâÊµãË∑ùÊï∞ÊçÆ
+
+// ==================== ÊéßÂà∂Áõ∏ÂÖ≥ÂèòÈáè ====================
+float v_forward = 100.0f;           // ÂâçËøõÈÄüÂ∫¶(m/s)
+float left_target_speed = 0.0f;   // Â∑¶ËΩÆÁõÆÊ†áÈÄüÂ∫¶
+float right_target_speed = 0.0f;  // Âè≥ËΩÆÁõÆÊ†áÈÄüÂ∫¶
+
+// ==================== ÁºñÁ†ÅÂô®Áõ∏ÂÖ≥ÂèòÈáè ====================
+int32_t encoder_left_count = 0;   // Â∑¶ÁºñÁ†ÅÂô®ËÆ°Êï∞
+int32_t encoder_right_count = 0;  // Âè≥ÁºñÁ†ÅÂô®ËÆ°Êï∞
+int32_t encoder_left_last = 0;    // ‰∏äÊ¨°Â∑¶ÁºñÁ†ÅÂô®ËÆ°Êï∞
+int32_t encoder_right_last = 0;   // ‰∏äÊ¨°Âè≥ÁºñÁ†ÅÂô®ËÆ°Êï∞
+
+// ==================== ÂÆöÊó∂Âô®Ê†áÂøó ====================
+uint8_t control_timer_flag = 0;   // ÊéßÂà∂ÂÆöÊó∂Âô®Ê†áÂøó(20ms)
+uint32_t system_tick = 0;         // Á≥ªÁªüÊó∂Èó¥ËÆ°Êï∞(ms)
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -164,6 +126,9 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
+  /* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -173,10 +138,82 @@ int main(void)
   MX_DMA_Init();
   MX_SPI4_Init();
   MX_DCMI_Init();
+  MX_TIM6_Init();
+  MX_TIM1_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_TIM7_Init();
+  MX_I2C2_Init();
+  MX_SPI2_Init();
+  MX_QUADSPI_Init();
+  MX_SPI1_Init();
+  MX_TIM5_Init();
+  MX_TIM8_Init();
+  MX_UART4_Init();
+  MX_TIM15_Init();
+  MX_TIM16_Init();
+  MX_TIM4_Init();
+  MX_I2C1_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
-	OV2640_Init();	//≈‰÷√OV2640
-	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// ∆Ù∂ØDMA¥´ ‰£¨¡¨–¯ƒ£ Ω
-	LCD_Init();//œ‘ æ∆¡≥ı ºªØ
+	// ==================== Á°¨‰ª∂ÂàùÂßãÂåñ ====================
+	OV2640_Init();	// ÂàùÂßãÂåñOV2640ÊëÑÂÉèÂ§¥
+	OV2640_DMA_Transmit_Continuous(Camera_Buffer,OV2640_BufferSize);	// ÂêØÂä®DMA‰º†Ëæì(ËøûÁª≠Ê®°Âºè)
+	LCD_Init();  // ÊòæÁ§∫Â±èÂàùÂßãÂåñ
+	
+	// ÂàùÂßãÂåñICM42688ÈôÄËû∫‰ª™
+	if(ICM42688P_Init() == 0)
+	{
+		// ÂàùÂßãÂåñÊàêÂäüÔºåÂêØÂä®‰º†ÊÑüÂô®
+		ICM42688P_Start();
+	}
+	else
+	{
+		// ÂàùÂßãÂåñÂ§±Ë¥•ÔºåÂèØ‰ª•Âú®ËøôÈáåÊ∑ªÂä†ÈîôËØØÂ§ÑÁêÜ
+		// ‰æãÂ¶ÇLEDÊåáÁ§∫„ÄÅ‰∏≤Âè£ËæìÂá∫Á≠â
+	}
+	
+	// ==================== Á≥ªÁªüÈÖçÁΩÆÂàùÂßãÂåñ ====================
+	system_config_init();    // ÂàùÂßãÂåñÁ≥ªÁªüÂèÇÊï∞(setpara, mycar, imuÁ≠â)
+	element_init();          // ÂàùÂßãÂåñÂÖÉÁ¥†ËØÜÂà´Á≥ªÁªü
+	
+	// ==================== ÂºÄÁéØPIDÊéßÂà∂Âô®ÂàùÂßãÂåñ ====================
+	open_loop_pid_init(
+		1.0f,    // kp: ÊØî‰æãÂ¢ûÁõä
+		0.1f,    // ki: ÁßØÂàÜÂ¢ûÁõä
+		0.05f,   // kd: ÂæÆÂàÜÂ¢ûÁõä
+		50.0f,   // integral_max: ÁßØÂàÜÈôêÂπÖ
+		2.0f     // output_max: ËæìÂá∫ÈôêÂπÖ(Â∑ÆÈÄü,m/s)
+	);
+	
+	// ==================== ÂÆöÊó∂Âô®ÂêØÂä® ====================
+	/* 
+	 * ÂÆöÊó∂Âô®ÈÖçÁΩÆËØ¥Êòé:
+	 * TIM2: Â∑¶ÁºñÁ†ÅÂô®(EncoderÊ®°Âºè) - Period=4294967295 (32‰ΩçËÆ°Êï∞Âô®)
+	 * TIM3: Âè≥ÁºñÁ†ÅÂô®(EncoderÊ®°Âºè) - Period=65535 (16‰ΩçËÆ°Êï∞Âô®)
+	 * TIM6: ÊéßÂà∂Âë®ÊúüÂÆöÊó∂Âô®(20ms) - Áî®‰∫éÈÄüÂ∫¶ËÆ°ÁÆóÂíåPIDÊéßÂà∂
+	 * TIM7: Á≥ªÁªüÊª¥Á≠îÂÆöÊó∂Âô®(1ms) - Áî®‰∫éRUNTIMEËÆ°Êï∞
+	 */
+	
+	// ÂêØÂä®ÁºñÁ†ÅÂô®ÂÆöÊó∂Âô®
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);  // Â∑¶ÁºñÁ†ÅÂô®(TIM2)
+	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);  // Âè≥ÁºñÁ†ÅÂô®(TIM3)
+	
+	// ÂêØÂä®ÊéßÂà∂Âë®ÊúüÂÆöÊó∂Âô®(20ms) - Ê≥®ÊÑè:‰∏çË¶Å‰øÆÊîπÂÆöÊó∂Âô®ÈÖçÁΩÆ,Âè™ÂêØÂä®‰∏≠Êñ≠
+	// TIM6ÈÖçÁΩÆ: PrescalerÂíåPeriodÈúÄË¶ÅÂú®CubeMX‰∏≠ÈÖçÁΩÆ‰∏∫20ms‰∏≠Êñ≠
+	HAL_TIM_Base_Start_IT(&htim6);  // ÂêØÂä®TIM6‰∏≠Êñ≠(20msÂë®Êúü)
+	
+	// ÂêØÂä®Á≥ªÁªüÊª¥Á≠îÂÆöÊó∂Âô®(1ms) - Ê≥®ÊÑè:‰∏çË¶Å‰øÆÊîπÂÆöÊó∂Âô®ÈÖçÁΩÆ
+	// TIM7ÈÖçÁΩÆ: PrescalerÂíåPeriodÈúÄË¶ÅÂú®CubeMX‰∏≠ÈÖçÁΩÆ‰∏∫1ms‰∏≠Êñ≠
+	HAL_TIM_Base_Start_IT(&htim7);  // ÂêØÂä®TIM7‰∏≠Êñ≠(1msÁ≥ªÁªüÊó∂Èíü)
+	
+	/* 
+	 * ÂÆöÊó∂Âô®ÈÖçÁΩÆË≠¶Âëä:
+	 * Â¶ÇÊûúÂÆöÊó∂Âô®Ê≤°ÊúâÈÖçÁΩÆÊ≠£Á°Æ,ËØ∑Âú®CubeMX‰∏≠Ê£ÄÊü•:
+	 * TIM6: ËÆ°ÁÆóÂÖ¨Âºè Period = (APB1_Timer_Clock / (Prescaler+1) / 50Hz) - 1
+	 * TIM7: ËÆ°ÁÆóÂÖ¨Âºè Period = (APB1_Timer_Clock / (Prescaler+1) / 1000Hz) - 1
+	 * APB1_Timer_ClockÈÄöÂ∏∏‰∏∫240MHz
+	 */
 	
   /* USER CODE END 2 */
 
@@ -184,36 +221,52 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  	if (DCMI_FrameState == 1)	// ≤…ºØµΩ¡À“ª÷°ÕºœÒ
+	  	if (DCMI_FrameState == 1)	// ÈááÈõÜÂà∞Êñ∞‰∏ÄÂ∏ßÂõæÂÉè
 		{
-			DCMI_FrameState = 0;		// «Â¡„±Í÷æŒª
+			DCMI_FrameState = 0;		// Ê∏ÖÈô§Ê†áÂøó‰Ωç
 			
-			/* ¥ÛΩÚ∑®º∆À„∂˛÷µªØ„–÷µ */
+			/* ==================== ÂõæÂÉèÂ§ÑÁêÜÊµÅÁ®ã ==================== */
+			
+			/* OTSUÁÆóÊ≥ïËÆ°ÁÆóÈòàÂÄº */
 			watch.threshold = img_otsu((uint16_t *)mt9v03x_image[30], 60, Display_Width, 10); 
 			
-			/* ∂˛÷µªØ„–÷µœﬁ∑˘ */
-			if(watch.threshold>120)
+			/* ÈòàÂÄº‰∏ä‰∏ãÈôêÂπÖ */
+			if(watch.threshold > 120)
 			{
-				watch.threshold=120;
+				watch.threshold = 120;
 			}
-			else if(watch.threshold<80)
+			else if(watch.threshold < 80)
 			{
-				watch.threshold=80;
+				watch.threshold = 80;
 			}
 			
-			/* ∂˛÷µªØ */
-			Binarization();
+			/* ‰∫åÂÄºÂåñÂ§ÑÁêÜ */
+			Binarization();    // mt9v03x_image ‚Üí Grayscale
 			
-			/* …®√Ë»¸µ¿±ﬂœﬂ */
-			scan_line();
+			/* Êâ´Á∫øÁÆóÊ≥ïÊèêÂèñËæπÁ∫ø */
+			scan_line();       // Grayscale ‚Üí lineinfo[]
 			
-			/* ‘⁄ÕºœÒ…œªÊ÷∆≥ˆ»¸µ¿±ﬂœﬂ */
+			/* ==================== ÂÖÉÁ¥†ËØÜÂà´‰∏éÁä∂ÊÄÅÊú∫ ==================== */
+			Element_recognition();  // Áä∂ÊÄÅÊú∫Â§ÑÁêÜÂêÑÁßçËµõÈÅìÂÖÉÁ¥†
+			
+			/* ==================== ÂºÄÁéØPIDÊéßÂà∂ ==================== */
+			// Ë∞ÉÁî®ÂºÄÁéØPIDÊéßÂà∂Âô®ËÆ°ÁÆóÂ∑¶Âè≥ËΩÆÁõÆÊ†áÈÄüÂ∫¶
+			open_loop_pid_calculate(v_forward, &left_target_speed, &right_target_speed);
+			
+			/* TODO: ËæìÂá∫Âà∞ÁîµÊú∫È©±Âä® */
+			motor_run(&leftmotor, left_target_speed,0);
+			motor_run(&rightmotor, right_target_speed,0);
+			
+			/* ==================== ÂõæÂÉèÊòæÁ§∫ ==================== */
+			
+			/* Âú®ÂõæÂÉè‰∏äÁªòÂà∂Âá∫Êâ´Á∫øÁªìÊûú */
 			draw_edge();
 			
-			/* œ‘ æ…„œÒÕ∑ÕºœÒ */
-			//œ‘ æ‘≠ÕºœÒ
-			//show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
-			//œ‘ æ∂˛÷µªØ…®œﬂÕº
+			/* ÊòæÁ§∫ÊëÑÂÉèÂ§¥ÂõæÂÉè */
+			// ÊòæÁ§∫ÂéüÂõæÂÉè:
+			// show_ov2640_image(0, 0, mt9v03x_image[0], Display_Width, Display_Height, Display_Width, Display_Height, 0);		
+			
+			// ÊòæÁ§∫‰∫åÂÄºÂåñ+Êâ´Á∫øÂõæ:
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);			
 		}
     /* USER CODE END WHILE */
@@ -238,11 +291,6 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-  while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
-
-  __HAL_RCC_SYSCFG_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
@@ -257,7 +305,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 5;
   RCC_OscInitStruct.PLL.PLLN = 192;
   RCC_OscInitStruct.PLL.PLLP = 2;
-  RCC_OscInitStruct.PLL.PLLQ = 2;
+  RCC_OscInitStruct.PLL.PLLQ = 20;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_2;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
@@ -286,14 +334,107 @@ void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SPI2|RCC_PERIPHCLK_SPI1;
+  PeriphClkInitStruct.PLL2.PLL2M = 15;
+  PeriphClkInitStruct.PLL2.PLL2N = 144;
+  PeriphClkInitStruct.PLL2.PLL2P = 2;
+  PeriphClkInitStruct.PLL2.PLL2Q = 2;
+  PeriphClkInitStruct.PLL2.PLL2R = 2;
+  PeriphClkInitStruct.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_0;
+  PeriphClkInitStruct.PLL2.PLL2VCOSEL = RCC_PLL2VCOWIDE;
+  PeriphClkInitStruct.PLL2.PLL2FRACN = 0;
+  PeriphClkInitStruct.Spi123ClockSelection = RCC_SPI123CLKSOURCE_PLL2;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
 /* USER CODE BEGIN 4 */
-//	≈‰÷√MPU
+// ==================== ÂÆöÊó∂Âô®‰∏≠Êñ≠ÂõûË∞ÉÂáΩÊï∞ ====================
+
+/**
+ * @brief ÂÆöÊó∂Âô®‰∏≠Êñ≠ÂõûË∞ÉÂáΩÊï∞
+ * @param htim ÂÆöÊó∂Âô®Âè•ÊüÑ
+ * @note TIM6: 20msÊéßÂà∂Âë®Êúü(50Hz) - ÈÄüÂ∫¶ËÆ°ÁÆó„ÄÅPIDÊéßÂà∂„ÄÅÁßØÂàÜÂô®Êõ¥Êñ∞
+ *       TIM7: 1msÁ≥ªÁªüÊª¥Á≠î(1000Hz) - Á≥ªÁªüÊó∂Èó¥ËÆ°Êï∞
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	// ==================== TIM6: 20msÊéßÂà∂Âë®Êúü ====================
+	if (htim->Instance == TIM6)
+	{
+		control_timer_flag = 1;  // ËÆæÁΩÆÊéßÂà∂Ê†áÂøó
+		
+		// ËØªÂèñÁºñÁ†ÅÂô®ËÆ°Êï∞ÂÄº
+		encoder_left_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim2);   // TIM2Â∑¶ÁºñÁ†ÅÂô®
+		encoder_right_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim3);  // TIM3Âè≥ÁºñÁ†ÅÂô®
+		
+		// ËÆ°ÁÆóÁºñÁ†ÅÂô®Â¢ûÈáè
+		int32_t delta_left = encoder_left_count - encoder_left_last;
+		int32_t delta_right = encoder_right_count - encoder_right_last;
+		
+		// ‰øùÂ≠òÊú¨Ê¨°ËÆ°Êï∞ÂÄº‰æõ‰∏ãÊ¨°‰ΩøÁî®
+		encoder_left_last = encoder_left_count;
+		encoder_right_last = encoder_right_count;
+		
+		// ËÆ°ÁÆóÈÄüÂ∫¶ (‰ºòÂåñÁâà)
+		// ÁºñÁ†ÅÂô®ÂèÇÊï∞:
+		//   - 256Á∫øÂõõÂÄçÈ¢ë: 256 √ó 4 = 1024ËÑâÂÜ≤/ÁºñÁ†ÅÂô®ËΩ¨
+		//   - ÁºñÁ†ÅÂô®ËΩ¨4Âúà = ËΩÆÂ≠êËΩ¨1Âúà: 1024 √ó 4 = 4096ËÑâÂÜ≤/ËΩÆËΩ¨
+		//   - ËΩÆÂ≠êÂçäÂæÑ: R = 4cm
+		//   - ËΩÆÂ≠êÂë®Èïø: C = 2œÄR = 2 √ó 3.14159 √ó 4 ‚âà 25.13cm
+		//   - ÊéßÂà∂Âë®Êúü: Œît = 20ms = 0.02s
+		// ÈÄüÂ∫¶ËÆ°ÁÆó: v(cm/s) = (delta_count / 4096) √ó 25.13 / 0.02
+		//                  = delta_count √ó (25.13 / 4096 / 0.02)
+		//                  = delta_count √ó 0.30664
+		const float PULSES_PER_WHEEL_REV = 4096.0f;      // ËÑâÂÜ≤Êï∞/ËΩÆËΩ¨
+		const float WHEEL_CIRCUMFERENCE = 25.13274f;     // ËΩÆÂ≠êÂë®Èïø(cm): 2œÄ√ó4
+		const float CONTROL_PERIOD = 0.02f;              // ÊéßÂà∂Âë®Êúü(s): 20ms
+		const float SPEED_COEFF = WHEEL_CIRCUMFERENCE / PULSES_PER_WHEEL_REV / CONTROL_PERIOD;  // ‚âà0.30664
+		
+		float left_speed = (float)delta_left * SPEED_COEFF;   // cm/s
+		float right_speed = (float)delta_right * SPEED_COEFF; // cm/s
+		float average_speed = (left_speed + right_speed) / 2.0f; // cm/s
+		
+		// Êõ¥Êñ∞Â∞èËΩ¶Áä∂ÊÄÅ
+		mycar.present_speed = average_speed;
+		
+		// Ë∑ØÂæÑÁßØÂàÜÊõ¥Êñ∞(Áî®‰∫éÂÖÉÁ¥†ËØÜÂà´)
+		distant_integeral(average_speed);
+		
+		// ËØªÂèñIMUÊï∞ÊçÆÂπ∂Êõ¥Êñ∞ÈôÄËû∫‰ª™Êï∞ÊçÆ
+		ICM42688P_ReadIMUData(&imu_data);
+		
+		// ËßíÂ∫¶ÁßØÂàÜÊõ¥Êñ∞(‰ΩøÁî®ÂÆûÈôÖÈôÄËû∫‰ª™ZËΩ¥Êï∞ÊçÆ)
+		angal_integeral(imu_data.gyro_z);
+	}
+	
+	// ==================== TIM7: 1msÁ≥ªÁªüÊª¥Á≠î ====================
+	else if (htim->Instance == TIM7)
+	{
+		system_tick++;
+		mycar.RUNTIME = system_tick;  // Êõ¥Êñ∞Á≥ªÁªüËøêË°åÊó∂Èó¥(ms)
+	}
+}
+
+//	ÈÖçÁΩÆMPU
 //
 void MPU_Config(void)
 {
 	MPU_Region_InitTypeDef MPU_InitStruct;
 
-	HAL_MPU_Disable();		// œ»Ω˚÷πMPU
+	HAL_MPU_Disable();		// ÂÖàÁ¶ÅÊ≠¢MPU
 
 	MPU_InitStruct.Enable 				= MPU_REGION_ENABLE;
 	MPU_InitStruct.BaseAddress 		= 0x24000000;
@@ -309,7 +450,7 @@ void MPU_Config(void)
 
 	HAL_MPU_ConfigRegion(&MPU_InitStruct);	
 
-	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);	//  πƒ‹MPU
+	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);	// ‰ΩøËÉΩMPU
 }
 /* USER CODE END 4 */
 
@@ -327,8 +468,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

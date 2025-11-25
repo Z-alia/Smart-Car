@@ -4,15 +4,11 @@
  *  Created on: 2023年6月21日
  *      Author: Admin
  */
- #include <stdlib.h>
-#include <math.h>
-#include <string.h>
 #include "scan_line.h"
-#include "Binarization.h"
-#include "Element_recognition.h"
-
+#include <stdlib.h>
 struct lineinfo_s lineinfo[120];
 #define LINE_WIDTH 188
+
 
 void scan_line()
 {
@@ -43,8 +39,7 @@ int line_single(struct lineinfo_s *lineinfo, unsigned char *inputimg)
 {
     //得到所有凸边沿
     uint8_t edge_store[_EDGE_STORE_SIZE] = {0};
-	//扫描inputimg数组（即行数组），并将跳变沿所对应的列数依次放到edge_store数组中
-    lineinfo->edge_count = get_orign_edges(inputimg, edge_store);
+    lineinfo->edge_count = get_orign_edges(inputimg, edge_store);//扫描inputimg数组（即行数组），并将跳变沿所对应的列数依次放到edge_store数组中
 
     //得到最大边沿
     get_max_edge(lineinfo, edge_store);
@@ -62,8 +57,7 @@ int line_findnext(struct lineinfo_s *lineinfo, uint8_t *inputimg, struct lineinf
     uint8_t *edge_store = lineinfo->edge_store;
     lineinfo->edge_count = get_orign_edges(inputimg, edge_store);
      //watch.addline_y = lineinfo->y;
-     if (lineinfo->y > 20 && lineinfo->y < 100)
-	{
+     if (lineinfo->y > 20 && lineinfo->y < 100){
          zebra_detect(lineinfo, edge_store, inputimg); //斑马线检测
          //apriltag_detect(lineinfo, edge_store, inputimg); //apriltag检测
      }
@@ -80,9 +74,9 @@ int line_findnext(struct lineinfo_s *lineinfo, uint8_t *inputimg, struct lineinf
  */
 uint8_t get_orign_edges(uint8_t *inputimg, uint8_t *edge_store)
 {
-	#if _EDGE_STORE_SIZE % 2 != 0
-	#error "_EDGE_STORE_SIZE must be even!"
-	#endif
+#if _EDGE_STORE_SIZE % 2 != 0
+#error "_EDGE_STORE_SIZE must be even!"
+#endif
     //查找并存储所有跳变沿对
     uint8_t edge_store_idx = 0;
     if (inputimg[0] >watch.threshold)//数组第0位大于阈值（图像最左端为白）则认为此处为跳变沿
@@ -200,13 +194,11 @@ int get_best_edge(struct lineinfo_s *lineinfo, uint8_t *edge_store, struct linei
     //累加中间的黑色部分求取比例
     int black_pix_count = 0;
     for (int k = temp_left_idx + 1; k < temp_right_idx; k += 2)
-	{
         black_pix_count += edge_store[k + 1] - edge_store[k];
-	}
     if (8 * black_pix_count > edge_store[temp_right_idx] - edge_store[temp_left_idx]) //如果有不可忽略的杂物
     {
         //选取最大的块    --可能的BUG:此处无法继续忽略噪点
-        int min_width = 188;
+        int max_width = 0;
         int max_idx = temp_left_idx;
 
         int dst = temp_left_idx + 1;
@@ -238,9 +230,9 @@ int get_best_edge(struct lineinfo_s *lineinfo, uint8_t *edge_store, struct linei
 
         for (int k = temp_left_idx; k < lineinfo->edge_count - 1; k += 2)
         {
-            if (abs(edge_store[k + 1] + edge_store[k]-188) < min_width)
+            if (edge_store[k + 1] - edge_store[k] > max_width)
             {
-                min_width = abs(edge_store[k + 1] + edge_store[k]-188);
+                max_width = edge_store[k + 1] - edge_store[k];
                 max_idx = k;
             }
         }
@@ -262,21 +254,13 @@ int get_best_edge(struct lineinfo_s *lineinfo, uint8_t *edge_store, struct linei
     lineinfo->left = edge_store[temp_left_idx];
     lineinfo->right = edge_store[temp_right_idx];
     if (lineinfo->right >= 187)
-	{
         lineinfo->right_lost = 1;
-	}
     else
-	{
         lineinfo->right_lost = 0;
-	}
     if (lineinfo->left <= 0)
-	{
         lineinfo->left_lost = 1;
-	}
     else
-	{
         lineinfo->left_lost = 0;
-	}
     return 0;
 }
 
@@ -285,36 +269,36 @@ int zebra_detect(struct lineinfo_s *lineinfo, uint8_t *edge_store, uint8_t *inpu
 {
     uint8_t white_width, zobra_white_count, edge_now;
     zobra_white_count = 0;
-    if (lineinfo->edge_count > 12)
-    {
-		for (uint8_t k = 0; k < lineinfo->edge_count; k += 2)
-		{
-			edge_now = edge_store[k];
-			if (edge_now < LINE_WIDTH)
-			{
-				if ((inputimg[edge_now] & 0x80) == 0x80)
-				{
-					white_width = edge_store[k + 1] - edge_store[k];
-					if (white_width > 1 && white_width < 14)
-					{
-						zobra_white_count++;
-						watch.ZebraInLine=lineinfo->y;//取满足条件时y最大值作为ZebraLine
-					}                 //watch.ZebraInLine为看到的斑马线最远端
-				}
-			}
-		}
-		if (zobra_white_count > 6)
-		{
-			lineinfo->zebra_flag = 1;
-			//beep(20);
-			// if(!mycar.status)
-			//ips200_draw_horizon(0, 119 - lineinfo->y, 188, 119 - lineinfo->y, BLUE);
-		}
-	}
-    else
-    {
-        lineinfo->zebra_flag = 0;
-    }
+        if (lineinfo->edge_count > 12)
+        {
+            for (uint8_t k = 0; k < lineinfo->edge_count; k += 2)
+            {
+                edge_now = edge_store[k];
+                if (edge_now < LINE_WIDTH)
+                {
+                    if ((inputimg[edge_now] & 0x80) == 0x80)
+                    {
+                        white_width = edge_store[k + 1] - edge_store[k];
+                        if (white_width > 1 && white_width < 14)
+                        {
+                            zobra_white_count++;
+                            watch.ZebraInLine=lineinfo->y;//取满足条件时y最大值作为ZebraLine
+                        }                 //watch.ZebraInLine为看到的斑马线最远端
+                    }
+                }
+            }
+            if (zobra_white_count > 6)
+            {
+                lineinfo->zebra_flag = 1;
+                //beep(20);
+                // if(!mycar.status)
+                //     ips200_draw_horizon(0, 119 - lineinfo->y, 188, 119 - lineinfo->y, BLUE);
+            }
+        }
+        else
+        {
+            lineinfo->zebra_flag = 0;
+        }
     return 0;
 }
 
