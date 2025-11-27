@@ -21,7 +21,7 @@ void clear_angle_integeral(void)
     angle_integral.integeral_flag=0;
 }
 //角度积分函数，放在陀螺仪读取数据的定时器中断中
-void angal_integeral(float gyro_z)
+void angal_integeral(float gyro_z)//每50ms加一次
 {
     if(angle_integral.integeral_flag==1)
     {

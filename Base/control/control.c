@@ -35,7 +35,8 @@ float straight_error_get(void)
        temp+=center_line[i];
 		
     }
-	sum+=(temp/length)*weight_dw;
+	sum+=temp/length;
+	sum*=weight_dw;
 	length=0;
 	temp=0.0;
 	for(uint8_t i=30;i<60;i++)
@@ -53,8 +54,12 @@ float straight_error_get(void)
 	   length++;
        temp+=center_line[i];
     }
+	
 	sum+=(temp/(float)length)*weight_up;
-    return sum- (94.0);
+	
+	control.error=sum-94.0;
+	
+    return control.error;
 }
 /**
  * @brief 摄像头误差计算函数(完全恢复原版算法)

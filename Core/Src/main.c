@@ -40,7 +40,7 @@
 #include "ICM-42688P.h"
 #include "motor.h"
 #include "control_pid.h"
-#include "../../HardWare/TOF_UART/tof_uart_driver.h"
+
 //#include ""
 //#include "ICM42688P_Simple.h"
 /* USER CODE END Includes */
@@ -54,7 +54,7 @@ PIDController PID_speed;
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 uint8_t receive_flag,v=5;
-float speed =3.0f;
+float speed =5.5f; //speed 7 p 7m/s
 
 /* USER CODE END PD */
 
@@ -147,14 +147,14 @@ int main(void)
 	ICM42688P_Init();
 	motor_init();
 	TR_driver_init();
-    TOF_UART_Driver_Init();
+    //TOF_UART_Driver_Init();
 //	TOF_Init();
 //	TOF_SetOutputMode(1);
 //	TOF_SetTriggerMode(0);
   /*----------------------------控制初始化--------------------------------------*/
 	cascade_pid_init(0.008f,
-                                  0.25f, 0.0f, 0.0f,   // 图像PID参数
-                                 20.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
+                                  0.08f, 0.0f, 0.0f,   // 图像PID参数
+                                 75.0f, 0.0f, 0.0f); // 右轮PID参数 // PID参数可根据需要调整
 //	pid_init(&PID_image,1.0,0,0,0);
 //	pid_init(&PID_speed,1.0,0,0,0);
 
@@ -171,7 +171,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    TOF_UART_Driver_Task();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -207,11 +206,11 @@ int main(void)
 		  if(distance_integral.integeral_data>300)//150  
 		  {
 			  watch.InLoop=11;
-			  speed=3.5f;
-			  v=5;
-			  cascade_pid_init(0.008f,
-                                  0.35f, 0.0f, 0.0f,   // 图像PID参数
-                                 15.0f, 0.0f, 0.0f);
+//			  speed=7.0f;
+//			  v=5;
+//			  cascade_pid_init(0.08f,
+//                                  0.75f, 0.0f, 0.0f,   // 图像PID参数
+//                                 50.0f, 0.0f, 0.0f);
 			  clear_distant_integeral();
 			  //distance_integral.integeral_flag=0;
 		  } 
@@ -244,7 +243,7 @@ int main(void)
 			//显示二值化扫线图
 			show_ov2640_image_int8(0, 0, imo[0], Display_Width, Display_Height, Display_Width, Display_Height);
 			
-			    
+			
 			image_process();
 			
 			// wifi图传
@@ -265,56 +264,19 @@ int main(void)
 		*/
         LCD_DisplayDecimals(200, 220, watch.zebra_flag, 1, 0);
     
-    /* TOF Debug - 全屏显示
-    LCD_DisplayString(10, 20, "TX:");
-    LCD_DisplayNumber(50, 20, g_tof_debug.tx_cnt, 5);
     
-    LCD_DisplayString(150, 20, "RX:");
-    LCD_DisplayNumber(190, 20, g_tof_debug.rx_isr_cnt, 5);
     
-    LCD_DisplayString(10, 50, "Valid:");
-    LCD_DisplayNumber(80, 50, g_tof_debug.valid_frame_cnt, 5);
     
-    LCD_DisplayString(150, 50, "Dis:");
-    LCD_DisplayNumber(220, 50, TOF_UART_GetDistance(), 5);
-    
-    // 发送的数据
-    LCD_DisplayString(10, 80, "Sent:");
-    for(uint8_t i = 0; i < 6 && i < g_tof_debug.sent_len; i++)
-    {
-        LCD_DisplayNumber(10 + i*40, 100, g_tof_debug.sent_data[i], 3);
-    }
-    
-    // 接收的原始数据
-    LCD_DisplayString(10, 130, "Recv:");
-    for(uint8_t i = 0; i < 7 && i < g_tof_debug.raw_len; i++)
-    {
-        LCD_DisplayNumber(10 + i*40, 150, g_tof_debug.raw_data[i], 3);
-    }
-    
-    // 详细状态
-    LCD_DisplayString(10, 160, "UInit:");
-    LCD_DisplayNumber(80, 160, g_tof_debug.uart_init_ok, 1);
-    
-    LCD_DisplayString(150, 160, "Timeout:");
-    LCD_DisplayNumber(220, 160, g_tof_debug.rx_timeout_cnt, 4);
-    
-    LCD_DisplayString(10, 190, "CRCErr:");
-    LCD_DisplayNumber(80, 190, g_tof_debug.crc_err_cnt, 5);
-    
-    LCD_DisplayString(150, 190, "TXErr:");
-    LCD_DisplayNumber(220, 190, g_tof_debug.tx_hal_err, 3);
-		*/
 		
 		
-		//日志回传
-		TR_Log_AddByte(watch.InLoop);
-		TR_Log_AddByte(watch.InLoopAngle2);
-		TR_Log_AddByte(watch.InLoopAngle2_x);
-		TR_Log_AddByte(watch.InLoopAngle2_y);
-		TR_Log_AddByte(watch.InLoopAngleL);
-		TR_Log_AddByte(watch.InLoopCirc);
-		TR_Send_Log();
+//		//日志回传
+//		TR_Log_AddByte(watch.InLoop);
+//		TR_Log_AddByte(watch.InLoopAngle2);
+//		TR_Log_AddByte(watch.InLoopAngle2_x);
+//		TR_Log_AddByte(watch.InLoopAngle2_y);
+//		TR_Log_AddByte(watch.InLoopAngleL);
+//		TR_Log_AddByte(watch.InLoopCirc);
+//		TR_Send_Log();
 		TR_Log_Clear();
 	/*----------------------------图像测试-----------------------------*/
 	if(watch.InLoop!=5&&watch.InLoop!=11)
@@ -331,10 +293,27 @@ int main(void)
 		//left_ring_complete_out();
 	}
 		left_ring_linefix();
+//	if(imu_data.gyro_y>5)
+//	{
+//		speed=25.0f;
+//		distant_integeral(50);
+//	}
+//	if(imu_data.gyro_y<-10)
+//	{
+//		speed=3.0f;
+//		clear_angle_integeral();
+//	}
 	
     /*---------------------------以下为控制区域--------------------------------*/
 		
-		
+//		//速度决策
+//	if(control.error>15.0f||control.error<-15.0f)
+//	{
+//		speed=5.0f;
+//		cascade_pid_init(0.08f,
+//                                  0.5f, 0.0f, 0.0f,   // 图像PID参数
+//                                 50.0f, 0.0f, 0.0f);
+//	}
 		//电机控制调用
 //		motor_run(&leftmotor,control.left_target_speed);
 //		motor_run(&rightmotor,control.right_target_speed);
@@ -447,10 +426,7 @@ void PeriphCommonClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-    TOF_UART_RxCpltCallback(huart);
-}
+
 
 //	配置MPU
 //
@@ -491,14 +467,46 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	//watch.Red_obstacle_flag=TOF_ReadDistanceFiltered();
 	 //图像环计算
 	 cascade_pid_outer_loop(speed); //目标速度设定
+	  
+//	 //test
+//	  g_cascade_pid.vL_target=7.0f;
+//	  g_cascade_pid.vR_target=7.0f;
+	  
+//	 TR_Log_AddFloat(control.left_target_speed);
+//	 TR_Log_AddFloat(control.right_target_speed);
+	  
+	  
   }
   if (htim->Instance == TIM16)
   {
+	  //速度决策
+	if(control.error>10.0f||control.error<-10.0f)
+	{
+		speed=5.0f;
+		cascade_pid_set_image_params(0.5f, 0.0f, 0.0f);
+		cascade_pid_set_speed_params(50.0f, 0.0f, 0.0f);
+		
+//		cascade_pid_init(0.08f,
+//                                  0.5f, 0.0f, 0.0f,   // 图像PID参数
+//                                 50.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		speed=5.5f;
+		cascade_pid_set_image_params(0.08f, 0.0f, 0.0f);
+		cascade_pid_set_speed_params(75.0f, 0.0f, 0.0f);
+	}
 	  //10ms
 	  //进行编码器积分
   control.lencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim5);//左编码器计数
   control.rencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim2);//右编码器计数
     distant_integeral(get_speed());
+	  
+	 //日志
+	TR_Log_AddFloat(control.left_speed);
+	TR_Log_AddFloat(control.right_speed);
+	  
+	  
     control.lencoder_count_last = control.lencoder_count;
     control.rencoder_count_last = control.rencoder_count;
 	  //速度环计算
@@ -508,14 +516,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     cascade_pid_inner_loop(control.left_speed,
                           control.right_speed,
                           &pwm_L, &pwm_R);
-    
+	  //日志
+
+	TR_Log_AddFloat(g_cascade_pid.vL_target);
+	TR_Log_AddFloat(g_cascade_pid.vR_target);
+	
+	TR_Log_AddUint8(straight);
     // 输出到电机
     control.left_target_speed = (int16_t)(pwm_L);
     
     control.right_target_speed = (int16_t)(pwm_R);
     
-	  motor_run(&leftmotor,control.left_target_speed,v);
-		motor_run(&rightmotor,control.right_target_speed,v);
+	motor_run(&leftmotor,control.left_target_speed,v);
+	motor_run(&rightmotor,control.right_target_speed,v);
+		
+	TR_Send_Log();
+	TR_Log_Clear();
   }
 }
 /* USER CODE END 4 */

@@ -67,6 +67,12 @@ extern int16_t persp_lx[120];      // 左线逆透视x坐标(透视变换后)
 extern int16_t persp_rx[120];      // 右线逆透视x坐标(透视变换后)
 extern uint8_t persp_ly[120];      // 左线逆透视y坐标(透视变换后)
 extern uint8_t persp_ry[120];      // 右线逆透视y坐标(透视变换后)
+extern uint8_t left_straight;
+extern uint8_t right_straight;
+extern uint8_t straight;
+
+extern uint8_t last_left_lost_up;
+extern uint8_t last_right_lost_up;
 
 #endif /*_IMAGE_H*/
 

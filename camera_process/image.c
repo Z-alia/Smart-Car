@@ -279,9 +279,17 @@ void search_l_r(uint16_t break_flag, uint8_t(*image)[image_w], uint16_t *l_stast
 		//左边判断
 		for (i = 0; i < 8; i++)
 		{
+			// 边界保护：检查八邻域坐标是否在图像范围内
+			uint8_t x_i = search_filds_l[i][0];
+			uint8_t y_i = search_filds_l[i][1];
+			uint8_t x_next = search_filds_l[(i + 1) & 7][0];
+			uint8_t y_next = search_filds_l[(i + 1) & 7][1];
+			if (x_i >= image_w || y_i >= image_h || x_next >= image_w || y_next >= image_h)
+				continue;  // 跳过越界的邻域点
+			
 			// 边界检测：i位置是黑(赛道外) 且 i+1位置是白(赛道内) → 找到黑白边界
-			if (image[search_filds_l[i][1]][search_filds_l[i][0]] == 0
-				&& image[search_filds_l[(i + 1) & 7][1]][search_filds_l[(i + 1) & 7][0]] == 255)
+			if (image[y_i][x_i] == 0
+				&& image[y_next][x_next] == 255)
 			{
 				// 实际选择i+1的坐标（白色区域的边缘点）
 				temp_l[index_l][0] = search_filds_l[(i + 1) & 7][0];
@@ -352,9 +360,17 @@ void search_l_r(uint16_t break_flag, uint8_t(*image)[image_w], uint16_t *l_stast
 		//右边判断
 		for (i = 0; i < 8; i++)
 		{
+			// 边界保护：检查八邻域坐标是否在图像范围内
+			uint8_t x_i_r = search_filds_r[i][0];
+			uint8_t y_i_r = search_filds_r[i][1];
+			uint8_t x_next_r = search_filds_r[(i + 1) & 7][0];
+			uint8_t y_next_r = search_filds_r[(i + 1) & 7][1];
+			if (x_i_r >= image_w || y_i_r >= image_h || x_next_r >= image_w || y_next_r >= image_h)
+				continue;  // 跳过越界的邻域点
+			
 			// 边界检测：i位置是黑(赛道外) 且 i+1位置是白(赛道内) → 找到黑白边界
-			if (image[search_filds_r[i][1]][search_filds_r[i][0]] == 0
-				&& image[search_filds_r[(i + 1) & 7][1]][search_filds_r[(i + 1) & 7][0]] == 255)
+			if (image[y_i_r][x_i_r] == 0
+				&& image[y_next_r][x_next_r] == 255)
 			{
 				// 实际选择i+1的坐标（白色区域的边缘点）
 				temp_r[index_r][0] = search_filds_r[(i + 1) & 7][0];
@@ -467,16 +483,21 @@ void get_left(uint16_t total_L)
 	if(left_lost_num-temp_lost_num>=3)// 这里3为了抗噪
 	{
 		//如果有中间段 从上往下看 因为下面两个角落经常糊
-		for(uint8_t row=last_left_lost_up-2;row>=last_left_lost_down+2;row--)
-		{
-			if(left_lost[row]==1&&left_lost[row+1]==0&&/*left_lost[row+2]==0&&*/last_left_lost_midend==0)
+		// 边界保护：确保循环范围有效，使用 int16_t 防止下溢
+		int16_t row_start_l = (int16_t)last_left_lost_up - 2;
+		int16_t row_end_l = (int16_t)last_left_lost_down + 2;
+		if (row_start_l > row_end_l && row_start_l > 0 && row_start_l < image_h - 1) {
+			for(int16_t row=row_start_l; row>=row_end_l && row>0; row--)
 			{
-				last_left_lost_midend=row;
-			}
-			if(left_lost[row]==1&&left_lost[row-1]==0&&/*left_lost[row-2]==0&&*/last_left_lost_midstart==0)
-			{
-				last_left_lost_midstart=row;
-				break;
+				if(left_lost[row]==1&&left_lost[row+1]==0&&/*left_lost[row+2]==0&&*/last_left_lost_midend==0)
+				{
+					last_left_lost_midend=(uint8_t)row;
+				}
+				if(left_lost[row]==1&&left_lost[row-1]==0&&/*left_lost[row-2]==0&&*/last_left_lost_midstart==0)
+				{
+					last_left_lost_midstart=(uint8_t)row;
+					break;
+				}
 			}
 		}
 	}
@@ -530,7 +551,7 @@ void get_right(uint16_t total_R)
 		}
 	}
 	//从下往上找丢线
-	for(uint8_t row=0;row<image_h;row++){
+	for(uint8_t row=0;row<image_h-1;row++){  // 边界保护：row+1 最大为 image_h-1
 		if(right_lost[row]==1&&right_lost[row+1]==0/*&&right_lost[row+2]==0*/)
 		{
 			last_right_lost_down=row;
@@ -538,10 +559,10 @@ void get_right(uint16_t total_R)
 		}
 	}
 	//从上往下找丢线
-	for(uint8_t row=image_h-1;row>=0;row--){
+	for(int16_t row=image_h-1;row>0;row--){  // 边界保护：使用 int16_t 避免下溢，row>0 确保 row-1>=0
 		if(right_lost[row]==1&&right_lost[row-1]==0/*&&right_lost[row-2]==0*/)
 		{
-			last_right_lost_up=row;
+			last_right_lost_up=(uint8_t)row;
 			break;
 		}
 	}
@@ -550,16 +571,21 @@ void get_right(uint16_t total_R)
 	if(right_lost_num-temp_lost_num>=3)// 这里3为了抗噪
 	{
 		//如果有中间段 从上往下找 因为下面两个角落经常糊
-		for(uint8_t row=last_right_lost_up-2;row>=last_right_lost_down+2;row--)
-		{
-			if(right_lost[row]==1&&right_lost[row+1]==0&&/*right_lost[row+2]==0&&*/last_right_lost_midend==0)
+		// 边界保护：确保循环范围有效，使用 int16_t 防止下溢
+		int16_t row_start = (int16_t)last_right_lost_up - 2;
+		int16_t row_end = (int16_t)last_right_lost_down + 2;
+		if (row_start > row_end && row_start > 0 && row_start < image_h - 1) {
+			for(int16_t row=row_start; row>=row_end && row>0; row--)
 			{
-				last_right_lost_midend=row;
-			}
-			if(right_lost[row]==1&&right_lost[row-1]==0&&/*right_lost[row-2]==0&&*/last_right_lost_midstart==0)
-			{
-				last_right_lost_midstart=row;
-				break;
+				if(right_lost[row]==1&&right_lost[row+1]==0&&/*right_lost[row+2]==0&&*/last_right_lost_midend==0)
+				{
+					last_right_lost_midend=(uint8_t)row;
+				}
+				if(right_lost[row]==1&&right_lost[row-1]==0&&/*right_lost[row-2]==0&&*/last_right_lost_midstart==0)
+				{
+					last_right_lost_midstart=(uint8_t)row;
+					break;
+				}
 			}
 		}
 	}
@@ -619,21 +645,33 @@ void draw_edge()
     for (int i = 0; i < data_stastics_l; i++) {
         int row = points_l[i][1];
         int col = points_l[i][0];
-        imo[row][col] = 1; // 左边界点标记为1
+        // 边界保护：确保坐标在图像范围内
+        if (row >= 0 && row < image_h && col >= 0 && col < image_w) {
+            imo[row][col] = 1; // 左边界点标记为1
+        }
     }
     // 显示右边界
     for (int i = 0; i < data_stastics_r; i++) {
         int row = points_r[i][1];
         int col = points_r[i][0];
-        imo[row][col] = 2; // 右边界点标记为2
+        // 边界保护：确保坐标在图像范围内
+        if (row >= 0 && row < image_h && col >= 0 && col < image_w) {
+            imo[row][col] = 2; // 右边界点标记为2
+        }
     }
     // 显示中线(补线)
     for (int row = 0; row < image_h; row++) {
 		// 这里y索引要颠倒 因为最终左、右、中线是从底部向上 而imo是从顶部向下
-        imo[image_h-1-row][center_line[row]] = 3;
-		imo[image_h-1-row][watch.fl_border[row]] = 4;
-		imo[image_h-1-row][watch.fr_border[row]] = 5;
-
+		int y_idx = image_h - 1 - row;
+		// 边界保护：确保坐标在图像范围内
+		if (y_idx >= 0 && y_idx < image_h) {
+			if (center_line[row] >= 0 && center_line[row] < image_w)
+				imo[y_idx][center_line[row]] = 3;
+			if (watch.fl_border[row] >= 0 && watch.fl_border[row] < image_w)
+				imo[y_idx][watch.fl_border[row]] = 4;
+			if (watch.fr_border[row] >= 0 && watch.fr_border[row] < image_w)
+				imo[y_idx][watch.fr_border[row]] = 5;
+		}
     }
 }
 
@@ -997,8 +1035,8 @@ void straight_detect(uint8_t *l, uint8_t *r,uint16_t start_l,uint16_t start_r,ui
 	// log_add_float("right_variance", right_variance, -1);
 
 	// 这里留了一个不那么严格的直线判断标准 值为2
-	left_straight = (left_variance < 10.0f)?1u:(left_variance < 50.0f?2u:0u);
-	right_straight = (right_variance < 10.0f)?1u:(right_variance < 50.0f?2u:0u);
+	left_straight = (left_variance < 5.0f)?1u:(left_variance < 50.0f?2u:0u);
+	right_straight = (right_variance < 5.0f)?1u:(right_variance < 50.0f?2u:0u);
 	straight = left_straight && right_straight;
 }
 
