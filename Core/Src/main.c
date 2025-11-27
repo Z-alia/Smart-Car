@@ -40,6 +40,7 @@
 #include "ICM-42688P.h"
 #include "motor.h"
 #include "control_pid.h"
+#include "element_state_machine.h"
 
 //#include ""
 //#include "ICM42688P_Simple.h"
@@ -147,10 +148,8 @@ int main(void)
 	ICM42688P_Init();
 	motor_init();
 	TR_driver_init();
-    //TOF_UART_Driver_Init();
-//	TOF_Init();
-//	TOF_SetOutputMode(1);
-//	TOF_SetTriggerMode(0);
+/*-----------------------------状态机-----------------------------------------*/
+	 element_state_machine_init();
   /*----------------------------控制初始化--------------------------------------*/
 	cascade_pid_init(0.008f,
                                   0.08f, 0.0f, 0.0f,   // 图像PID参数
@@ -175,46 +174,48 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  /*-----------------------------状态机-----------------------------------------*/
-	  if(watch.InLoop==2)
-	  {
-//		  speed =2.0f;
-//		  v=5;
-//		  cascade_pid_init(0.008f,
-//                                  0.25f, 0.0f, 0.0f,   // 图像PID参数
-//                                 20.0f, 0.0f, 0.0f);
-		  distance_integral.integeral_flag=1;
-		  if(distance_integral.integeral_data>300)//150  
-		  {
-			  watch.InLoop=10;
-			  clear_distant_integeral();
-			  //distance_integral.integeral_flag=0;
-		  }
-	}
-	  if(watch.InLoop==10)
-	  {
-		 distance_integral.integeral_flag=1;
-		  if(distance_integral.integeral_data>400)//150  
-		  {
-			  watch.InLoop=4;
-			  clear_distant_integeral();
-			  //distance_integral.integeral_flag=0;
-		  } 
-	  }
-	  if(watch.InLoop==4)
-	  {
-		 distance_integral.integeral_flag=1;
-		  if(distance_integral.integeral_data>300)//150  
-		  {
-			  watch.InLoop=11;
-//			  speed=7.0f;
-//			  v=5;
-//			  cascade_pid_init(0.08f,
-//                                  0.75f, 0.0f, 0.0f,   // 图像PID参数
-//                                 50.0f, 0.0f, 0.0f);
-			  clear_distant_integeral();
-			  //distance_integral.integeral_flag=0;
-		  } 
-	  }
+		element_state_machine_update();
+	  //	  if(watch.InLoop==2)
+//	  {
+////		  speed =2.0f;
+////		  v=5;
+////		  cascade_pid_init(0.008f,
+////                                  0.25f, 0.0f, 0.0f,   // 图像PID参数
+////                                 20.0f, 0.0f, 0.0f);
+//		  distance_integral.integeral_flag=1;
+//		  if(distance_integral.integeral_data>300)//150  
+//		  {
+//			  watch.InLoop=10;
+//			  clear_distant_integeral();
+//			  //distance_integral.integeral_flag=0;
+//		  }
+//	}
+//	  if(watch.InLoop==10)
+//	  {
+//		 distance_integral.integeral_flag=1;
+//		  if(distance_integral.integeral_data>400)//150  
+//		  {
+//			  watch.InLoop=4;
+//			  clear_distant_integeral();
+//			  //distance_integral.integeral_flag=0;
+//		  } 
+//	  }
+//	  if(watch.InLoop==4)
+//	  {
+//		 distance_integral.integeral_flag=1;
+//		  if(distance_integral.integeral_data>300)//150  
+//		  {
+//			  watch.InLoop=11;
+////			  speed=7.0f;
+////			  v=5;
+////			  cascade_pid_init(0.08f,
+////                                  0.75f, 0.0f, 0.0f,   // 图像PID参数
+////                                 50.0f, 0.0f, 0.0f);
+//			  clear_distant_integeral();
+//			  //distance_integral.integeral_flag=0;
+//		  } 
+//	  }
+
 //	  if(watch.InLoop==5)
 //	  {
 //		 distance_integral.integeral_flag=1;
@@ -250,6 +251,7 @@ int main(void)
 			//TR_Write_Image(120, 188, (unsigned char *)imo);
 			
 		}
+		LCD_DisplayDecimals(220,150,control.error,3,1);
 		/*
 		LCD_DisplayDecimals(220, 190, control.left_speed, 3,5); 
 		LCD_DisplayDecimals(220, 170, control.right_speed, 3,5); 
@@ -277,22 +279,22 @@ int main(void)
 //		TR_Log_AddByte(watch.InLoopAngleL);
 //		TR_Log_AddByte(watch.InLoopCirc);
 //		TR_Send_Log();
-		TR_Log_Clear();
+		//TR_Log_Clear();
 	/*----------------------------图像测试-----------------------------*/
-	if(watch.InLoop!=5&&watch.InLoop!=11)
-	{
-		left_ring_first_angle();
-		left_ring_circular_arc();
-		left_ring_second_angle();
-		left_ring_begin_turn();
-		left_ring_prepare_out();
-		left_ring_out_angle();
-		left_ring_out_loop_turn();
-//		left_ring_out_loop();
-//		left_ring_straight_out_angle();
-		//left_ring_complete_out();
-	}
-		left_ring_linefix();
+//	if(watch.InLoop!=5&&watch.InLoop!=11)
+//	{
+//		left_ring_first_angle();
+//		left_ring_circular_arc();
+//		left_ring_second_angle();
+//		left_ring_begin_turn();
+//		left_ring_prepare_out();
+//		left_ring_out_angle();
+//		left_ring_out_loop_turn();
+////		left_ring_out_loop();
+////		left_ring_straight_out_angle();
+//		//left_ring_complete_out();
+//	}
+//		left_ring_linefix();
 //	if(imu_data.gyro_y>5)
 //	{
 //		speed=25.0f;
@@ -306,36 +308,8 @@ int main(void)
 	
     /*---------------------------以下为控制区域--------------------------------*/
 		
-//		//速度决策
-//	if(control.error>15.0f||control.error<-15.0f)
-//	{
-//		speed=5.0f;
-//		cascade_pid_init(0.08f,
-//                                  0.5f, 0.0f, 0.0f,   // 图像PID参数
-//                                 50.0f, 0.0f, 0.0f);
-//	}
-		//电机控制调用
-//		motor_run(&leftmotor,control.left_target_speed);
-//		motor_run(&rightmotor,control.right_target_speed);
-//	/*---------------imutest-----------------*/
-//	  //ICM42688P_ReadIMUData(&imu_data);
-//	  LCD_DisplayDecimals(50,200,imu_data.gyro_z,3,2);
-//	  LCD_DisplayDecimals(50,175,imu_data.accel_z,3,2);
-//	  LCD_DisplayDecimals(50,150,imu_data.temperature,3,1);
-//	//3.编码器
-//		LCD_DisplayDecimals(200, 150, get_speed(), 3,1);
-//		LCD_DisplayDecimals(250, 175, control.lencoder_count, 5,0);
-//		LCD_DisplayDecimals(250, 200, control.rencoder_count, 5,0);
-//		LCD_DisplayDecimals(150, 175, control.left_speed, 3,1);
-//		LCD_DisplayDecimals(150, 200, control.right_speed, 3,1);
-		
-//	//4.电机
-//		motor_run(&leftmotor,100);
-//		motor_run(&rightmotor,100);
-//	//5.wifi
-//		TR_Write_Image_Pixle(120, 188, (unsigned char *)Grayscale);
-    //tof test
-		//LCD_DisplayDecimals(200, 200, watch.Red_obstacle_flag, 10,0);
+
+
 
   }
   /* USER CODE END 3 */
@@ -480,22 +454,31 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM16)
   {
 	  //速度决策
-	if(control.error>10.0f||control.error<-10.0f)
-	{
-		speed=5.0f;
-		cascade_pid_set_image_params(0.5f, 0.0f, 0.0f);
-		cascade_pid_set_speed_params(50.0f, 0.0f, 0.0f);
-		
-//		cascade_pid_init(0.08f,
-//                                  0.5f, 0.0f, 0.0f,   // 图像PID参数
-//                                 50.0f, 0.0f, 0.0f);
+	  if(g_element_state==STATE_NORMAL)
+	  {
+		if(
+			control.error<20.0f&&control.error>-20.0f
+		)
+		{
+			//这套数据可以跑欧姆环
+			speed=4.7f;
+			cascade_pid_set_image_params(0.19f, 0.0f, 0.01f);
+			cascade_pid_set_speed_params(72.0f, 0.2f, 0.0f);
+			
+		}
+		else
+		{
+			speed=4.5f;
+			cascade_pid_set_image_params(0.20f, 0.0f, 0.01f);
+			cascade_pid_set_speed_params(50.0f, 0.2f, 0.0f);
+		}
 	}
-	else
-	{
-		speed=5.5f;
-		cascade_pid_set_image_params(0.08f, 0.0f, 0.0f);
-		cascade_pid_set_speed_params(75.0f, 0.0f, 0.0f);
-	}
+	  else 
+	  {
+		  speed=3.5f;
+		cascade_pid_set_image_params(0.15f, 0.0f, 0.01f);
+		cascade_pid_set_speed_params(50.0f, 0.2f, 0.0f);
+	  }
 	  //10ms
 	  //进行编码器积分
   control.lencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim5);//左编码器计数
@@ -521,7 +504,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	TR_Log_AddFloat(g_cascade_pid.vL_target);
 	TR_Log_AddFloat(g_cascade_pid.vR_target);
 	
-	TR_Log_AddUint8(straight);
+	//TR_Log_AddUint8(straight);
+	
+	TR_Log_AddFloat(control.error);
     // 输出到电机
     control.left_target_speed = (int16_t)(pwm_L);
     

@@ -758,6 +758,16 @@
               <FileType>1</FileType>
               <FilePath>..\camera_process\zebra_detection.c</FilePath>
             </File>
+            <File>
+              <FileName>element_state_machine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\camera_process\element_state_machine.c</FilePath>
+            </File>
+            <File>
+              <FileName>element_state_machine.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\camera_process\element_state_machine.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

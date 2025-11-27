@@ -1,6 +1,7 @@
-base_project/image.o: ..\camera_process\image.c ..\camera_process\image.h \
-  ..\Base\control\control.h ..\camera_process\morph_binary_bitpacked.h \
-  ..\camera_process\Binarization.h ..\Core\Inc\main.h \
+base_project/element_state_machine.o: \
+  ..\camera_process\element_state_machine.c \
+  ..\camera_process\element_state_machine.h \
+  ..\camera_process\Element_recognition.h ..\Core\Inc\main.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal.h \
   ..\Core\Inc\stm32h7xx_hal_conf.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_rcc.h \
@@ -34,5 +35,4 @@ base_project/image.o: ..\camera_process\image.c ..\camera_process\image.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_tim_ex.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart.h \
   ..\Drivers\STM32H7xx_HAL_Driver\Inc\stm32h7xx_hal_uart_ex.h \
-  ..\Base\type_def.h ..\camera_process\Element_recognition.h \
-  ..\camera_process\element_state_machine.h
+  ..\Base\type_def.h ..\Base\control\integral.h

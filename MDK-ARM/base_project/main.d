@@ -41,4 +41,5 @@ base_project/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\camera_process\image.h ..\Base\control\control.h \
   ..\HardWare\Wifi\LQ_Transfer_Image.h ..\Base\control\integral.h \
   ..\HardWare\42688\ICM-42688P.h ..\HardWare\MOTOR\motor.h \
-  ..\Base\control\control_pid.h
+  ..\Base\control\control_pid.h \
+  ..\camera_process\element_state_machine.h

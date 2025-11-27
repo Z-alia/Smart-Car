@@ -20,8 +20,8 @@ extern "C" {
 #define IMAGE_W 188  // 图像宽度
 //获取误差
 #define weight_up 0.1//下部为0-30 中部为30-60 上部为60-120
-#define weight_md 0.25
-#define weight_dw 0.65
+#define weight_md 0.3
+#define weight_dw 0.6
 
 //车身状态结构体(整合编码器和电机状态)
 typedef struct

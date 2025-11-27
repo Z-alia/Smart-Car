@@ -20,6 +20,7 @@
 "base_project\image.o"
 "base_project\morph_binary_bitpacked.o"
 "base_project\zebra_detection.o"
+"base_project\element_state_machine.o"
 "base_project\stm32h7xx_hal_cortex.o"
 "base_project\stm32h7xx_hal_dcmi.o"
 "base_project\stm32h7xx_hal_rcc.o"
