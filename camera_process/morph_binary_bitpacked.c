@@ -327,9 +327,9 @@ void morph_clean_u8_binary_adapter(const uint8_t* RESTRICT src_u8,
     zebra_detect_bitpacked(out_buf,
                            width,
                            height,
-                           60,    // row_start
+                           50,    // row_start
                            70,    // row_end
-                           10);   // xor_threshold (上限 10)
+                           8);   // xor_threshold (上限 10)
 
     open_close_bitpacked(packed_src, tmp_buf, out_buf,  width, height);
     unpack_bits_to_binary_u8(out_buf, width, height, dst_u8, width);

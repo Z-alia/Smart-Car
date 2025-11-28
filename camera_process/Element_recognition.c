@@ -305,7 +305,7 @@ void left_ring_begin_turn()
         //set_speed(setpara.loop_target_speed);
         //change_pid_para(&CAM_Turn,&setpara.loop_turn_PID);//将转向PID参数调为环内转向PID
         //watch.fix_slope=(float)(lineinfo[watch.InLoopAngle2].left)/(115-watch.InLoopAngle2);
-        begin_angle_integeral(60);
+        //begin_angle_integeral(60);
         //beep2(2,20);
     }
 }

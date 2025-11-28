@@ -1,7 +1,7 @@
-﻿#include "Element_recognition.h"
+#include "Element_recognition.h"
 
 // 帧级去抖参数：连续命中/连续未命中帧数
-#define ZEBRA_CONFIRM_FRAMES 2u
+#define ZEBRA_CONFIRM_FRAMES 1u
 #define ZEBRA_RELEASE_FRAMES 2u
 
 // Portable 32-bit popcount
@@ -33,18 +33,62 @@ static uint32_t zebra_row_edge_count(const uint32_t *row_bits, int width, int wo
     return count;
 }
 
-// Row-to-row XOR count: smaller value means two neighbouring rows look similar (long stripes)
-static uint32_t zebra_row_xor_count(const uint32_t *row_a_bits, const uint32_t *row_b_bits, int words_per_row)
+// Count differing bits between two rows (bit-packed, aligned)
+static uint32_t zebra_row_xor_count(const uint32_t *row_a, const uint32_t *row_b, int width, int words_per_row)
 {
-    uint32_t count = 0;
+    uint32_t diff = 0;
 
     for (int i = 0; i < words_per_row; ++i)
     {
-        uint32_t diff = row_a_bits[i] ^ row_b_bits[i];
-        count += (uint32_t)zebra_popcount32(diff);
+        uint32_t mask = 0xFFFFFFFFu;
+        if (i == words_per_row - 1)
+        {
+            int remaining = width - ((words_per_row - 1) << 5);
+            if (remaining < 32)
+            {
+                mask = (remaining > 0) ? ((1u << remaining) - 1u) : 0u;
+            }
+        }
+
+        uint32_t word_xor = (row_a[i] ^ row_b[i]) & mask;
+        diff += (uint32_t)zebra_popcount32(word_xor);
     }
 
-    return count;
+    return diff;
+}
+
+// Count differing bits allowing a horizontal shift of row_b (shift in pixels, small range)
+static uint32_t zebra_row_xor_count_shift(const uint32_t *row_a, const uint32_t *row_b, int width, int shift)
+{
+    uint32_t diff = 0;
+
+    for (int x = 0; x < width; ++x)
+    {
+        uint32_t abit = (row_a[x >> 5] >> (x & 31)) & 1u;
+        int bx = x + shift;
+        uint32_t bbit = 0u;
+        if (bx >= 0 && bx < width)
+        {
+            bbit = (row_b[bx >> 5] >> (bx & 31)) & 1u;
+        }
+        diff += (abit ^ bbit);
+    }
+
+    return diff;
+}
+
+// Minimal difference between rows when allowing 1-pixel horizontal tolerance
+static uint32_t zebra_row_xor_count_best3(const uint32_t *row_a, const uint32_t *row_b, int width, int words_per_row)
+{
+    uint32_t d0 = zebra_row_xor_count(row_a, row_b, width, words_per_row);
+    uint32_t dl = zebra_row_xor_count_shift(row_a, row_b, width, -1);
+    uint32_t dr = zebra_row_xor_count_shift(row_a, row_b, width, 1);
+    uint32_t best = (d0 < dl) ? d0 : dl;
+    if (dr < best)
+    {
+        best = dr;
+    }
+    return best;
 }
 
 // Count number of foreground runs (bit=1) whose width is within [min_w, max_w]
@@ -129,12 +173,13 @@ uint8_t zebra_detect_bitpacked(const uint32_t *bits,
         const uint32_t *row_bits = bits + (int)y * words_per_row;
         uint32_t row_edges = zebra_row_edge_count(row_bits, width, words_per_row);
         uint32_t row_xor = (prev_row_bits != NULL)
-                               ? zebra_row_xor_count(row_bits, prev_row_bits, words_per_row)
+                               ? zebra_row_xor_count_best3(row_bits, prev_row_bits, width, words_per_row)
                                : 0xFFFFFFFFu; // 首行无对比
         uint32_t row_stripes = zebra_count_stripes_row(row_bits, width, 2, 13); // 1<width<14 -> [2,13]
 
         // 行间相似性（首行无需约束），斑马线为长条，上下相似
-        uint32_t row_xor_limit = (width > 0) ? (uint32_t)(width / 2) : 0u;
+        // 放宽行间相似阈值：允许更多像素差异以容忍噪声/视角
+        uint32_t row_xor_limit = (width > 0) ? (uint32_t)((width * 3) / 4) : 0u;
         if (row_xor_limit < 32u)
         {
             row_xor_limit = 32u;

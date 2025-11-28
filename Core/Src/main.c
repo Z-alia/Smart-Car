@@ -174,7 +174,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  /*-----------------------------状态机-----------------------------------------*/
-		//element_state_machine_update();
+		element_state_machine_update();
 	  //	  if(watch.InLoop==2)
 //	  {
 ////		  speed =2.0f;
@@ -248,7 +248,7 @@ int main(void)
 			image_process();
 			
 			// wifi图传
-			//TR_Write_Image(120, 188, (unsigned char *)imo);
+			//TR_Write_Image_Pixle(120, 188, imo[0]);
 			
 		}
 		LCD_DisplayDecimals(220,150,control.error,3,1);
@@ -265,7 +265,7 @@ int main(void)
 		LCD_DisplayDecimals(200,100,watch.InLoopAngle2_y,1,0);
 		
 		
-        //LCD_DisplayDecimals(200, 220, watch.zebra_flag, 1, 0);
+        LCD_DisplayDecimals(200, 220, watch.zebra_flag, 1, 0);
     
     
     
@@ -458,32 +458,33 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  if(g_element_state==STATE_NORMAL)
 	  {
 		if(
-			control.error<20.0f&&control.error>-20.0f
+			(control.error<20.0f&&control.error>-20.0f)
+		//(last_left_lost_up>100||last_right_lost_up>100)
 		)
 		{
 			//这套数据可以跑欧姆环
-			speed=4.0f;
-			cascade_pid_set_image_params(0.19f, 0.0f, 0.01f);
+			speed=4.41f;
+			cascade_pid_set_image_params(0.165f, 0.0f, 0.01f);
 			cascade_pid_set_speed_params(80.0f, 0.0f, 0.0f);
 			
 		}
 		else
 		{
-			speed=4.5f;
-			cascade_pid_set_image_params(0.20f, 0.0f, 0.01f);
+			speed=4.52f;
+			cascade_pid_set_image_params(0.20f, 0.0f, 0.041f);
 			cascade_pid_set_speed_params(55.0f, 0.0f, 0.0f);
 		}
 	}
 	  else 
 	  {
 		  speed=3.5f;
-		cascade_pid_set_image_params(0.10f, 0.0f, 0.00f);
+		cascade_pid_set_image_params(0.2f, 0.0f, 0.01f);
 		cascade_pid_set_speed_params(60.0f, 0.0f, 0.0f);
 	  }
 	  //10ms
 	  //进行编码器积分
-  control.lencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim5);//左编码器计数
-  control.rencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim2);//右编码器计数
+	control.lencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim5);//左编码器计数
+	control.rencoder_count = (int32_t)__HAL_TIM_GET_COUNTER(&htim2);//右编码器计数
     distant_integeral(get_speed());
 	  
 	 //日志
@@ -511,13 +512,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	//TR_Log_AddUint8(watch.InLoop);
     // 输出到电机
+	if(watch.zebra_flag==0)
+	{
     control.left_target_speed = (int16_t)(pwm_L);
     
     control.right_target_speed = (int16_t)(pwm_R);
     
 	motor_run(&leftmotor,control.left_target_speed,v);
 	motor_run(&rightmotor,control.right_target_speed,v);
-	
+	}
+	else if(watch.zebra_flag==1&&HAL_GetTick()>10)
+	{
+		while(1)
+		motor_stop();
+	}
 	TR_Log_AddFloat(pwm_L);
 	TR_Log_AddFloat(pwm_R);
 	TR_Send_Log();

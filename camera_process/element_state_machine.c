@@ -7,6 +7,7 @@
 #include "element_state_machine.h"
 #include "Element_recognition.h"  // 引入watch结构体
 #include "integral.h"
+#include "motor.h"
 //#include "nav_recorder_all_in_one.h"
 
 // ==================== 全局变量 ====================
@@ -37,6 +38,7 @@ static void handle_normal_state(void)
     // 检测斑马线
     if (watch.zebra_flag) {
         g_element_state = STATE_ZEBRA;
+		motor_stop();
         return;
     }
     
@@ -73,14 +75,14 @@ static void handle_loop_entry_state(void)
 		left_ring_begin_turn();
 		left_ring_prepare_out();
 		left_ring_out_angle();
-		left_ring_out_loop_turn();
-		left_ring_out_loop();
-		left_ring_straight_out_angle();
-		left_ring_complete_out();
+//		left_ring_out_loop_turn();
+//		left_ring_out_loop();
+//		left_ring_straight_out_angle();
+//		left_ring_complete_out();
     if(watch.InLoop==2)
 	  {
 		  distance_integral.integeral_flag=1;
-		  if(distance_integral.integeral_data>300)//150  
+		  if(distance_integral.integeral_data>100)//150  
 		  {
 			  watch.InLoop=10;
 			  clear_distant_integeral();
@@ -90,7 +92,7 @@ static void handle_loop_entry_state(void)
 	  if(watch.InLoop==10)
 	  {
 		 distance_integral.integeral_flag=1;
-		  if(distance_integral.integeral_data>400)//150  
+		  if(distance_integral.integeral_data>550)//150  
 		  {
 			  watch.InLoop=4;
 			  clear_distant_integeral();
@@ -100,7 +102,7 @@ static void handle_loop_entry_state(void)
 	  if(watch.InLoop==4)
 	  {
 		 distance_integral.integeral_flag=1;
-		  if(distance_integral.integeral_data>300)//150  
+		  if(distance_integral.integeral_data>320)//150  
 		  {
 			  watch.InLoop=11;
 			  clear_distant_integeral();
@@ -110,7 +112,7 @@ static void handle_loop_entry_state(void)
 	  left_ring_linefix();
 	   if (watch.InLoop==11) {
 		   
-        g_element_state = STATE_LOOP_EXIT;
+        g_element_state = STATE_NORMAL;
         return;
     }
 }
