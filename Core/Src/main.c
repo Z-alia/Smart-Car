@@ -174,7 +174,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  /*-----------------------------状态机-----------------------------------------*/
-		element_state_machine_update();
+		//element_state_machine_update();
 	  //	  if(watch.InLoop==2)
 //	  {
 ////		  speed =2.0f;
@@ -252,19 +252,20 @@ int main(void)
 			
 		}
 		LCD_DisplayDecimals(220,150,control.error,3,1);
-		/*
-		LCD_DisplayDecimals(220, 190, control.left_speed, 3,5); 
-		LCD_DisplayDecimals(220, 170, control.right_speed, 3,5); 
-		LCD_DisplayDecimals(220,150,straight_error_get(),3,1);
-		LCD_DisplayDecimals(220,130,receive_flag,2,0);
 		
-		//LCD_DisplayDecimals(200,20,watch.InLoop,1,0);
+		//LCD_DisplayDecimals(220, 190, control.left_speed, 3,5); 
+		//LCD_DisplayDecimals(220, 170, control.right_speed, 3,5); 
+		//LCD_DisplayDecimals(220,150,straight_error_get(),3,1);
+		//LCD_DisplayDecimals(220,130,receive_flag,2,0);
+		
+		LCD_DisplayDecimals(200,20,watch.InLoop,1,0);
 		LCD_DisplayDecimals(200,40,watch.InLoopAngleL,1,0);
 		LCD_DisplayDecimals(200,60,watch.InLoopCirc,1,0);
 		LCD_DisplayDecimals(200,80,watch.InLoopAngle2_x,1,0);
 		LCD_DisplayDecimals(200,100,watch.InLoopAngle2_y,1,0);
-		*/
-        LCD_DisplayDecimals(200, 220, watch.zebra_flag, 1, 0);
+		
+		
+        //LCD_DisplayDecimals(200, 220, watch.zebra_flag, 1, 0);
     
     
     
@@ -432,7 +433,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   // 检查是否是TIM15的更新事件中断
   if (htim->Instance == TIM15)
   {
-	//100ms
+	//50ms
 	  
 	//TR_Receive_Packet(&receive_flag,16,1);
     //进行陀螺仪数据收集和积分
@@ -461,23 +462,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		)
 		{
 			//这套数据可以跑欧姆环
-			speed=4.7f;
+			speed=4.0f;
 			cascade_pid_set_image_params(0.19f, 0.0f, 0.01f);
-			cascade_pid_set_speed_params(72.0f, 0.2f, 0.0f);
+			cascade_pid_set_speed_params(80.0f, 0.0f, 0.0f);
 			
 		}
 		else
 		{
 			speed=4.5f;
 			cascade_pid_set_image_params(0.20f, 0.0f, 0.01f);
-			cascade_pid_set_speed_params(50.0f, 0.2f, 0.0f);
+			cascade_pid_set_speed_params(55.0f, 0.0f, 0.0f);
 		}
 	}
 	  else 
 	  {
 		  speed=3.5f;
-		cascade_pid_set_image_params(0.15f, 0.0f, 0.01f);
-		cascade_pid_set_speed_params(50.0f, 0.2f, 0.0f);
+		cascade_pid_set_image_params(0.10f, 0.0f, 0.00f);
+		cascade_pid_set_speed_params(60.0f, 0.0f, 0.0f);
 	  }
 	  //10ms
 	  //进行编码器积分
@@ -506,7 +507,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	//TR_Log_AddUint8(straight);
 	
-	TR_Log_AddFloat(control.error);
+	//TR_Log_AddFloat(control.error);
+	
+	//TR_Log_AddUint8(watch.InLoop);
     // 输出到电机
     control.left_target_speed = (int16_t)(pwm_L);
     
@@ -514,7 +517,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     
 	motor_run(&leftmotor,control.left_target_speed,v);
 	motor_run(&rightmotor,control.right_target_speed,v);
-		
+	
+	TR_Log_AddFloat(pwm_L);
+	TR_Log_AddFloat(pwm_R);
 	TR_Send_Log();
 	TR_Log_Clear();
   }

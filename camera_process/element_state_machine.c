@@ -67,6 +67,7 @@ static void handle_normal_state(void)
  */
 static void handle_loop_entry_state(void)
 {
+		left_ring_first_angle();
 		left_ring_circular_arc();
 		left_ring_second_angle();
 		left_ring_begin_turn();
@@ -96,16 +97,16 @@ static void handle_loop_entry_state(void)
 			  //distance_integral.integeral_flag=0;
 		  } 
 	  }
-//	  if(watch.InLoop==4)
-//	  {
-//		 distance_integral.integeral_flag=1;
-//		  if(distance_integral.integeral_data>300)//150  
-//		  {
-//			  watch.InLoop=11;
-//			  clear_distant_integeral();
-//			  //distance_integral.integeral_flag=0;
-//		  } 
-//	  }
+	  if(watch.InLoop==4)
+	  {
+		 distance_integral.integeral_flag=1;
+		  if(distance_integral.integeral_data>300)//150  
+		  {
+			  watch.InLoop=11;
+			  clear_distant_integeral();
+			  //distance_integral.integeral_flag=0;
+		  } 
+	  }
 	  left_ring_linefix();
 	   if (watch.InLoop==11) {
 		   

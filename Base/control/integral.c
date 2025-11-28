@@ -25,7 +25,7 @@ void angal_integeral(float gyro_z)//每50ms加一次
 {
     if(angle_integral.integeral_flag==1)
     {
-        angle_integral.integeral_data+=gyro_z;
+        angle_integral.integeral_data+=(gyro_z/20.0f);
         if(angle_integral.integeral_Thres>0)
         {
             if(angle_integral.integeral_data>angle_integral.integeral_Thres)

@@ -4,6 +4,8 @@
 #include "image.h"
 #include "Binarization.h"
 #include "integral.h"
+#include "element_state_machine.h"
+
 //小车状态变量
 struct watch_o watch;
 
@@ -136,10 +138,10 @@ for(int y=loop_forward_near;y<loop_forward_far;y++)//逐行扫描
             )
         {//左圆环的第一个角点所在行
             watch.InLoopAngleL = y;
-            left_ring_confirm();//10.25testtag
-            if(0)     //在当前无元素时进行以下操作，其他时候只找角点
+            //left_ring_confirm();//10.25testtag
+            if(g_element_state == STATE_NORMAL)     //在当前无元素时进行以下操作，其他时候只找角点
             {
-                   //left_ring_confirm();
+                   left_ring_confirm();
             }
             break;
         }
@@ -153,27 +155,27 @@ void left_ring_confirm()
 {
     uint8_t zebra_confirm=0,white_count1=0,white_count2=0,white_count3=0,black_count=0,right_lost=0;
     //right_ring_first_angle();//扫描是否存在右环角点
-    //left_ring_circular_arc();//扫描是否存在左环上弧
+    left_ring_circular_arc();//扫描是否存在左环上弧
     for(int y=loop_forward_near;y<95;y++)//逐行扫描
     {
         if(((r_border[y+2]-r_border[y])>2)||(r_border[y]-r_border[y+2])>4)
             right_lost+=1;
-//        if(lineinfo[y].right-lineinfo[y+2].right>20
-//           &&lineinfo[y-1].right-lineinfo[y+3].right>20
-//           &&lineinfo[y-2].right-lineinfo[y+4].right>20)
-//            right_lost+=3;
+        if(r_border[y]-r_border[y+2]>20
+           &&r_border[y-1]-r_border[y+3]>20
+           &&r_border[y-2]-r_border[y+4]>20)
+            right_lost+=3;
     }
        if(right_lost<3)
        {
-//           for(int x=lineinfo[watch.InLoopAngleL-1].left;x>0;x--)
-//           {
-//               if(Grayscale[119-watch.InLoopAngleL][x]==255)
-//                   white_count1++;
-//               if(Grayscale[119-(watch.InLoopAngleL-1)][x]==255)
-//                   white_count2++;
-//               if(Grayscale[119-(watch.InLoopAngleL-2)][x]==255)
-//                   white_count3++;
-//           }
+           for(int x=l_border[watch.InLoopAngleL-1];x>0;x--)
+           {
+               if(Grayscale[119-watch.InLoopAngleL][x]==255)
+                   white_count1++;
+               if(Grayscale[119-(watch.InLoopAngleL-1)][x]==255)
+                   white_count2++;
+               if(Grayscale[119-(watch.InLoopAngleL-2)][x]==255)
+                   white_count3++;
+           }
            //vofa.loop[5]=white_count1;
            //vofa.loop[6]=white_count2;
            //vofa.loop[7]=white_count3;
@@ -185,12 +187,12 @@ void left_ring_confirm()
 		   //老学长上位机
 			//           vofa.loop[6]=l_border[watch.InLoopAngleL].left;
 		   //           vofa.loop[7]=black_count;   
-           if(/*(white_count1>=10&&white_count2>=10&&white_count3>=10)&&*/(black_count<10))
+           if((white_count1>=1&&white_count2>=1&&white_count3>=1)&&(black_count<12))
            {
 			   //状态机
                //enter_element(Left_ring);    //正式进入左圆环元素
 			   //编码器积分
-               //begin_distant_integeral(6000);
+               begin_distant_integeral(10);
               // if(Element_rem.loop_data[Element_rem.loop_count]==0)//如果是小环
 			   //牢学长的石
 //               {
@@ -210,22 +212,22 @@ void left_ring_confirm()
        }
 	   //状态机
     //Element=None;
-    watch.InLoopAngleR=120;
-    watch.InLoopAngleL=120;
+//    watch.InLoopAngleR=120;
+//    watch.InLoopAngleL=120;
 }
 /*函数名称：void left_ring_circular_arc()
 功能说明：左环上凸弧扫描函数
 */
 void left_ring_circular_arc()
 {
-    if (watch.InLoop != 1&&watch.InLoop != 2)return;//在循环之前跳出，节省时间
+    if (watch.InLoop != 1&&watch.InLoop != 2)return;//???????????????????
     //beep(20);
-    for(int y= loop_forward_far;y>loop_forward_near;y--)//逐行扫描
+    for(int y= loop_forward_far;y>loop_forward_near;y--)//???????
     {
         if (y <watch.InLoopAngle2  
-            &&(watch.InLoopAngleL<65)//去除了两个积分条件
+            &&(watch.InLoopAngleL<65)//?????????????????
            //&&(y>(watch.InLoopAngleL+20))
-           &&y <watch.InLoopCirc   //初始化给120
+           &&y <watch.InLoopCirc   //???????120
            &&!left_lost[y+3]
            &&!left_lost[y+2]
            &&!left_lost[y+1]
@@ -240,7 +242,7 @@ void left_ring_circular_arc()
            &&l_border[y-3] <= l_border[y]
            //&&(watch.right_lost+watch.cross_lost)<5
             )
-       { //入环点所在行
+       { //??????????
             watch.InLoopCirc = y;
             //beep(20);
             break;
@@ -253,8 +255,8 @@ void left_ring_circular_arc()
 */
 void left_ring_second_angle()
 {
-    if(watch.InLoop != 1&&watch.InLoop != 2)return;//在循环之前跳出，节省时间
-    for(int y=loop_forward_far;y>loop_forward_near;y--)//逐行扫描
+    if(watch.InLoop != 1&&watch.InLoop != 2)return;//???????????????????
+    for(int y=loop_forward_far;y>loop_forward_near;y--)//???????
     {
         if (watch.InLoopCirc<66&&
             y<watch.InLoopAngle2
@@ -275,7 +277,7 @@ void left_ring_second_angle()
                break;
            }
     }
-	//持续抓住第二角点，保证补线完整
+	//???????????????????????
     if(watch.InLoopAngle2!=120
         &&watch.InLoopAngle2>50
         )
@@ -291,8 +293,10 @@ void left_ring_begin_turn()
 {
 	//去除了路径积分和角度积分
     if(watch.InLoop!=1)return;//在循环之前跳出，节省时间
-    if(/*get_integeral_state(&distance_integral)==2 路程积分完成
-        &&*/watch.InLoop==1
+    if(
+		//get_integeral_state(&distance_integral)==2 //路程积分完成
+        //&&
+	watch.InLoop==1
         &&watch.InLoopAngle2<=90  //注意，该值影响补线入环的早晚
     )
     {
@@ -301,7 +305,7 @@ void left_ring_begin_turn()
         //set_speed(setpara.loop_target_speed);
         //change_pid_para(&CAM_Turn,&setpara.loop_turn_PID);//将转向PID参数调为环内转向PID
         //watch.fix_slope=(float)(lineinfo[watch.InLoopAngle2].left)/(115-watch.InLoopAngle2);
-        //begin_angle_integeral(260);
+        begin_angle_integeral(60);
         //beep2(2,20);
     }
 }
@@ -313,12 +317,13 @@ void left_ring_prepare_out()//第340帧
 {
     if(watch.InLoop != 3)return;
     if( watch.InLoop == 3
-        //&&get_integeral_state(&angle_integral)==1 10.28 test tag
+        //&&get_integeral_state(&angle_integral)==2 //10.28 test tag
         //&&get_integeral_data(&angle_integral)>160
         &&r_border[69]<120
         &&r_border[69]>95
     )
    {
+	   
        watch.InLoop = 4;
        watch.OutLoop_turn_point_x=r_border[69];
        //beep2(4,20);
@@ -379,7 +384,7 @@ void left_ring_out_loop_turn()
 //        {
 //            begin_angle_integeral(setpara.big_loop_out);
 //        }
-        //begin_distant_integeral(3000);//开启路程积分，此时要保持左转
+        //begin_distant_integeral(300);//开启路程积分，此时要保持左转
         watch.OutLoop=1;
         //beep2(5,20);
     }
@@ -406,7 +411,7 @@ void left_ring_out_loop()
             )
                 )
             {
-            //clear_distant_integeral();
+            clear_distant_integeral();
 //            if(Element_rem.loop_data[Element_rem.loop_count]==0)//如果是小环
 //            {
                 //begin_distant_integeral(setpara.loop_out_distance);
@@ -415,7 +420,7 @@ void left_ring_out_loop()
 //            {
 //                begin_distant_integeral(setpara.big_loop_out_distance);
 //            }
-            //clear_angle_integeral();
+            clear_angle_integeral();
             //beep2(6,20);
             watch.InLoop =5;////不用陀螺仪，用摄像头自身提取赛道元素；
             }
@@ -465,7 +470,7 @@ void left_ring_complete_out()
         )
      {
          //clear_all_flags();// 出环成功,清除所有标志
-         watch.InLoop=0;  //10.29 test tag
+         watch.InLoop=11;  //10.29 test tag
          //out_element();   状态机函数
          //mycar.target_speed=setpara.com_target_speed;//恢复正常速度
          //change_pid_para(&CAM_Turn,&setpara.com_turn_PID);//恢复正常转向PID
